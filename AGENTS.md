@@ -15,12 +15,7 @@ This workspace contains the **Enterprise AI Governance Package** — an automate
 3. **1-Minute Developer Kit:** [`project-kit/init.py`](file:///c:/ai-governance-package/project-kit/init.py) (auto-scaffolds `governance-cards/data-card.yaml` and `ai-project-manifest.yaml`).
 4. **Automated PR & Code Gate:** [`plugins/pull-request/ai_code_review_gate.py`](file:///c:/ai-governance-package/plugins/pull-request/ai_code_review_gate.py) (blocks AGPL/GPL copyleft violations and unreviewed AI code).
 5. **4 Autonomous Governance Agents:** [`agents/`](file:///c:/ai-governance-package/agents/) (Intake, Resolver, Enforcement, Monitoring).
-6. **Multi-Industry Sample Projects:**
-   * [`sample-ai-project/`](file:///c:/ai-governance-package/sample-ai-project/) (Baseline Customer Support AI)
-   * [`sample-loan-approval-risk/`](file:///c:/ai-governance-package/sample-loan-approval-risk/) (Credit Underwriting - Demographic Disparity Failure & Fix)
-   * [`sample-medical-triage-ai/`](file:///c:/ai-governance-package/sample-medical-triage-ai/) (Emergency Triage - Human Clinician Override Failure & Fix)
-   * [`sample-financial-advisor/`](file:///c:/ai-governance-package/sample-financial-advisor/) (Wealth Management)
-   * [`sample-hr-resume-screening/`](file:///c:/ai-governance-package/sample-hr-resume-screening/) (Recruiting Screener)
+6. **Production-Ready Core Distribution:** Pure engine, policy rules, and MCP servers without mock projects for production environments. Integrates seamlessly into any repository via [`project-kit/init.py`](file:///c:/ai-governance-package/project-kit/init.py) or Model Context Protocol ([`mcp_server.py`](file:///c:/ai-governance-package/mcp_server.py)).
 7. **Executive Management Presentation:** [`AI_Governance_Novice_Guide.html`](file:///c:/ai-governance-package/AI_Governance_Novice_Guide.html) (14-slide executive slide deck with PDF export, Dark/Light modes, and Q&A Appendix).
 
 ---
