@@ -1,0 +1,68 @@
+# ==============================================================================
+# Policy-as-Code Rules: Domain 13 - Monitoring, Drift & Incidents (MON)
+# ==============================================================================
+# Schema: policy-as-code/rule-schema.json
+# Baseline Controls: ORG-CTL-MON-001, ORG-CTL-MON-002, ORG-CTL-MON-003, ORG-CTL-MON-004
+# ==============================================================================
+
+schema_version: "1.0.0"
+domain: "monitoring_drift_incidents"
+owner_placeholder: "[ROLE: Model Risk Officer & MLOps Lead]"
+review_date_placeholder: "[YYYY-MM-DD]"
+status: "DRAFT"
+
+rules:
+  # ----------------------------------------------------------------------------
+  # Control: ORG-CTL-MON-001 - Prompt and Configuration Traceability
+  # ----------------------------------------------------------------------------
+  - rule_id: "PAC-MON-001"
+    target_control_id: "ORG-CTL-MON-001"
+    title: "Project Repository Git Traceability Check"
+    description: "Verifies that the project manifest declares a valid repository URL for change tracking."
+    enforcement_points:
+      - "ci_build_pipeline"
+    mode: "blocking"
+    input_context:
+      - "ai_project_manifest"
+    assertions:
+      - assertion_id: "A01"
+        description: "repository_url must be populated."
+        field_path: "repository_url"
+        operator: "not_empty"
+        failure_message: "repository_url is required for version traceability."
+    remediation: "Ensure repository_url points to the canonical Git repository in ai-project-manifest.yaml."
+    reference_rego: |
+      # verify against current documentation
+      package ai_governance.mon001
+      default allow = false
+      allow {
+          input.repository_url != ""
+      }
+
+  # ----------------------------------------------------------------------------
+  # Control: ORG-CTL-MON-003 - Automated Drift Alert Threshold Verification
+  # ----------------------------------------------------------------------------
+  - rule_id: "PAC-MON-003"
+    target_control_id: "ORG-CTL-MON-003"
+    title: "Data and Concept Drift Metric Check"
+    description: "Verifies that production drift monitoring PSI does not exceed alert threshold (0.25 standard, 0.15 high-risk)."
+    enforcement_points:
+      - "periodic_automated_scan"
+    mode: "advisory"
+    input_context:
+      - "eval_benchmark_report"
+    assertions:
+      - assertion_id: "A01"
+        description: "Measured feature drift PSI must not exceed 0.25."
+        field_path: "drift_psi_score"
+        operator: "less_than_or_equal"
+        expected_value: 0.25
+        failure_message: "Production feature drift PSI exceeded warning threshold (0.25)."
+    remediation: "Investigate distributional shift in production inference inputs; trigger model retraining if drift persists."
+    reference_rego: |
+      # verify against current documentation
+      package ai_governance.mon003
+      default allow = false
+      allow {
+          input.drift_psi_score <= 0.25
+      }

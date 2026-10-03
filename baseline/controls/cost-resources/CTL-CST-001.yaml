@@ -1,0 +1,56 @@
+id: "ORG-CTL-CST-001"
+title: "Mandatory Project Token Budgets and Hard Spending Caps"
+objective: "Enforce monthly financial budgets and token consumption quotas per AI project at the gateway layer to eliminate runaway operational expenses and denial-of-wallet risks."
+domain: "cost_resource_limits"
+type: "universal"
+
+applicability_condition:
+  predicate_type: "always"
+  description: "Universal control applying to all AI projects invoking commercial model APIs or provisioned GPU clusters."
+
+lifecycle_stages:
+  - "integration_ci_cd"
+  - "deployment_admission"
+  - "runtime_operation"
+
+enforcement_points:
+  - "ci_build_pipeline"
+  - "deployment_admission_controller"
+  - "api_gateway_sidecar"
+
+check_type: "automated"
+mode: "blocking"
+
+evidence_required:
+  - artifact_type: "finops_budget_allocation_record"
+    description: "FinOps ledger record confirming approved monthly budget and active gateway token-tracking quota tag."
+    format: "json"
+    retention_period_years: 5
+
+exception_eligibility:
+  eligible: true
+  statutory_prohibition: false
+  minimum_compensating_controls:
+    - "Temporary emergency quota expansion approved by Finance Business Partner."
+
+reference_mappings:
+  - framework: "NIST AI RMF 1.0"
+    clause_or_section: "GOVERN 1.3"
+    citation_title: "Resource allocation and budget management for AI trustworthiness"
+    mapping_status: "verified"
+    notes: "Requires formal planning and allocation of compute and financial resources."
+  - framework: "OWASP Top 10 for LLM Applications (2025)"
+    clause_or_section: "LLM04:2025"
+    citation_title: "Denial of Service - Resource and Financial Exhaustion"
+    mapping_status: "verified"
+    notes: "Direct warning against uncapped model queries resulting in denial-of-wallet attacks."
+  - framework: "ISO/IEC 42001:2023"
+    clause_or_section: "Clause 7.1"
+    citation_title: "Resources"
+    mapping_status: "verified"
+    notes: "Requires determining and providing resources needed for the establishment and operation of AI."
+
+owner_placeholder: "[ROLE: Enterprise Cloud FinOps Lead]"
+review_date_placeholder: "[YYYY-MM-DD]"
+version: "1.0.0"
+status: "DRAFT"

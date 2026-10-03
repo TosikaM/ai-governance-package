@@ -1,0 +1,61 @@
+id: "ORG-CTL-HUM-002"
+title: "Real-Time Human Override and Stop Telemetry (HOTL)"
+objective: "Provide human operators supervising automated workflows and autonomous agents with an instantaneous, non-disruptive mechanism to pause, override, alter, or permanently abort active system executions."
+domain: "human_oversight_redress"
+type: "conditional"
+
+applicability_condition:
+  predicate_type: "manifest_property_match"
+  manifest_path: "ai_system_profile.archetype"
+  operator: "in"
+  target_value:
+    - "autonomous_agent"
+    - "hybrid"
+  description: "Applies to autonomous agents, multi-agent frameworks, and automated tool-executing systems."
+
+lifecycle_stages:
+  - "integration_ci_cd"
+  - "deployment_admission"
+  - "runtime_operation"
+
+enforcement_points:
+  - "ci_build_pipeline"
+  - "deployment_admission_controller"
+  - "agent_runtime_interceptor"
+
+check_type: "automated"
+mode: "blocking"
+
+evidence_required:
+  - artifact_type: "override_mechanism_integration_test"
+    description: "Automated test report verifying that operator intervention signals abort agent task loops within 1000 milliseconds."
+    format: "json"
+    retention_period_years: 5
+
+exception_eligibility:
+  eligible: false
+  statutory_prohibition: false
+  minimum_compensating_controls:
+    - "No exceptions permitted. Autonomous agents operating without an operational stop/override mechanism cannot be deployed."
+
+reference_mappings:
+  - framework: "EU AI Act Regulation (EU) 2024/1689"
+    clause_or_section: "Article 14(4)(e)"
+    citation_title: "Intervention and stop capabilities in high-risk AI oversight"
+    mapping_status: "verified"
+    notes: "Requires overseers to be able to intervene or interrupt the system through a stop button or similar procedure."
+  - framework: "NIST AI RMF 1.0"
+    clause_or_section: "MANAGE 2.2"
+    citation_title: "Mechanisms to override, adjust, or terminate AI operations are in place."
+    mapping_status: "verified"
+    notes: "Requires technical capability to intervene in automated processes."
+  - framework: "ISO/IEC 42001:2023"
+    clause_or_section: "Annex A.5.4"
+    citation_title: "Human oversight and override capability"
+    mapping_status: "verified"
+    notes: "Mandates provision of operational override controls for automated systems."
+
+owner_placeholder: "[ROLE: Autonomous Systems Platform Lead]"
+review_date_placeholder: "[YYYY-MM-DD]"
+version: "1.0.0"
+status: "DRAFT"

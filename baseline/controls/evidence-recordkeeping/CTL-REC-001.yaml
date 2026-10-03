@@ -1,0 +1,54 @@
+id: "ORG-CTL-REC-001"
+title: "Machine-Verifiable Evidence Record Generation and Schema Conformance"
+objective: "Verify that all governance gate evaluations, security scan results, and benchmark reports produce structured, machine-verifiable evidence records conforming strictly to schemas/evidence-record.schema.json."
+domain: "evidence_integrity_recordkeeping"
+type: "universal"
+
+applicability_condition:
+  predicate_type: "always"
+  description: "Universal control applying to all automated pipelines and audit gates producing governance evidence."
+
+lifecycle_stages:
+  - "integration_ci_cd"
+  - "deployment_admission"
+
+enforcement_points:
+  - "ci_build_pipeline"
+  - "deployment_admission_controller"
+
+check_type: "automated"
+mode: "blocking"
+
+evidence_required:
+  - artifact_type: "evidence_schema_validation_report"
+    description: "Automated validation log confirming that generated ORG-EVD records satisfy all required fields in schemas/evidence-record.schema.json."
+    format: "json"
+    retention_period_years: 7
+
+exception_eligibility:
+  eligible: false
+  statutory_prohibition: false
+  minimum_compensating_controls:
+    - "No exceptions permitted. Machine-verifiable evidence format is a core architectural invariant."
+
+reference_mappings:
+  - framework: "ISO/IEC 42001:2023"
+    clause_or_section: "Clause 7.5"
+    citation_title: "Documented information - Creating and updating"
+    mapping_status: "verified"
+    notes: "Requires documented information to have appropriate identification, format, and review."
+  - framework: "NIST AI RMF 1.0"
+    clause_or_section: "GOVERN 1.2"
+    citation_title: "Auditability and record-keeping mechanisms are established."
+    mapping_status: "verified"
+    notes: "Requires systematic record-keeping capturing trustworthiness evidence."
+  - framework: "EU AI Act Regulation (EU) 2024/1689"
+    clause_or_section: "Article 12"
+    citation_title: "Record-keeping - Logging capabilities for high-risk AI systems"
+    mapping_status: "verified"
+    notes: "Statutory basis for automated recording of system events and conformance proof."
+
+owner_placeholder: "[ROLE: Enterprise Compliance Automation Architect]"
+review_date_placeholder: "[YYYY-MM-DD]"
+version: "1.0.0"
+status: "DRAFT"

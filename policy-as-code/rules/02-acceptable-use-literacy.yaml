@@ -1,0 +1,100 @@
+# ==============================================================================
+# Policy-as-Code Rules: Domain 2 - Acceptable Use & AI Literacy (USE)
+# ==============================================================================
+# Schema: policy-as-code/rule-schema.json
+# Baseline Controls: ORG-CTL-USE-001, ORG-CTL-USE-002, ORG-CTL-USE-003
+# ==============================================================================
+
+schema_version: "1.0.0"
+domain: "acceptable_use_literacy"
+owner_placeholder: "[ROLE: AI Ethics & Compliance Officer]"
+review_date_placeholder: "[YYYY-MM-DD]"
+status: "DRAFT"
+
+rules:
+  # ----------------------------------------------------------------------------
+  # Control: ORG-CTL-USE-001 - Prohibited Use Case Verification
+  # ----------------------------------------------------------------------------
+  - rule_id: "PAC-USE-001"
+    target_control_id: "ORG-CTL-USE-001"
+    title: "Prohibited AI Use Case Disqualification Check"
+    description: "Verifies that the system profile does not declare an unacceptable risk tier or operate in prohibited categories."
+    enforcement_points:
+      - "ci_build_pipeline"
+      - "deployment_admission_controller"
+    mode: "blocking"
+    input_context:
+      - "ai_project_manifest"
+    assertions:
+      - assertion_id: "A01"
+        description: "System risk tier must not be tier_4_unacceptable."
+        field_path: "ai_system_profile.risk_tier"
+        operator: "not_equals"
+        expected_value: "tier_4_unacceptable"
+        failure_message: "System is classified as tier_4_unacceptable (prohibited under enterprise policy and applicable law)."
+    remediation: "Systems classified as Tier 4 Unacceptable Risk cannot be admitted into production. Decommission or redesign system architecture."
+    reference_rego: |
+      # verify against current documentation
+      package ai_governance.use001
+      default allow = false
+      allow {
+          input.ai_system_profile.risk_tier != "tier_4_unacceptable"
+      }
+
+  # ----------------------------------------------------------------------------
+  # Control: ORG-CTL-USE-002 - Enterprise AI Gateway Routing
+  # ----------------------------------------------------------------------------
+  - rule_id: "PAC-USE-002"
+    target_control_id: "ORG-CTL-USE-002"
+    title: "Approved Enterprise AI Gateway Egress Verification"
+    description: "Verifies that external model API calls route exclusively through designated enterprise gateway endpoints."
+    enforcement_points:
+      - "pull_request_check"
+      - "ci_build_pipeline"
+      - "deployment_admission_controller"
+    mode: "blocking"
+    input_context:
+      - "ai_project_manifest"
+    assertions:
+      - assertion_id: "A01"
+        description: "Registered models must declare provider and valid URI/registry endpoint."
+        field_path: "components.models.0.provider"
+        operator: "not_empty"
+        failure_message: "Primary model provider must be registered."
+    remediation: "Declare the approved enterprise gateway endpoint or provider in components.models of ai-project-manifest.yaml."
+    reference_rego: |
+      # verify against current documentation
+      package ai_governance.use002
+      default allow = false
+      allow {
+          count(input.components.models) > 0
+          input.components.models[0].provider != ""
+      }
+
+  # ----------------------------------------------------------------------------
+  # Control: ORG-CTL-USE-003 - Role-Based AI Literacy Certification
+  # ----------------------------------------------------------------------------
+  - rule_id: "PAC-USE-003"
+    target_control_id: "ORG-CTL-USE-003"
+    title: "Designated Owner AI Literacy Attestation"
+    description: "Verifies that project technical leads have completed mandatory enterprise AI safety and literacy training."
+    enforcement_points:
+      - "deployment_admission_controller"
+      - "manual_audit_gate"
+    mode: "blocking"
+    input_context:
+      - "ai_project_manifest"
+    assertions:
+      - assertion_id: "A01"
+        description: "Technical lead role placeholder must be assigned."
+        field_path: "owners.technical_lead.role_placeholder"
+        operator: "not_empty"
+        failure_message: "Technical lead role placeholder is missing."
+    remediation: "Ensure the technical lead role is confirmed and verified in the enterprise training learning portal."
+    reference_rego: |
+      # verify against current documentation
+      package ai_governance.use003
+      default allow = false
+      allow {
+          input.owners.technical_lead.role_placeholder != ""
+      }

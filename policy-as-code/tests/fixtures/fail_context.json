@@ -1,0 +1,60 @@
+{
+  "project_id": "INVALID PROJECT ID WITH SPACES",
+  "project_name": "Non-Compliant Rogue System",
+  "description": "",
+  "repository_url": "ftp://invalid-protocol.net/bad",
+  "schema_version": "not-a-semver",
+  "owners": {
+    "business_owner": {
+      "name": "Anonymous",
+      "email": "not-a-valid-email",
+      "role_placeholder": ""
+    },
+    "technical_lead": {
+      "name": "",
+      "email": "also-invalid",
+      "role_placeholder": ""
+    }
+  },
+  "ai_system_profile": {
+    "archetype": "unregistered_archetype",
+    "lifecycle_stage": "invalid_stage",
+    "risk_tier": "tier_4_unacceptable",
+    "declared_characteristics": {},
+    "data_classifications": [],
+    "target_geographies": [],
+    "target_sectors": []
+  },
+  "components": {
+    "models": [
+      {
+        "name": "unverified-model",
+        "version": "latest",
+        "provider": "",
+        "source_type": "prohibited_source"
+      }
+    ],
+    "agent_tools": [
+      {
+        "tool_id": "",
+        "description": "",
+        "schema_uri": "",
+        "execution_mode": "uncontrolled_root"
+      }
+    ]
+  },
+  "governance_bindings": {},
+  "model_id": "",
+  "total_test_cases": 2,
+  "accuracy_score": 0.65,
+  "hallucination_rate": 0.18,
+  "toxicity_score": 0.12,
+  "accessibility_violations": 14,
+  "max_recursion_steps": 60,
+  "drift_psi_score": 0.48,
+  "peak_task_tokens": 120000,
+  "record_id": "BAD-RECORD-ID",
+  "artifact_payload": {
+    "sha256_digest": "invalid-short-hash"
+  }
+}

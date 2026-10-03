@@ -1,0 +1,76 @@
+id: "ORG-CTL-RSK-003"
+title: "Material Change Risk Re-Evaluation and Threshold Review"
+objective: "Trigger automated governance review and re-assessment whenever a system undergoes material changes in model version, operational autonomy, data classification, or geographic footprint."
+domain: "risk_classification_impact"
+type: "parameterized"
+
+applicability_condition:
+  predicate_type: "always"
+  description: "Applies to all systems across ongoing production modifications."
+
+parameters:
+  max_unreviewed_prompt_diff_ratio:
+    description: "Maximum allowable Levenshtein token distance ratio between active production prompt and candidate prompt before triggering mandatory re-assessment."
+    data_type: "float"
+    default_value: 0.20
+    allowed_range:
+      min: 0.05
+      max: 0.50
+    monotonicity: "lower_is_stricter"
+    approval_authority_placeholder: "[ROLE: Enterprise AI Risk Officer]"
+  reassessment_sla_days:
+    description: "Maximum calendar days allowed to complete re-assessment after material change declaration before deployment freeze."
+    data_type: "integer"
+    default_value: 30
+    allowed_range:
+      min: 7
+      max: 60
+    monotonicity: "lower_is_stricter"
+    approval_authority_placeholder: "[ROLE: AI Review Board Chair]"
+
+lifecycle_stages:
+  - "integration_ci_cd"
+  - "deployment_admission"
+  - "runtime_operation"
+
+enforcement_points:
+  - "pull_request_check"
+  - "ci_build_pipeline"
+  - "deployment_admission_controller"
+
+check_type: "hybrid"
+mode: "blocking"
+
+evidence_required:
+  - artifact_type: "material_change_reassessment_record"
+    description: "Differential risk analysis documenting impact of model swap, prompt modification, or capability expansion."
+    format: "markdown"
+    retention_period_years: 7
+
+exception_eligibility:
+  eligible: true
+  statutory_prohibition: false
+  minimum_compensating_controls:
+    - "Temporary canary deployment restricted to maximum 5% internal user traffic."
+
+reference_mappings:
+  - framework: "EU AI Act Regulation (EU) 2024/1689"
+    clause_or_section: "Article 3(23)"
+    citation_title: "Substantial modification definition and re-assessment obligations"
+    mapping_status: "verified"
+    notes: "Requires high-risk systems undergoing substantial modification to execute a new conformity assessment."
+  - framework: "NIST AI RMF 1.0"
+    clause_or_section: "MANAGE 4.1"
+    citation_title: "Post-deployment monitoring and changes to AI systems are evaluated."
+    mapping_status: "verified"
+    notes: "Mandates ongoing risk re-evaluation when AI systems or operational contexts change."
+  - framework: "ISO/IEC 42001:2023"
+    clause_or_section: "Clause 6.3"
+    citation_title: "Planning of changes"
+    mapping_status: "verified"
+    notes: "Requires formal change planning and risk review for AI management systems."
+
+owner_placeholder: "[ROLE: Enterprise AI Risk Officer]"
+review_date_placeholder: "[YYYY-MM-DD]"
+version: "1.0.0"
+status: "DRAFT"

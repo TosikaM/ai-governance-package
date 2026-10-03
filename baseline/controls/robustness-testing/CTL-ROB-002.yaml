@@ -1,0 +1,55 @@
+id: "ORG-CTL-ROB-002"
+title: "Prompt and Model Non-Regression Evaluation Gates"
+objective: "Prevent silent performance degradation or unexpected behavioral shifts by executing automated differential non-regression test suites against historical baseline test runs whenever prompts, weights, or retrieval parameters are modified."
+domain: "robustness_evaluation_testing"
+type: "universal"
+
+applicability_condition:
+  predicate_type: "always"
+  description: "Universal control applying to all pull requests and deployment candidates altering prompts, model weights, or RAG configurations."
+
+lifecycle_stages:
+  - "integration_ci_cd"
+  - "deployment_admission"
+
+enforcement_points:
+  - "pull_request_check"
+  - "ci_build_pipeline"
+  - "deployment_admission_controller"
+
+check_type: "automated"
+mode: "blocking"
+
+evidence_required:
+  - artifact_type: "regression_evaluation_diff_report"
+    description: "Automated regression report comparing candidate benchmark performance against production baseline, proving zero statistically significant performance regressions."
+    format: "json"
+    retention_period_years: 5
+
+exception_eligibility:
+  eligible: true
+  statutory_prohibition: false
+  minimum_compensating_controls:
+    - "Canary deployment with automated rollback triggered if live user satisfaction or error rate drops by more than 5%."
+
+reference_mappings:
+  - framework: "NIST AI RMF 1.0"
+    clause_or_section: "MEASURE 2.6"
+    citation_title: "AI system performance is monitored and evaluated against baseline expectations."
+    mapping_status: "verified"
+    notes: "Requires comparison against baseline performance models during updates."
+  - framework: "ISO/IEC 42001:2023"
+    clause_or_section: "Clause 6.3"
+    citation_title: "Planning of changes - AI system verification"
+    mapping_status: "verified"
+    notes: "Requires formal verification that changes do not degrade system reliability."
+  - framework: "OWASP Top 10 for LLM Applications (2025)"
+    clause_or_section: "LLM09:2025"
+    citation_title: "Misinformation / Hallucination - Regression Prevention"
+    mapping_status: "verified"
+    notes: "Mandates non-regression testing to ensure model updates do not introduce new hallucinations."
+
+owner_placeholder: "[ROLE: Lead AI Evaluation Engineer]"
+review_date_placeholder: "[YYYY-MM-DD]"
+version: "1.0.0"
+status: "DRAFT"

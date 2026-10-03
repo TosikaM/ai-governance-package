@@ -1,0 +1,59 @@
+id: "ORG-CTL-SUP-001"
+title: "Third-Party Foundation Model and Vendor Risk Assessment"
+objective: "Verify that commercial foundation models, hosted AI SaaS endpoints, and external model APIs undergo formal vendor risk evaluation, security audit, and zero-training data handling validation prior to integration."
+domain: "supply_chain_third_party"
+type: "conditional"
+
+applicability_condition:
+  predicate_type: "manifest_property_match"
+  manifest_path: "ai_system_profile.declared_characteristics.uses_external_third_party_models_apis"
+  operator: "is_true"
+  target_value: true
+  description: "Applies to any AI system communicating with third-party, commercial, or external cloud model APIs."
+
+lifecycle_stages:
+  - "concept_design"
+  - "integration_ci_cd"
+  - "deployment_admission"
+
+enforcement_points:
+  - "ci_build_pipeline"
+  - "deployment_admission_controller"
+  - "manual_audit_gate"
+
+check_type: "hybrid"
+mode: "blocking"
+
+evidence_required:
+  - artifact_type: "vendor_risk_assessment_record"
+    description: "Completed third-party vendor risk assessment confirming SOC 2 / ISO 27001 certification and contractually binding zero-training data handling terms."
+    format: "json"
+    retention_period_years: 7
+
+exception_eligibility:
+  eligible: true
+  statutory_prohibition: false
+  minimum_compensating_controls:
+    - "Usage strictly limited to non-production sandbox environment with synthetic dummy data only."
+
+reference_mappings:
+  - framework: "NIST AI RMF 1.0"
+    clause_or_section: "GOVERN 3.2"
+    citation_title: "Third-party AI risks are managed according to organizational risk tolerances."
+    mapping_status: "verified"
+    notes: "Requires formal risk management for externally acquired AI systems and foundation models."
+  - framework: "ISO/IEC 42001:2023"
+    clause_or_section: "Annex A.10.1"
+    citation_title: "Supplier relationships and third-party AI risk"
+    mapping_status: "verified"
+    notes: "Mandates documented verification of supplier security and data handling agreements."
+  - framework: "OWASP Top 10 for LLM Applications (2025)"
+    clause_or_section: "LLM03:2025"
+    citation_title: "Supply Chain Risks"
+    mapping_status: "verified"
+    notes: "Addresses vulnerabilities arising from unvetted third-party models and services."
+
+owner_placeholder: "[ROLE: AI Supply Chain & Third-Party Risk Lead]"
+review_date_placeholder: "[YYYY-MM-DD]"
+version: "1.0.0"
+status: "DRAFT"

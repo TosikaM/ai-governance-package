@@ -1,0 +1,73 @@
+# ==============================================================================
+# Policy-as-Code Rules: Domain 11 - Human Oversight & Redress (HUM)
+# ==============================================================================
+# Schema: policy-as-code/rule-schema.json
+# Baseline Controls: ORG-CTL-HUM-001, ORG-CTL-HUM-002, ORG-CTL-HUM-003, ORG-CTL-HUM-004
+# ==============================================================================
+
+schema_version: "1.0.0"
+domain: "human_oversight_redress"
+owner_placeholder: "[ROLE: Enterprise Human Oversight Operations Lead]"
+review_date_placeholder: "[YYYY-MM-DD]"
+status: "DRAFT"
+
+rules:
+  # ----------------------------------------------------------------------------
+  # Control: ORG-CTL-HUM-001 - Autonomous Decision Authorization Check
+  # ----------------------------------------------------------------------------
+  - rule_id: "PAC-HUM-001"
+    target_control_id: "ORG-CTL-HUM-001"
+    title: "High-Impact Autonomous Decision Authorization Gate"
+    description: "Verifies that systems making autonomous decisions affecting individuals declare proper ownership governance."
+    enforcement_points:
+      - "ci_build_pipeline"
+      - "deployment_admission_controller"
+    mode: "blocking"
+    input_context:
+      - "ai_project_manifest"
+    assertions:
+      - assertion_id: "A01"
+        description: "makes_autonomous_decisions_affecting_humans must be explicitly declared boolean."
+        field_path: "ai_system_profile.declared_characteristics.makes_autonomous_decisions_affecting_humans"
+        operator: "exists"
+        failure_message: "makes_autonomous_decisions_affecting_humans boolean must be declared."
+    remediation: "Declare makes_autonomous_decisions_affecting_humans in ai_system_profile.declared_characteristics."
+    reference_rego: |
+      # verify against current documentation
+      package ai_governance.hum001
+      default allow = false
+      allow {
+          is_boolean(input.ai_system_profile.declared_characteristics.makes_autonomous_decisions_affecting_humans)
+      }
+
+  # ----------------------------------------------------------------------------
+  # Control: ORG-CTL-HUM-002 - Destructive Action Human Review Mode Check
+  # ----------------------------------------------------------------------------
+  - rule_id: "PAC-HUM-002"
+    target_control_id: "ORG-CTL-HUM-002"
+    title: "Destructive Action Human Authorization Gating"
+    description: "Verifies that any tool performing destructive state modifications requires human approval."
+    enforcement_points:
+      - "ci_build_pipeline"
+      - "deployment_admission_controller"
+    mode: "blocking"
+    input_context:
+      - "ai_project_manifest"
+    assertions:
+      - assertion_id: "A01"
+        description: "Destructive tool execution mode must declare approval requirement if present."
+        field_path: "components.agent_tools.0.execution_mode"
+        operator: "in"
+        expected_value:
+          - "read_only"
+          - "safe_write"
+          - "destructive_write_requires_approval"
+        failure_message: "Tool execution mode does not conform to human authorization requirements."
+    remediation: "Ensure tools with destructive state mutations are marked as 'destructive_write_requires_approval'."
+    reference_rego: |
+      # verify against current documentation
+      package ai_governance.hum002
+      default allow = false
+      allow {
+          input.components.agent_tools[0].execution_mode != ""
+      }

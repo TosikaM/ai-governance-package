@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Governance Compliance Audit Report - sample-loan-approval-risk</title>
+<style>
+  :root {
+    --navy: #0B2E59; --navy-dark: #061A33; --navy-light: #16437E;
+    --red: #E52421; --green: #059669; --amber: #D97706;
+    --bg: #F8FAFC; --card: #FFFFFF; --border: #E2E8F0;
+    --text-main: #0F172A; --text-muted: #64748B;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background: var(--bg); color: var(--text-main); line-height: 1.5; padding: 24px; }
+  .container { max-width: 1100px; margin: 0 auto; background: var(--card); border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.06); border: 1px solid var(--border); overflow: hidden; }
+  
+  /* Header */
+  header { background: linear-gradient(135deg, var(--navy-dark) 0%, var(--navy) 100%); color: #fff; padding: 28px 36px; border-bottom: 3px solid var(--red); }
+  .header-tag { display: inline-block; background: var(--red); color: #fff; font-size: 11px; font-weight: 800; padding: 4px 10px; border-radius: 4px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+  h1 { font-size: 24px; font-weight: 700; margin-bottom: 6px; }
+  .header-meta { font-size: 13px; color: #CBD5E1; display: flex; gap: 20px; flex-wrap: wrap; margin-top: 10px; }
+  
+  /* KPI Grid */
+  .kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; padding: 24px 36px; background: #F1F5F9; border-bottom: 1px solid var(--border); }
+  .kpi-card { background: #fff; padding: 16px; border-radius: 8px; border: 1px solid var(--border); border-top: 3px solid var(--navy); }
+  .kpi-card.green { border-top-color: var(--green); }
+  .kpi-card.red { border-top-color: var(--red); }
+  .kpi-label { font-size: 11px; text-transform: uppercase; color: var(--text-muted); font-weight: 700; letter-spacing: 0.5px; }
+  .kpi-value { font-size: 22px; font-weight: 800; color: var(--navy); margin-top: 4px; font-family: monospace; }
+  
+  /* Content Sections */
+  .section { padding: 28px 36px; border-bottom: 1px solid var(--border); }
+  .section:last-child { border-bottom: none; }
+  h2 { font-size: 18px; font-weight: 700; color: var(--navy); margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
+  p.lead { font-size: 14px; color: var(--text-muted); margin-bottom: 18px; }
+  
+  /* Table */
+  table { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 12px; }
+  th, td { padding: 12px 14px; text-align: left; border-bottom: 1px solid var(--border); }
+  th { background: #F8FAFC; color: var(--navy); font-weight: 700; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
+  tr:hover td { background: #F8FAFC; }
+  
+  /* Badges */
+  .badge { display: inline-block; font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 4px; font-family: monospace; text-transform: uppercase; }
+  .badge.pass { background: #D1FAE5; color: #065F46; border: 1px solid #A7F3D0; }
+  .badge.warn { background: #FEF3C7; color: #92400E; border: 1px solid #FDE68A; }
+  .badge.fail { background: #FEE2E2; color: #991B1B; border: 1px solid #FECACA; }
+  .enforce-rule { font-size: 12px; color: #475569; font-weight: 600; }
+  
+  /* Inference Box */
+  .inference-box { background: #EFF6FF; border: 1px solid #BFDBFE; border-left: 4px solid var(--navy-light); padding: 16px 20px; border-radius: 6px; margin-top: 14px; }
+  .inference-box h3 { font-size: 14px; color: var(--navy); margin-bottom: 6px; }
+  .inference-box ul { padding-left: 20px; font-size: 13px; color: #1E3A8A; }
+  .inference-box li { margin-bottom: 4px; }
+  
+  /* Action Box */
+  .action-box { background: #FFFBEB; border: 1px solid #FDE68A; border-left: 4px solid var(--amber); padding: 16px 20px; border-radius: 6px; }
+  .action-box h3 { font-size: 14px; color: #92400E; margin-bottom: 6px; }
+  .action-box p { font-size: 13px; color: #78350F; line-height: 1.5; }
+  
+  /* Footer */
+  footer { background: #F8FAFC; padding: 16px 36px; display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: var(--text-muted); border-top: 1px solid var(--border); }
+  .btn-print { background: var(--navy); color: #fff; border: none; padding: 6px 14px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: 600; }
+  .btn-print:hover { background: var(--navy-light); }
+  
+  @media (max-width: 768px) {
+    .kpi-grid { grid-template-columns: 1fr 1fr; }
+    body { padding: 10px; }
+    header, .section, .kpi-grid { padding: 16px 20px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <header>
+    <div class="header-tag">🚨 4 NON-COMPLIANCE ANOMALIES DETECTED</div>
+    <h1>AI Governance Verification & Audit Report</h1>
+    <div class="header-meta">
+      <span><strong>Project:</strong> sample-loan-approval-risk (SYS-AUTO-SAMPLE-LOAN-APPROVAL-RISK-01)</span>
+      <span><strong>Risk Tier:</strong> Unknown</span>
+      <span><strong>Archetype:</strong> Unknown</span>
+      <span><strong>Snapshot Hash:</strong> <code>dcb506b27ca945a2</code></span>
+    </div>
+  </header>
+
+  <div class="kpi-grid">
+    <div class="kpi-card red">
+      <div class="kpi-label">Compliance Checks</div>
+      <div class="kpi-value"><span style='color:var(--red);'>2 / 7 PASSED</span></div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Active Controls Bound</div>
+      <div class="kpi-value">41</div>
+    </div>
+    <div class="kpi-card red">
+      <div class="kpi-label">Governance Status</div>
+      <div class="kpi-value"><span style='color:var(--red); font-size:16px; font-weight:800;'>BLOCKED (NON-COMPLIANT)</span></div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Integrity State</div>
+      <div class="kpi-value" style="font-size:18px; color:var(--navy);">SEALED</div>
+    </div>
+  </div>
+
+  <div class="section">
+    
+            <div class="action-box" style="background:#FFF1F2; border:1px solid #FECDD3; border-left:4px solid var(--red); padding:16px 20px; border-radius:6px; margin-bottom:20px;">
+              <h3 style="color:#991B1B; font-size:15px; margin-bottom:6px;">🚨 Automated Pipeline Release Barrier Engaged</h3>
+              <p style="color:#4C0519; font-size:13px; line-height:1.5;">This project currently violates mandatory enterprise governance policies. Automated safety shields have locked software deployment and pull-request merging until the flagged non-compliant items are remediated.</p>
+            </div>
+            
+    <h2>1. Codebase Inspection & Inference Summary</h2>
+    <p class="lead">What the system detected, inferred, and bound to this repository based on static AST and dependency analysis:</p>
+    
+    <div class="inference-box">
+      <h3>Automated Technical Inference:</h3>
+      <ul>
+        <li><strong>Inferred Archetype:</strong> <code>Unknown</code> (Identified via language models, agentic tooling, and vector memory dependencies).</li>
+        <li><strong>Assigned Risk Tier:</strong> <code>Unknown</code> (Bound to high-scrutiny controls under baseline charter).</li>
+        <li><strong>Effective Contract:</strong> Baseline 61 controls merged monotonically with overlay obligations to yield exactly <strong>41 active obligations</strong>.</li>
+        <li><strong>Cryptographic Proof:</strong> State sealed with SHA-256 integrity digest <code>dcb506b27ca945a2</code>.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>2. Verification & Compliance Checklist</h2>
+    <p class="lead">Audit verification of all governance gates, configuration files, and pipeline barriers:</p>
+    
+    <table>
+      <thead>
+        <tr>
+          <th>Governance Item & Verification Scope</th>
+          <th>Status</th>
+          <th>Artifact Details</th>
+          <th>Automated Enforcement Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        
+            <tr>
+              <td><strong>Declarative Project Manifest (POL-ACC-01)</strong><br><small style="color:#64748B;">Defines project identity, risk tier, owners, and bindings</small></td>
+              <td><span class="badge pass">PASSED</span></td>
+              <td><code>ai-project-manifest.yaml</code></td>
+              <td><span class="enforce-rule">Blocks CI build if missing</span></td>
+            </tr>
+            
+            <tr>
+              <td><strong>Cryptographic Policy Snapshot (POL-REC-01)</strong><br><small style="color:#64748B;">Deterministic merge of baseline + overlays with SHA-256 seal</small></td>
+              <td><span class="badge pass">PASSED</span></td>
+              <td><code>41 controls active | SHA-256: dcb506b27ca945a2...</code></td>
+              <td><span class="enforce-rule">Enforced at all pipeline gates</span></td>
+            </tr>
+            
+            <tr>
+              <td><strong>Pre-Commit Secrets Scanner (POL-SEC-01)</strong><br><small style="color:#64748B;">Intercepts unencrypted API keys and credentials before git commit</small></td>
+              <td><span class="badge warn">ACTION REQ</span></td>
+              <td><code>Pre-commit hook not installed</code></td>
+              <td><span class="enforce-rule">PR scanner acts as fallback barrier</span></td>
+            </tr>
+            
+            <tr>
+              <td><strong>GitHub Actions PR Governance Gate</strong><br><small style="color:#64748B;">Evaluates hallucination rates, accuracy, and licenses on PRs</small></td>
+              <td><span class="badge fail">FAILED</span></td>
+              <td><code>Workflow file missing in .github/workflows/</code></td>
+              <td><span class="enforce-rule">Deployment blocked by registry gate</span></td>
+            </tr>
+            
+            <tr>
+              <td><strong>Model Quality & Accuracy Standard (POL-ROB-01)</strong><br><small style="color:#64748B;">Validates benchmark accuracy >= 85% and hallucination <= 4%</small></td>
+              <td><span class="badge fail">FAILED</span></td>
+              <td><code>ACCURACY FAILED: 72.0% is below company standard (>=85%)</code></td>
+              <td><span class="enforce-rule">Promotion to staging/production locked</span></td>
+            </tr>
+            
+            <tr>
+              <td><strong>Data Privacy & PII Protection Standard (POL-DAT-01)</strong><br><small style="color:#64748B;">Enforces customer PII sanitization and statutory retention schedules</small></td>
+              <td><span class="badge fail">FAILED</span></td>
+              <td><code>PRIVACY HAZARD: Customer PII detected but sanitization_applied is false</code></td>
+              <td><span class="enforce-rule">Deployment blocked; privacy audit required</span></td>
+            </tr>
+            
+            <tr>
+              <td><strong>Hardcoded AI Secret & Credential Scan (POL-SEC-01)</strong><br><small style="color:#64748B;">Scans codebase for unencrypted API keys, bearer tokens, and secrets</small></td>
+              <td><span class="badge fail">FAILED</span></td>
+              <td><code>SECURITY BREACH: OpenAI Secret Key in loan_evaluator.py:9</code></td>
+              <td><span class="enforce-rule">Aborts git commit; blocks PR merge button</span></td>
+            </tr>
+            
+      </tbody>
+    </table>
+  </div>
+
+  <div class="section">
+    <h2>3. Automated Actions on Non-Compliance (Enforcement Matrix)</h2>
+    <p class="lead">What actions the platform takes if non-compliance is detected or standards are violated:</p>
+    
+    <div class="action-box">
+      <h3>Active Enforcement Barriers:</h3>
+      <p style="margin-bottom:8px;"><strong>1. Pre-Commit Gate:</strong> If an API key or unencrypted token is staged, <code>git commit</code> is aborted immediately (exit code 1). Credentials cannot leave the developer's workstation.</p>
+      <p style="margin-bottom:8px;"><strong>2. Pull Request Gate:</strong> In CI/CD, if accuracy falls below 85%, hallucination rate exceeds 4%, or copyleft GPL licenses are detected, GitHub Actions fails and the PR merge button is locked.</p>
+      <p style="margin-bottom:8px;"><strong>3. Model Promotion Gate:</strong> In the model registry, unsafe Python <code>pickle</code> files are rejected. Only <code>safetensors</code> and <code>ONNX</code> with validated Model Cards can be promoted to staging or production.</p>
+      <p style="margin-bottom:8px;"><strong>4. Kubernetes Admission Webhook:</strong> Pods without valid cryptographic Cosign signatures or flagged as Tier 4 Prohibited AI are rejected at deployment with HTTP 403 Forbidden.</p>
+      <p><strong>5. Runtime Tool PEP Interceptor:</strong> For autonomous agents, tool calls exceeding depth 3 or sensitive financial transactions lacking dual-key human approval tokens are blocked in real-time.</p>
+    </div>
+  </div>
+
+  <footer>
+    <span>Generated autonomously by Enterprise AI Governance Agent v0.1.0</span>
+    <button class="btn-print" onclick="window.print()">Print / Save as PDF</button>
+  </footer>
+</div>
+
+</body>
+</html>

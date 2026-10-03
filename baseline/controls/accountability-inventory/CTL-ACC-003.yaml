@@ -1,0 +1,52 @@
+id: "ORG-CTL-ACC-003"
+title: "Project Governance Manifest Schema Conformance"
+objective: "Verify that every AI codebase maintains an ai-project-manifest.yaml file adhering strictly to schemas/project-manifest.schema.json, accurately declaring architecture, characteristics, and version pins."
+domain: "accountability_inventory"
+type: "universal"
+
+applicability_condition:
+  predicate_type: "always"
+  description: "Universal control applying to all software repositories containing AI models, pipelines, or agent configurations."
+
+lifecycle_stages:
+  - "concept_design"
+  - "integration_ci_cd"
+  - "deployment_admission"
+
+enforcement_points:
+  - "pre_commit_hook"
+  - "pull_request_check"
+  - "ci_build_pipeline"
+  - "deployment_admission_controller"
+
+check_type: "automated"
+mode: "blocking"
+
+evidence_required:
+  - artifact_type: "manifest_validation_report"
+    description: "Automated schema validation log confirming zero JSON Schema errors against schemas/project-manifest.schema.json."
+    format: "json"
+    retention_period_years: 5
+
+exception_eligibility:
+  eligible: false
+  statutory_prohibition: false
+  minimum_compensating_controls:
+    - "No exceptions permitted. The manifest is the primary declarative contract required for all automated governance resolution."
+
+reference_mappings:
+  - framework: "NIST AI RMF 1.0"
+    clause_or_section: "GOVERN 1.2"
+    citation_title: "The organization's AI policies, processes, procedures, and practices are in place and operationalized."
+    mapping_status: "verified"
+    notes: "Manifest operationalizes declarative enterprise governance policies."
+  - framework: "ISO/IEC 42001:2023"
+    clause_or_section: "Clause 7.5"
+    citation_title: "Documented information"
+    mapping_status: "verified"
+    notes: "Requires machine-readable and human-readable documentation of system configuration."
+
+owner_placeholder: "[ROLE: Platform Architecture Lead]"
+review_date_placeholder: "[YYYY-MM-DD]"
+version: "1.0.0"
+status: "DRAFT"

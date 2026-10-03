@@ -1,0 +1,56 @@
+id: "ORG-CTL-DAT-001"
+title: "Training and Retrieval Dataset Lineage and Data Card Verification"
+objective: "Ensure that every dataset utilized for AI model pre-training, fine-tuning, evaluation, or vector knowledge indexing maintains an attested Data Card capturing provenance, consent, and licensing."
+domain: "data_quality_privacy_retention"
+type: "universal"
+
+applicability_condition:
+  predicate_type: "always"
+  description: "Universal control applying to all datasets ingested for model development, evaluation, or RAG indexing."
+
+lifecycle_stages:
+  - "data_preparation"
+  - "model_training"
+  - "integration_ci_cd"
+
+enforcement_points:
+  - "ci_build_pipeline"
+  - "model_registry_admission"
+  - "manual_audit_gate"
+
+check_type: "hybrid"
+mode: "blocking"
+
+evidence_required:
+  - artifact_type: "attested_data_card"
+    description: "Completed Data Card adhering to templates/data-card.md documenting source lineage, curation pipeline, consent basis, and license terms."
+    format: "markdown"
+    retention_period_years: 7
+
+exception_eligibility:
+  eligible: true
+  statutory_prohibition: false
+  minimum_compensating_controls:
+    - "Use restricted to sandboxed research environment with synthetic surrogate data only."
+
+reference_mappings:
+  - framework: "ISO/IEC 42001:2023"
+    clause_or_section: "Annex A.7.2"
+    citation_title: "Data provenance and data quality management"
+    mapping_status: "verified"
+    notes: "Requires documented traceability of data sources, collection methods, and transformations."
+  - framework: "EU AI Act Regulation (EU) 2024/1689"
+    clause_or_section: "Article 10(2)"
+    citation_title: "Data and data governance practices for high-risk AI systems"
+    mapping_status: "verified"
+    notes: "Mandates appropriate data governance including design choices, data collection, and preparation."
+  - framework: "NIST AI RMF 1.0"
+    clause_or_section: "MAP 2.2"
+    citation_title: "Information about data provenance and lineage is documented."
+    mapping_status: "verified"
+    notes: "Establishes data lineage documentation as a core risk management requirement."
+
+owner_placeholder: "[ROLE: Enterprise Data Governance Lead]"
+review_date_placeholder: "[YYYY-MM-DD]"
+version: "1.0.0"
+status: "DRAFT"

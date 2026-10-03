@@ -1,0 +1,213 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://governance.internal.net/schemas/overlay.schema.json",
+  "title": "AI Governance Contextual Overlay Schema",
+  "description": "JSON Schema specification for regulatory, sectoral, risk-tier, and architectural AI governance overlays. Overlays add or tighten requirements and never weaken baseline controls.",
+  "type": "object",
+  "required": [
+    "id",
+    "title",
+    "category",
+    "target_scope",
+    "baseline_compatibility",
+    "citations",
+    "legal_review_status",
+    "rules",
+    "owner_placeholder",
+    "review_date_placeholder",
+    "version",
+    "status"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^ORG-OVL-[A-Z]{3}-[A-Z0-9_-]+-[0-9]{3}$",
+      "description": "Permanent canonical overlay identifier adhering to the enterprise scheme."
+    },
+    "title": {
+      "type": "string",
+      "minLength": 5,
+      "maxLength": 150,
+      "description": "Human-readable title of the overlay."
+    },
+    "category": {
+      "type": "string",
+      "enum": ["geography", "sector", "risk_tier", "ai_type", "contractual"],
+      "description": "The classification of this overlay differentiator."
+    },
+    "target_scope": {
+      "type": "object",
+      "description": "Conditions under which a project manifest must or may attach this overlay.",
+      "required": ["applicability_summary"],
+      "properties": {
+        "applicability_summary": {
+          "type": "string"
+        },
+        "jurisdictions": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "sectors": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "risk_tiers": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "ai_types": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    },
+    "baseline_compatibility": {
+      "type": "string",
+      "description": "SemVer range expression of compatible baseline packages (e.g. '>=0.1.0 <2.0.0')."
+    },
+    "citations": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["source_title", "citation_reference", "publication_date_or_version", "verification_status"],
+        "properties": {
+          "source_title": {
+            "type": "string"
+          },
+          "citation_reference": {
+            "type": "string",
+            "description": "Specific statutory article, regulatory paragraph, or industry benchmark standard."
+          },
+          "url": {
+            "type": "string",
+            "format": "uri"
+          },
+          "publication_date_or_version": {
+            "type": "string"
+          },
+          "verification_status": {
+            "type": "string",
+            "enum": ["verified", "verify against primary source"]
+          }
+        }
+      },
+      "description": "Authoritative legal or industry standards underpinning this overlay."
+    },
+    "legal_review_status": {
+      "type": "string",
+      "enum": [
+        "PENDING_QUALIFIED_LEGAL_REVIEW",
+        "QUALIFIED_LEGAL_REVIEW_APPROVED",
+        "NOT_LEGAL_STATUTE_TECHNICAL_SPEC_ONLY"
+      ],
+      "description": "Explicit legal review gate. Regulatory overlays require qualified legal counsel review before release."
+    },
+    "rules": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["rule_id", "target_control_id", "action", "rationale"],
+        "properties": {
+          "rule_id": {
+            "type": "string",
+            "pattern": "^R[0-9]{2,3}$"
+          },
+          "target_control_id": {
+            "type": "string",
+            "pattern": "^ORG-CTL-[A-Z]{3}-[0-9]{3}$",
+            "description": "The baseline control ID being tightened, or the new overlay control ID being introduced."
+          },
+          "action": {
+            "type": "string",
+            "enum": [
+              "add_control",
+              "tighten_parameter",
+              "upgrade_mode",
+              "require_additional_evidence",
+              "restrict_exception"
+            ],
+            "description": "Permitted monotonic action: add a new control, tighten a parameter, upgrade mode to blocking, require more evidence, or restrict exceptions."
+          },
+          "parameter_tightening": {
+            "type": "object",
+            "required": ["parameter_name", "new_value", "direction"],
+            "properties": {
+              "parameter_name": { "type": "string" },
+              "new_value": {},
+              "direction": {
+                "type": "string",
+                "enum": ["lower_is_stricter", "higher_is_stricter", "strict_subset"]
+              }
+            }
+          },
+          "upgraded_mode": {
+            "type": "string",
+            "enum": ["blocking", "review"],
+            "description": "Upgraded enforcement mode (e.g., converting an advisory baseline control to blocking)."
+          },
+          "additional_evidence": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["artifact_type", "description", "format"],
+              "properties": {
+                "artifact_type": { "type": "string" },
+                "description": { "type": "string" },
+                "format": { "type": "string" }
+              }
+            }
+          },
+          "restrict_exception": {
+            "type": "object",
+            "properties": {
+              "disallow_exceptions": { "type": "boolean" },
+              "additional_mandatory_compensations": {
+                "type": "array",
+                "items": { "type": "string" }
+              }
+            }
+          },
+          "rationale": {
+            "type": "string",
+            "description": "Specific regulatory or risk rationale for this tightening rule."
+          }
+        }
+      },
+      "description": "Monotonic enhancement and tightening rules defined by this overlay."
+    },
+    "conflict_resolution": {
+      "type": "object",
+      "required": ["default_behavior", "resolution_escalation_path"],
+      "properties": {
+        "default_behavior": {
+          "type": "string",
+          "enum": ["UNRESOLVED_CONFLICT_HALT", "MOST_RESTRICTIVE_ENVELOPE"],
+          "description": "When multiple overlays propose incompatible values with no defined monotonic ordering, the resolver MUST transition to UNRESOLVED_CONFLICT_HALT."
+        },
+        "resolution_escalation_path": {
+          "type": "string",
+          "description": "Escalation routing for arbitration (e.g., 'Enterprise AI Safety Review Board and Legal Counsel')."
+        }
+      }
+    },
+    "owner_placeholder": {
+      "type": "string",
+      "description": "Designated enterprise role placeholder (e.g. '[ROLE: Regulatory Affairs Lead]')."
+    },
+    "review_date_placeholder": {
+      "type": "string",
+      "description": "Scheduled review date placeholder (e.g. '[YYYY-MM-DD]')."
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+(-[a-z0-9.]+)?$"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["DRAFT", "PROPOSED", "APPROVED", "ACTIVE", "DEPRECATED", "RETIRED"]
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,53 @@
+id: "ORG-CTL-RET-003"
+title: "Vector Index Teardown and Immediate Credential Revocation"
+objective: "Purge active vector knowledge stores, delete semantic caches, and permanently revoke all agent service credentials, IAM roles, and API tokens within 24 hours of decommissioning to eliminate orphaned attack surfaces."
+domain: "retirement_decommissioning"
+type: "universal"
+
+applicability_condition:
+  predicate_type: "always"
+  description: "Universal control applying to all retiring runtime environments, agent frameworks, and vector indices."
+
+lifecycle_stages:
+  - "retirement_decommissioning"
+
+enforcement_points:
+  - "deployment_admission_controller"
+  - "periodic_automated_scan"
+
+check_type: "automated"
+mode: "blocking"
+
+evidence_required:
+  - artifact_type: "teardown_and_iam_revocation_audit"
+    description: "Cloud infrastructure teardown report proving that vector collections were dropped and associated agent service principals were deleted from IAM directory."
+    format: "json"
+    retention_period_years: 5
+
+exception_eligibility:
+  eligible: false
+  statutory_prohibition: false
+  minimum_compensating_controls:
+    - "No exceptions permitted. Retaining active credentials for decommissioned systems creates severe security breach risks."
+
+reference_mappings:
+  - framework: "NIST AI RMF 1.0"
+    clause_or_section: "MANAGE 4.3"
+    citation_title: "Access credentials and runtime resources are revoked upon AI system phase-out."
+    mapping_status: "verified"
+    notes: "Requires clean teardown of authentication tokens and storage volumes."
+  - framework: "ISO/IEC 42001:2023"
+    clause_or_section: "Annex A.8.2"
+    citation_title: "Revocation of access rights for retired AI systems"
+    mapping_status: "verified"
+    notes: "Mandates prompt revocation of identity tokens and resource permissions upon retirement."
+  - framework: "OWASP Top 10 for LLM Applications (2025)"
+    clause_or_section: "LLM06:2025"
+    citation_title: "Excessive Agency - Orphaned Credentials"
+    mapping_status: "verified"
+    notes: "Addresses eliminating orphaned agent credentials and unmaintained tool connections."
+
+owner_placeholder: "[ROLE: Enterprise Cloud Infrastructure & IAM Lead]"
+review_date_placeholder: "[YYYY-MM-DD]"
+version: "1.0.0"
+status: "DRAFT"

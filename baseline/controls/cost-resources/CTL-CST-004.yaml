@@ -1,0 +1,57 @@
+id: "ORG-CTL-CST-004"
+title: "Semantic Caching and Architectural Model Right-Sizing"
+objective: "Reduce redundant model inference compute through semantic caching layers and enforce architectural right-sizing prohibiting frontier flagship models for routine extraction or formatting tasks."
+domain: "cost_resource_limits"
+type: "universal"
+
+applicability_condition:
+  predicate_type: "always"
+  description: "Universal control applying to all production AI applications and gateway configurations."
+
+lifecycle_stages:
+  - "concept_design"
+  - "integration_ci_cd"
+  - "runtime_operation"
+
+enforcement_points:
+  - "ci_build_pipeline"
+  - "api_gateway_sidecar"
+  - "manual_audit_gate"
+
+check_type: "hybrid"
+mode: "advisory"
+
+evidence_required:
+  - artifact_type: "model_efficiency_and_caching_audit"
+    description: "FinOps architecture review confirming high-volume repetitive queries utilize caching and model tier matches task complexity requirements."
+    format: "markdown"
+    retention_period_years: 3
+
+exception_eligibility:
+  eligible: true
+  statutory_prohibition: false
+  minimum_compensating_controls:
+    - "Documented business justification explaining why caching cannot be used (e.g. strict zero-persistence requirement)."
+
+reference_mappings:
+  - framework: "NIST AI RMF 1.0"
+    clause_or_section: "GOVERN 1.3"
+    citation_title: "Resource efficiency and environmental sustainability in AI systems"
+    mapping_status: "verified"
+    notes: "Requires organizations to consider environmental impact and compute efficiency of AI models."
+  - framework: "ISO/IEC 42001:2023"
+    clause_or_section: "Annex A.5.1"
+    citation_title: "AI system environmental and resource impact"
+    mapping_status: "verified"
+    notes: "Mandates evaluation of resource consumption and efficiency."
+  - framework: "Internal Policy Reference"
+    clause_or_section: "FINOPS-AI-02"
+    citation_title: "Enterprise AI Model Right-Sizing and Inference Optimization Standard"
+    mapping_status: "verified"
+    notes: "Internal FinOps standard mandating semantic caching and compute optimization."
+
+owner_placeholder: "[ROLE: Enterprise AI Platform Architect]"
+review_date_placeholder: "[YYYY-MM-DD]"
+version: "1.0.0"
+status: "DRAFT"
+borderline_placement_rationale: "Enforced in advisory mode in baseline to drive compute efficiency without blocking diverse application architectures."

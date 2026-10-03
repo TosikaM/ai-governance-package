@@ -1,0 +1,82 @@
+id: "ORG-CTL-ROB-003"
+title: "Pre-deployment Benchmark Evaluation & Hallucination Threshold"
+objective: "Ensure that generative models and RAG pipelines satisfy minimum domain accuracy and maximum hallucination rate thresholds prior to production admission."
+domain: "robustness_evaluation_testing"
+type: "parameterized"
+
+applicability_condition:
+  predicate_type: "manifest_property_match"
+  manifest_path: "ai_system_profile.archetype"
+  operator: "in"
+  target_value:
+    - "generative_llm"
+    - "rag_system"
+    - "autonomous_agent"
+  description: "Applies to generative, RAG, and agentic systems producing unstructured language."
+
+parameters:
+  max_hallucination_rate:
+    description: "Maximum allowable hallucination rate measured on certified domain benchmark test suite."
+    data_type: "float"
+    default_value: 0.05
+    allowed_range:
+      min: 0.0
+      max: 0.20
+    monotonicity: "lower_is_stricter"
+    approval_authority_placeholder: "[ROLE: Model Risk Officer]"
+  min_benchmark_accuracy:
+    description: "Minimum acceptable task accuracy score on evaluation suite."
+    data_type: "float"
+    default_value: 0.85
+    allowed_range:
+      min: 0.70
+      max: 1.0
+    monotonicity: "higher_is_stricter"
+    approval_authority_placeholder: "[ROLE: Head of AI Evaluation]"
+
+lifecycle_stages:
+  - "evaluation_validation"
+  - "deployment_admission"
+
+enforcement_points:
+  - "ci_build_pipeline"
+  - "model_registry_admission"
+  - "deployment_admission_controller"
+
+check_type: "automated"
+mode: "blocking"
+
+evidence_required:
+  - artifact_type: "eval_benchmark_report"
+    description: "Machine-readable benchmark evaluation output detailing test cases, hallucinations, and score distributions."
+    format: "json"
+    retention_period_years: 7
+
+exception_eligibility:
+  eligible: true
+  statutory_prohibition: false
+  minimum_compensating_controls:
+    - "Enforce mandatory human-in-the-loop review for all model outputs until benchmark accuracy reaches baseline threshold."
+    - "Implement real-time factual grounding verification via secondary validator model."
+
+reference_mappings:
+  - framework: "NIST AI RMF 1.0"
+    clause_or_section: "MEASURE 2.5"
+    citation_title: "AI system performance is assessed using rigorous, domain-specific evaluation methods."
+    mapping_status: "verified"
+    notes: "Direct alignment to generative accuracy and validity testing."
+  - framework: "ISO/IEC 42001:2023"
+    clause_or_section: "Clause 9.1"
+    citation_title: "Monitoring, measurement, analysis and evaluation of AI system performance."
+    mapping_status: "verified"
+    notes: "Mandates quantitative measurement against defined quality thresholds."
+  - framework: "OWASP Top 10 for LLM Applications (2025)"
+    clause_or_section: "LLM09:2025"
+    citation_title: "Misinformation / Hallucination"
+    mapping_status: "verified"
+    notes: "Requires evaluation suites to mitigate factual inaccuracies."
+
+owner_placeholder: "[ROLE: AI Safety & Evaluation Lead]"
+review_date_placeholder: "[YYYY-MM-DD]"
+version: "1.0.0"
+status: "DRAFT"

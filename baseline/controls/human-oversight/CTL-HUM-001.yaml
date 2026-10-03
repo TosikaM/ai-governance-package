@@ -1,0 +1,58 @@
+id: "ORG-CTL-HUM-001"
+title: "Mandatory Human-in-the-Loop (HITL) Authorization for High-Impact Decisions"
+objective: "Enforce programmatic approval gates requiring a qualified human operator to explicitly review and authorize AI-generated recommendations before committing actions producing legal, economic, health, or employment consequences."
+domain: "human_oversight_redress"
+type: "conditional"
+
+applicability_condition:
+  predicate_type: "manifest_property_match"
+  manifest_path: "ai_system_profile.risk_tier"
+  operator: "equals"
+  target_value: "tier_3_high"
+  description: "Applies to any system classified as High Risk (Tier 3) or making decisions affecting human rights or livelihoods."
+
+lifecycle_stages:
+  - "deployment_admission"
+  - "runtime_operation"
+
+enforcement_points:
+  - "ci_build_pipeline"
+  - "deployment_admission_controller"
+  - "agent_runtime_interceptor"
+
+check_type: "hybrid"
+mode: "blocking"
+
+evidence_required:
+  - artifact_type: "hitl_enforcement_telemetry_report"
+    description: "Runtime telemetry proving that 100% of high-impact action commits require a cryptographically signed human approval token prior to state execution."
+    format: "json"
+    retention_period_years: 7
+
+exception_eligibility:
+  eligible: false
+  statutory_prohibition: true
+  minimum_compensating_controls:
+    - "No exceptions permitted. Delegating binding high-impact legal decisions entirely to autonomous machines is prohibited."
+
+reference_mappings:
+  - framework: "EU AI Act Regulation (EU) 2024/1689"
+    clause_or_section: "Article 14"
+    citation_title: "Human oversight of high-risk AI systems"
+    mapping_status: "verified"
+    notes: "Direct statutory mandate requiring high-risk AI systems to be designed to enable natural persons to oversee operation."
+  - framework: "Regulation (EU) 2016/679 (GDPR)"
+    clause_or_section: "Article 22"
+    citation_title: "Automated individual decision-making, including profiling"
+    mapping_status: "verified"
+    notes: "Grants data subjects the right not to be subject to decisions based solely on automated processing."
+  - framework: "NIST AI RMF 1.0"
+    clause_or_section: "GOVERN 1.2"
+    citation_title: "Human oversight mechanisms are in place and operationalized."
+    mapping_status: "verified"
+    notes: "Mandates human-in-the-loop controls for high-consequence AI workflows."
+
+owner_placeholder: "[ROLE: Enterprise Human Oversight Operations Lead]"
+review_date_placeholder: "[YYYY-MM-DD]"
+version: "1.0.0"
+status: "DRAFT"

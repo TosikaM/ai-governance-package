@@ -1,0 +1,53 @@
+id: "ORG-CTL-RET-001"
+title: "Formal System Retirement Intake and Registry Status Transition"
+objective: "Ensure that obsolete, superseded, or non-compliant AI systems transition through a formal decommissioning workflow and update the Central AI Inventory status from production to decommissioned."
+domain: "retirement_decommissioning"
+type: "universal"
+
+applicability_condition:
+  predicate_type: "always"
+  description: "Universal control applying to all retiring AI applications, models, and agents."
+
+lifecycle_stages:
+  - "retirement_decommissioning"
+
+enforcement_points:
+  - "manual_audit_gate"
+  - "deployment_admission_controller"
+
+check_type: "hybrid"
+mode: "blocking"
+
+evidence_required:
+  - artifact_type: "retirement_intake_attestation"
+    description: "Signed decommissioning submission in Central AI Inventory documenting retirement rationale, authorized successor system ID, and date of service withdrawal."
+    format: "json"
+    retention_period_years: 7
+
+exception_eligibility:
+  eligible: false
+  statutory_prohibition: false
+  minimum_compensating_controls:
+    - "No exceptions permitted. Decommissioned systems must formally record their status change in the enterprise registry."
+
+reference_mappings:
+  - framework: "NIST AI RMF 1.0"
+    clause_or_section: "MANAGE 4.3"
+    citation_title: "AI system retirement and phase-out procedures are followed."
+    mapping_status: "verified"
+    notes: "Requires formal transition management when systems are retired from active service."
+  - framework: "ISO/IEC 42001:2023"
+    clause_or_section: "Clause 8.2"
+    citation_title: "AI system lifecycle processes - System retirement"
+    mapping_status: "verified"
+    notes: "Mandates documented criteria and procedures for retiring AI systems."
+  - framework: "ISO/IEC 23894:2023"
+    clause_or_section: "Clause 8.5"
+    citation_title: "AI system transition and decommissioning management"
+    mapping_status: "verified"
+    notes: "Provides risk management guidelines for transitioning and retiring AI assets."
+
+owner_placeholder: "[ROLE: Enterprise Architecture & AI Lifecycle Manager]"
+review_date_placeholder: "[YYYY-MM-DD]"
+version: "1.0.0"
+status: "DRAFT"

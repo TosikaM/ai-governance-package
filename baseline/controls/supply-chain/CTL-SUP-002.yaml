@@ -1,0 +1,58 @@
+id: "ORG-CTL-SUP-002"
+title: "Machine-Readable SBOM and Model Bill of Materials (MBOM) Generation"
+objective: "Ensure that every deployed AI container, pipeline, and model repository automatically generates a cryptographically hashed CycloneDX/SPDX Software Bill of Materials (SBOM) and Model Bill of Materials (MBOM)."
+domain: "supply_chain_third_party"
+type: "universal"
+
+applicability_condition:
+  predicate_type: "always"
+  description: "Universal control applying to all deployable AI packages, container images, and models."
+
+lifecycle_stages:
+  - "integration_ci_cd"
+  - "deployment_admission"
+
+enforcement_points:
+  - "ci_build_pipeline"
+  - "deployment_admission_controller"
+
+check_type: "automated"
+mode: "blocking"
+
+evidence_required:
+  - artifact_type: "cyclonedx_sbom_report"
+    description: "Machine-readable CycloneDX JSON SBOM detailing all runtime binaries, Python libraries, tokenizers, and upstream dependencies."
+    format: "cyclonedx_json"
+    retention_period_years: 7
+  - artifact_type: "model_bom_record"
+    description: "Structured MBOM documenting model family, revision digest, parameter count, quantization method, and source URI."
+    format: "json"
+    retention_period_years: 7
+
+exception_eligibility:
+  eligible: false
+  statutory_prohibition: false
+  minimum_compensating_controls:
+    - "No exceptions permitted. Automated SBOM generation is a mandatory CI/CD admission gate prerequisite."
+
+reference_mappings:
+  - framework: "NIST AI RMF 1.0"
+    clause_or_section: "GOVERN 1.2"
+    citation_title: "AI system components and software dependencies are documented and tracked."
+    mapping_status: "verified"
+    notes: "Baseline component traceability through machine-readable bills of materials."
+  - framework: "OWASP Top 10 for LLM Applications (2025)"
+    clause_or_section: "LLM03:2025"
+    citation_title: "Supply Chain Risks - Component Tracking"
+    mapping_status: "verified"
+    notes: "Requires maintaining software and model inventory to detect vulnerable upstream packages."
+  - framework: "ISO/IEC 42001:2023"
+    clause_or_section: "Annex A.10.2"
+    citation_title: "Management of AI system components and dependencies"
+    mapping_status: "verified"
+    notes: "Requires documenting all software, data, and hardware components forming the AI system."
+
+owner_placeholder: "[ROLE: Lead DevSecOps Architect]"
+review_date_placeholder: "[YYYY-MM-DD]"
+version: "1.0.0"
+status: "DRAFT"

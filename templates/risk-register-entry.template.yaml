@@ -1,0 +1,65 @@
+# ==============================================================================
+# Enterprise AI Governance Package - AI Risk Register Entry Template
+# ==============================================================================
+# File: risk-register-entry.template.yaml
+# Scope: Project and Enterprise AI Risk Management Registers
+# ==============================================================================
+
+schema_version: "1.0.0"
+entry_id: "ORG-RSK-2026-001"
+project_id: "starter-ai-project"
+title: "Prompt Injection and Indirect Retrieval Poisoning in Enterprise RAG"
+status: "ACTIVE"
+
+# Risk Taxonomy Classification
+# Allowed: adversarial_security | model_robustness | algorithmic_bias | data_privacy | regulatory_noncompliance | agent_autonomy_loss | economic_cost
+category: "adversarial_security"
+
+# Threat Scenario Description
+threat_scenario:
+  description: "An attacker injects malicious instructions into internal documents indexed by the vector database, causing the LLM to ignore system instructions and exfiltrate confidential customer records via external webhooks."
+  threat_actors:
+    - "external_adversary"
+    - "malicious_insider"
+  vulnerability_vectors:
+    - "untrusted_rag_document_corpus"
+    - "inadequate_output_sanitization"
+
+# Inherent Risk Scoring (Pre-Mitigation)
+inherent_risk:
+  likelihood: "HIGH"     # LOW | MEDIUM | HIGH | CRITICAL
+  impact: "CRITICAL"     # LOW | MEDIUM | HIGH | CRITICAL
+  rating: "CRITICAL"     # LOW | MEDIUM | HIGH | CRITICAL
+  rationale: "High probability of poisoned document ingestion combined with severe regulatory penalties for customer PII exfiltration."
+
+# Mitigations & Mapped Baseline Controls
+governance_controls:
+  - control_id: "ORG-CTL-SEC-001"
+    title: "Direct and Indirect Prompt Injection Defensive Guardrails"
+    mitigation_role: "Input guardrail sidecar drops instructions matching known jailbreak and indirect injection heuristics."
+  - control_id: "ORG-CTL-SEC-002"
+    title: "Zero-Trust Retrieval Authorization at Vector Layer"
+    mitigation_role: "Vector search enforces user document ACLs before returning context to the model prompt."
+  - control_id: "ORG-CTL-SEC-003"
+    title: "Unsafe Model Output Sanitization and Execution Sink Parameterization"
+    mitigation_role: "Output filter blocks SSRF URL schemes and drops unauthorized external network egress."
+
+# Residual Risk Scoring (Post-Mitigation)
+residual_risk:
+  likelihood: "LOW"
+  impact: "MEDIUM"
+  rating: "LOW"
+  justification: "Layered defense (vector ACLs + input injection filters + egress sink parameterization) reduces probability to Low and bounds potential impact."
+
+# Real-Time Monitoring & Telemetry
+monitoring_telemetry:
+  metric_name: "gateway_prompt_injection_flag_count"
+  threshold: 5
+  window_minutes: 15
+  alert_action: "Trigger automated P2 incident and temporarily isolate offending document source."
+
+# Accountability & Sign-Offs
+owner_placeholder: "[ROLE: AI Security Engineering Lead]"
+approver_placeholder: "[ROLE: Enterprise Chief Risk Officer]"
+review_date_placeholder: "[YYYY-MM-DD]"
+next_review_date: "[YYYY-MM-DD]"

@@ -1,0 +1,53 @@
+id: "ORG-CTL-RET-002"
+title: "Secure Model Weight Cold Archiving and Data Subject Purging"
+objective: "Freeze, cryptographically hash, and transfer decommissioned production model weights to immutable cold storage for the statutory retention window while purging unneeded intermediate checkpoints."
+domain: "retirement_decommissioning"
+type: "universal"
+
+applicability_condition:
+  predicate_type: "always"
+  description: "Universal control applying to all retiring model weights, adapters, and tokenizer checkpoints."
+
+lifecycle_stages:
+  - "retirement_decommissioning"
+
+enforcement_points:
+  - "deployment_admission_controller"
+  - "manual_audit_gate"
+
+check_type: "automated"
+mode: "blocking"
+
+evidence_required:
+  - artifact_type: "weight_archival_and_disposal_record"
+    description: "Cold storage deposit receipt confirming final model weights were hashed with SHA-256 and moved to cold vault, with non-essential training scratch disks destroyed."
+    format: "json"
+    retention_period_years: 7
+
+exception_eligibility:
+  eligible: false
+  statutory_prohibition: false
+  minimum_compensating_controls:
+    - "No exceptions permitted. Model weights must be preserved for post-retirement evidentiary defense."
+
+reference_mappings:
+  - framework: "ISO/IEC 42001:2023"
+    clause_or_section: "Clause 8.2"
+    citation_title: "AI system asset disposal and archival"
+    mapping_status: "verified"
+    notes: "Requires secure preservation of historical model weights to satisfy legal accountability."
+  - framework: "NIST AI RMF 1.0"
+    clause_or_section: "MANAGE 4.3"
+    citation_title: "Model artifacts are preserved or securely disposed upon system phase-out."
+    mapping_status: "verified"
+    notes: "Mandates archival of model assets to enable retrospective audit."
+  - framework: "Regulation (EU) 2016/679 (GDPR)"
+    clause_or_section: "Article 17"
+    citation_title: "Right to erasure - Data disposition at end of processing"
+    mapping_status: "verified"
+    notes: "Requires verifying that personal data embedded in models or caches is handled compliantly upon retirement."
+
+owner_placeholder: "[ROLE: Enterprise Data Stewardship & Archival Lead]"
+review_date_placeholder: "[YYYY-MM-DD]"
+version: "1.0.0"
+status: "DRAFT"

@@ -1,0 +1,57 @@
+id: "ORG-CTL-SUP-003"
+title: "Insecure Model Deserialization Prohibition and SHA-256 Hash Verification"
+objective: "Prevent arbitrary code execution and model supply chain poisoning by prohibiting vulnerable serialization formats (e.g., Python pickle, untrusted PyTorch .bin) and verifying SHA-256 cryptographic hashes for all model checkpoints."
+domain: "supply_chain_third_party"
+type: "universal"
+
+applicability_condition:
+  predicate_type: "always"
+  description: "Universal control applying to all model checkpoints, weights, and tokenizer files downloaded or stored internally."
+
+lifecycle_stages:
+  - "data_preparation"
+  - "model_training"
+  - "integration_ci_cd"
+  - "deployment_admission"
+
+enforcement_points:
+  - "ci_build_pipeline"
+  - "model_registry_admission"
+  - "deployment_admission_controller"
+
+check_type: "automated"
+mode: "blocking"
+
+evidence_required:
+  - artifact_type: "model_format_and_hash_audit"
+    description: "Automated scan output verifying model files adhere to safe formats (safetensors, GGUF, ONNX) and match publisher SHA-256 checksums."
+    format: "json"
+    retention_period_years: 7
+
+exception_eligibility:
+  eligible: true
+  statutory_prohibition: false
+  minimum_compensating_controls:
+    - "Model loaded within an isolated, unprivileged gVisor/firecracker microVM with zero network egress and read-only filesystem."
+
+reference_mappings:
+  - framework: "OWASP Top 10 for LLM Applications (2025)"
+    clause_or_section: "LLM03:2025"
+    citation_title: "Supply Chain Risks - Malicious Model Deserialization"
+    mapping_status: "verified"
+    notes: "Direct warning against arbitrary code execution via Python pickle in machine learning checkpoints."
+  - framework: "NIST AI RMF 1.0"
+    clause_or_section: "PROTECT 1.1"
+    citation_title: "AI system components are protected from malicious tampering."
+    mapping_status: "verified"
+    notes: "Requires cryptographic integrity checking for downloaded model assets."
+  - framework: "ISO/IEC 42001:2023"
+    clause_or_section: "Annex A.8.1"
+    citation_title: "Protection of AI system assets and model parameters"
+    mapping_status: "verified"
+    notes: "Mandates security verification of AI model files against unauthorized modification."
+
+owner_placeholder: "[ROLE: AI Application Security Lead]"
+review_date_placeholder: "[YYYY-MM-DD]"
+version: "1.0.0"
+status: "DRAFT"

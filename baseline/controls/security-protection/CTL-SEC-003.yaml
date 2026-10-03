@@ -1,0 +1,55 @@
+id: "ORG-CTL-SEC-003"
+title: "Unsafe Model Output Sanitization and Execution Sink Parameterization"
+objective: "Prohibit the direct dynamic execution of model-generated text (e.g. eval, shell execution, raw SQL concatenation) and enforce strict context-aware output encoding to prevent Cross-Site Scripting (XSS) and Command Injection."
+domain: "security_attack_mitigation"
+type: "universal"
+
+applicability_condition:
+  predicate_type: "always"
+  description: "Universal control applying to all software components ingesting or rendering AI model responses."
+
+lifecycle_stages:
+  - "integration_ci_cd"
+  - "runtime_operation"
+
+enforcement_points:
+  - "pull_request_check"
+  - "ci_build_pipeline"
+  - "api_gateway_sidecar"
+
+check_type: "automated"
+mode: "blocking"
+
+evidence_required:
+  - artifact_type: "output_sink_sast_scan_report"
+    description: "Static analysis report verifying zero unsanitized dynamic execution sinks (eval, raw SQL, exec) consuming model output variables."
+    format: "sarif_json"
+    retention_period_years: 5
+
+exception_eligibility:
+  eligible: false
+  statutory_prohibition: false
+  minimum_compensating_controls:
+    - "No exceptions permitted. Direct unparsed model execution creates catastrophic remote code execution vulnerabilities."
+
+reference_mappings:
+  - framework: "OWASP Top 10 for LLM Applications (2025)"
+    clause_or_section: "LLM05:2025"
+    citation_title: "Improper Output Handling"
+    mapping_status: "verified"
+    notes: "Requires strict validation, sanitization, and encoding of LLM outputs prior to downstream execution or rendering."
+  - framework: "NIST AI 600-1 (GenAI Profile)"
+    clause_or_section: "PROTECT 1.3"
+    citation_title: "Mitigation of output-driven vulnerabilities and execution exploits"
+    mapping_status: "verified"
+    notes: "Mandates defensive programming patterns preventing untrusted model output execution."
+  - framework: "ISO/IEC 42001:2023"
+    clause_or_section: "Annex A.8.1"
+    citation_title: "Operational security controls for AI output processing"
+    mapping_status: "verified"
+    notes: "Requires security controls protecting downstream systems from compromised AI outputs."
+
+owner_placeholder: "[ROLE: Application Security Lead]"
+review_date_placeholder: "[YYYY-MM-DD]"
+version: "1.0.0"
+status: "DRAFT"

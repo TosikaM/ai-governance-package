@@ -1,0 +1,56 @@
+id: "ORG-CTL-USE-002"
+title: "Approved Enterprise AI Gateway Routing and Egress Control"
+objective: "Ensure that all programmatic and interactive foundation model invocations route exclusively through the enterprise-managed LLM Gateway, blocking unapproved Shadow AI endpoints."
+domain: "acceptable_use_literacy"
+type: "universal"
+
+applicability_condition:
+  predicate_type: "always"
+  description: "Universal control applying to all runtime software communicating with external or internal LLM endpoints."
+
+lifecycle_stages:
+  - "integration_ci_cd"
+  - "deployment_admission"
+  - "runtime_operation"
+
+enforcement_points:
+  - "ci_build_pipeline"
+  - "deployment_admission_controller"
+  - "api_gateway_sidecar"
+
+check_type: "automated"
+mode: "blocking"
+
+evidence_required:
+  - artifact_type: "network_egress_conformance_report"
+    description: "Automated container and pipeline egress scan confirming model inference endpoints resolve to approved enterprise gateway FQDNs."
+    format: "json"
+    retention_period_years: 5
+
+exception_eligibility:
+  eligible: true
+  statutory_prohibition: false
+  minimum_compensating_controls:
+    - "Direct VPC peering to vendor endpoint with zero-data-retention agreement and local proxy DLP logging."
+
+reference_mappings:
+  - framework: "OWASP Top 10 for LLM Applications (2025)"
+    clause_or_section: "LLM02:2025"
+    citation_title: "Sensitive Information Disclosure"
+    mapping_status: "verified"
+    notes: "Gateway enforcement prevents inadvertent data leakage to untrusted consumer AI endpoints."
+  - framework: "NIST AI RMF 1.0"
+    clause_or_section: "PROTECT 1.1"
+    citation_title: "Cybersecurity and egress controls protect AI system components and communication paths."
+    mapping_status: "verified"
+    notes: "Requires perimeter and network-level enforcement of approved AI channels."
+  - framework: "ISO/IEC 42001:2023"
+    clause_or_section: "Annex A.8.1"
+    citation_title: "AI system security requirements and architectural controls"
+    mapping_status: "verified"
+    notes: "Mandates centralized proxying and inspection of AI communication traffic."
+
+owner_placeholder: "[ROLE: Enterprise Network Security Lead]"
+review_date_placeholder: "[YYYY-MM-DD]"
+version: "1.0.0"
+status: "DRAFT"

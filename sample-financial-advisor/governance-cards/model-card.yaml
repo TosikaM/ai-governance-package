@@ -1,0 +1,15 @@
+# Standard Model Card
+model_details:
+  model_id: "MDL-SAMPLE-FINANCIAL-ADVISOR-01"
+  model_name: "sample-financial-advisor Model"
+  version: "0.1.0"
+  architecture: "autonomous_agent"
+  frameworks_detected: ["langchain"]
+  intended_use: "Automated business processing"
+evaluation:
+  benchmark_accuracy: 0.88
+  hallucination_rate_ceiling: 0.04
+  bias_parity_ratio: 0.85
+governance:
+  status: "DRAFT"
+  owner_placeholder: "[ROLE: ML Engineer]"

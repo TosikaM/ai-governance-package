@@ -1,0 +1,72 @@
+# ==============================================================================
+# Enterprise AI Governance Package - Standardized Data Card Template
+# ==============================================================================
+# File: data-card.template.yaml
+# Scope: Training, Fine-Tuning, and RAG Knowledge Vector Datasets
+# Reference Standards: ISO/IEC 42001:2023 Annex A.6, NIST AI RMF 1.0 (MAP 1.5)
+# ==============================================================================
+
+schema_version: "1.0.0"
+dataset_id: "ORG-DAT-2026-001"
+dataset_name: "Customer Support Verified Knowledge Corpus"
+version: "2.1.0"
+creation_date: "[YYYY-MM-DD]"
+status: "DRAFT"
+
+# Provenance & Collection Methodology
+provenance:
+  source_systems:
+    - "Corporate Confluence Knowledge Base"
+    - "Official Product Technical Documentation Repository"
+    - "Approved Customer Support Solution Articles"
+  collection_period:
+    start_date: "2023-01-01"
+    end_date: "2026-09-30"
+  collection_method: "Automated ETL extraction via authenticated enterprise APIs"
+  primary_curator_role: "[ROLE: Enterprise Knowledge Manager]"
+
+# Curation, Cleaning & PII Sanitization
+curation:
+  filtering_pipeline:
+    deduplication: "MinHash LSH exact and near-duplicate document removal"
+    pii_redaction: "Automated Presidio NER scanner redacting names, emails, SSNs, credit cards"
+    outdated_deprecation_filter: "Pruned all product documentation marked archived or obsolete"
+  data_quality_checks:
+    label_accuracy_verification: "Manual spot-audit on 500 randomly sampled chunks"
+    formatting_validation: "Markdown structural parsing and JSON schema compliance"
+
+# Composition & Representation
+composition:
+  total_documents: 14500
+  total_token_count: 8500000
+  storage_size_mb: 48.5
+  primary_languages:
+    - code: "en"
+      percentage: 85.0
+    - code: "es"
+      percentage: 10.0
+    - code: "fr"
+      percentage: 5.0
+  demographic_representation_notes: "Documentation text is technical and gender-neutral; no demographic variables present."
+
+# Intellectual Property & Licensing Clearance (ORG-CTL-IPR-001)
+intellectual_property:
+  licensing_classification: "internal_proprietary"
+  commercial_use_cleared: true
+  third_party_copyrights_present: false
+  copyleft_license_contamination: false
+  legal_counsel_approval_reference: "LEGAL-IP-CLEARANCE-2026-042"
+
+# Privacy, Consent & Retention (ORG-CTL-DAT-004)
+privacy_and_retention:
+  contains_personal_data: false   # After automated redaction
+  data_classification: "internal"
+  gdpr_legal_basis: "legitimate_interest"
+  retention_schedule:
+    retention_period_years: 5
+    purge_mechanism: "Automated annual purge of decommissioned product documentation"
+    immutability_lock: "WORM compliant storage for audited release snapshots"
+
+owner_placeholder: "[ROLE: Head of Data Governance]"
+approver_placeholder: "[ROLE: Enterprise Data Protection Officer]"
+review_date_placeholder: "[YYYY-MM-DD]"

@@ -1,0 +1,51 @@
+id: "ORG-CTL-ACC-002"
+title: "Accountable System Ownership and Role Designation"
+objective: "Guarantee that every deployed AI system maintains active, identifiable human business and technical owners accountable for legal compliance, performance, and risk management."
+domain: "accountability_inventory"
+type: "universal"
+
+applicability_condition:
+  predicate_type: "always"
+  description: "Universal control applying to all AI systems across all lifecycle phases."
+
+lifecycle_stages:
+  - "concept_design"
+  - "deployment_admission"
+  - "runtime_operation"
+
+enforcement_points:
+  - "ci_build_pipeline"
+  - "deployment_admission_controller"
+  - "periodic_automated_scan"
+
+check_type: "automated"
+mode: "blocking"
+
+evidence_required:
+  - artifact_type: "ownership_attestation_record"
+    description: "Directory validation confirming active corporate email addresses and roles for Business Owner and Technical Lead."
+    format: "json"
+    retention_period_years: 5
+
+exception_eligibility:
+  eligible: true
+  statutory_prohibition: false
+  minimum_compensating_controls:
+    - "Temporary assignment of divisional engineering VP as interim custodian during owner transitions (max 30 days)."
+
+reference_mappings:
+  - framework: "NIST AI RMF 1.0"
+    clause_or_section: "GOVERN 2.1"
+    citation_title: "Roles and responsibilities for AI risk management are documented, clearly defined, and communicated."
+    mapping_status: "verified"
+    notes: "Mandates unambiguous RACI designation for AI asset lifecycle."
+  - framework: "ISO/IEC 42001:2023"
+    clause_or_section: "Clause 5.3"
+    citation_title: "Organizational roles, responsibilities and authorities"
+    mapping_status: "verified"
+    notes: "Requires assigning responsibility for ensuring AI management system conformity."
+
+owner_placeholder: "[ROLE: Enterprise AI Governance Lead]"
+review_date_placeholder: "[YYYY-MM-DD]"
+version: "1.0.0"
+status: "DRAFT"

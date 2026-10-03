@@ -1,0 +1,121 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://governance.internal.net/schemas/effective-snapshot.schema.json",
+  "title": "Effective Policy Snapshot Specification Schema",
+  "description": "JSON Schema specification for resolved, immutable, effective-policy snapshots produced by project-kit/resolver/resolve.py. Represents the exact set of baseline and tightened overlay controls governing a project at build and runtime.",
+  "type": "object",
+  "required": [
+    "snapshot_schema_version",
+    "generated_at",
+    "as_of_date",
+    "project_id",
+    "baseline_version_pin",
+    "applied_overlays",
+    "total_active_controls",
+    "controls",
+    "snapshot_integrity_hash"
+  ],
+  "properties": {
+    "snapshot_schema_version": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$",
+      "description": "Version of the effective snapshot schema."
+    },
+    "generated_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 UTC timestamp recording when this snapshot was computed."
+    },
+    "as_of_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Evaluation date used to verify exception expiration (YYYY-MM-DD)."
+    },
+    "project_id": {
+      "type": "string",
+      "pattern": "^[a-zA-Z0-9_-]{3,50}$",
+      "description": "Enterprise project identifier matching the project manifest."
+    },
+    "baseline_version_pin": {
+      "type": "string",
+      "pattern": "^v[0-9]+\\.[0-9]+\\.[0-9]+(-[a-z0-9.]+)?$",
+      "description": "Pinned semantic version of the enterprise governance baseline."
+    },
+    "applied_overlays": {
+      "type": "array",
+      "description": "List of contextual overlays successfully evaluated and merged into this snapshot.",
+      "items": {
+        "type": "object",
+        "required": ["overlay_id", "version_pin"],
+        "properties": {
+          "overlay_id": {
+            "type": "string",
+            "pattern": "^ORG-OVL-[A-Z0-9-]+$"
+          },
+          "version_pin": {
+            "type": "string",
+            "pattern": "^[a-zA-Z0-9_.-]+$"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "total_active_controls": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "Count of active controls applicable to this system."
+    },
+    "controls": {
+      "type": "object",
+      "description": "Dictionary of active controls keyed by permanent control ID.",
+      "additionalProperties": {
+        "type": "object",
+        "required": [
+          "id",
+          "title",
+          "lifecycle_stages",
+          "enforcement_points",
+          "check_type",
+          "mode"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^ORG-CTL-[A-Z]{3}-[0-9]{3}$"
+          },
+          "title": { "type": "string" },
+          "domain": { "type": "string" },
+          "type": { "type": "string" },
+          "lifecycle_stages": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "enforcement_points": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "check_type": { "type": "string" },
+          "mode": { "type": "string" },
+          "parameters": { "type": "object" },
+          "evidence_required": { "type": "array" },
+          "exception_eligibility": { "type": "object" },
+          "applied_overlays": { "type": "array" },
+          "active_exception": {
+            "type": ["object", "null"],
+            "properties": {
+              "exception_id": { "type": "string" },
+              "expiration_date": { "type": "string" },
+              "compensating_controls": { "type": "array" }
+            }
+          }
+        }
+      }
+    },
+    "snapshot_integrity_hash": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$",
+      "description": "Canonical SHA-256 digest of the resolved snapshot for tamper verification."
+    }
+  },
+  "additionalProperties": false
+}

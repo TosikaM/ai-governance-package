@@ -1,0 +1,142 @@
+openapi: 3.0.3
+info:
+  title: Enterprise AI Governance API
+  description: Universal REST & Action API for AI Governance, compliance audits, copyleft license scanning, and automated onboarding. Compatible with ChatGPT Custom Actions, Claude, and cloud workflows.
+  version: 1.0.0
+servers:
+  - url: http://localhost:3335
+    description: Local or Private Cloud Server
+paths:
+  /health:
+    get:
+      summary: Health Check
+      description: Returns service status.
+      responses:
+        '200':
+          description: Service is healthy.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+                  server:
+                    type: string
+                    example: enterprise-ai-governance-mcp
+  /api/inspect:
+    post:
+      summary: Inspect AI Codebase
+      description: Scans a target repository directory to detect AI frameworks, PII, tool executions, leaked secrets, and infers risk tier.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                target_dir:
+                  type: string
+                  description: Directory path of the AI project to inspect.
+                  default: "."
+      responses:
+        '200':
+          description: Inspection results.
+  /api/auto-setup:
+    post:
+      summary: Auto-Setup AI Governance
+      description: Autonomously creates manifest, Model Card, Data Card, pre-commit hooks, CI/CD PR gates, and resolves policy snapshot in under 60 seconds.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                target_dir:
+                  type: string
+                  description: Directory path of the AI project to onboard.
+                  default: "."
+      responses:
+        '200':
+          description: Setup summary and list of created files.
+  /api/audit:
+    post:
+      summary: Run Full Governance Audit
+      description: Audits an AI project against all 16 enterprise policies, evaluates 7 pipeline barriers, and optionally generates an interactive HTML report.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                target_dir:
+                  type: string
+                  description: Directory path of the project to audit.
+                  default: "."
+                generate_html:
+                  type: boolean
+                  description: Whether to generate an HTML report.
+                  default: true
+                output_filename:
+                  type: string
+                  description: Filename for the HTML report.
+                  default: "governance-compliance-report.html"
+      responses:
+        '200':
+          description: Full compliance report with check results and pass/fail summary.
+  /api/check-pr:
+    post:
+      summary: Scan PR for Copyleft and Secrets
+      description: Checks repository code for AGPL/GPL copyleft licenses, unencrypted API credentials, and AI-generated code markers.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                target_dir:
+                  type: string
+                  description: Directory path to scan.
+                  default: "."
+      responses:
+        '200':
+          description: PR gate result (PASSED or BLOCKED) with list of violations.
+  /api/list-policies:
+    post:
+      summary: List or Retrieve Enterprise Policies
+      description: Returns catalog of 16 policies with regulatory mappings, or retrieves full text of a specific policy ID.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                policy_id:
+                  type: string
+                  description: Optional policy code (e.g. POL-SEC, POL-IPR, POL-DAT, POL-FAI).
+      responses:
+        '200':
+          description: List of policies or full policy markdown.
+  /api/explain-control:
+    post:
+      summary: Explain Control and Remediation
+      description: Returns full specification, regulatory mappings, and step-by-step developer remediation guidance for any control ID.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - control_id
+              properties:
+                control_id:
+                  type: string
+                  description: Control ID to explain (e.g. CTL-FAI-001, CTL-IPR-003, CTL-SEC-001).
+      responses:
+        '200':
+          description: Control obligations, enforcement points, and remediation tips.

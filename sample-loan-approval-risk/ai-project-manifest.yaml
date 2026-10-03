@@ -1,0 +1,32 @@
+schema_version: "2020-12"
+project_id: "SYS-AUTO-SAMPLE-LOAN-APPROVAL-RISK-01"
+project_name: "Loan Credit Scoring & Underwriting AI"
+baseline_version: "v0.1.0-draft"
+
+owners:
+  business_owner:
+    name: "Head of Credit Risk"
+    email: "credit-risk@company.com"
+  technical_lead:
+    name: "ML Underwriting Lead"
+    email: "ml-credit@company.com"
+
+ai_system_profile:
+  lifecycle_status: "development"
+  risk_tier: "tier_3_high"
+  archetype: "predictive_tabular"
+  declared_characteristics:
+    processes_personal_data: true
+    executes_tools_or_agents: false
+    generates_user_facing_content: false
+    makes_automated_decisions: true
+    generates_code_or_executable_artifacts: false
+
+governance_bindings:
+  overlays:
+    geography: []
+    sector: []
+    risk_tier:
+      - overlay_id: "ORG-OVL-RSK-TIER3-001"
+        version: "v0.1.0-draft"
+  exceptions: []

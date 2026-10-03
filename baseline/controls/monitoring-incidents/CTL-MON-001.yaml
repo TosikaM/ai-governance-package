@@ -1,0 +1,51 @@
+id: "ORG-CTL-MON-001"
+title: "Version-Controlled Prompt and Configuration Traceability"
+objective: "Enforce strict Git version control and peer-reviewed change management for all system prompts, model hyper-parameters, vector retriever configurations, and tool definitions, prohibiting unversioned production hot-editing."
+domain: "monitoring_drift_incidents"
+type: "universal"
+
+applicability_condition:
+  predicate_type: "always"
+  description: "Universal control applying to all AI application configurations."
+
+lifecycle_stages:
+  - "integration_ci_cd"
+  - "deployment_admission"
+  - "runtime_operation"
+
+enforcement_points:
+  - "pull_request_check"
+  - "ci_build_pipeline"
+  - "deployment_admission_controller"
+
+check_type: "automated"
+mode: "blocking"
+
+evidence_required:
+  - artifact_type: "git_configuration_provenance_record"
+    description: "Deployment admission attestation verifying that production runtime parameters correspond to a signed Git commit SHA on a protected release branch."
+    format: "json"
+    retention_period_years: 7
+
+exception_eligibility:
+  eligible: false
+  statutory_prohibition: false
+  minimum_compensating_controls:
+    - "No exceptions permitted. Unversioned production prompt editing creates untraceable security and compliance liabilities."
+
+reference_mappings:
+  - framework: "ISO/IEC 42001:2023"
+    clause_or_section: "Clause 8.1"
+    citation_title: "Operational planning and change control for AI systems"
+    mapping_status: "verified"
+    notes: "Requires formal change control procedures for all AI system configurations."
+  - framework: "NIST AI RMF 1.0"
+    clause_or_section: "GOVERN 1.2"
+    citation_title: "Configuration management and traceability across the AI lifecycle"
+    mapping_status: "verified"
+    notes: "Mandates complete traceability of model configuration and prompt changes."
+
+owner_placeholder: "[ROLE: Enterprise SRE & Release Engineering Lead]"
+review_date_placeholder: "[YYYY-MM-DD]"
+version: "1.0.0"
+status: "DRAFT"

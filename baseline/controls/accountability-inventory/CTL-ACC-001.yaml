@@ -1,0 +1,55 @@
+id: "ORG-CTL-ACC-001"
+title: "Mandatory AI System Registration in Central Inventory"
+objective: "Ensure that every artificial intelligence system, model, RAG pipeline, and autonomous agent is catalogued in the central enterprise AI inventory prior to production deployment."
+domain: "accountability_inventory"
+type: "universal"
+
+applicability_condition:
+  predicate_type: "always"
+  description: "Universal control applying to all AI systems enterprise-wide."
+
+lifecycle_stages:
+  - "concept_design"
+  - "deployment_admission"
+
+enforcement_points:
+  - "ci_build_pipeline"
+  - "deployment_admission_controller"
+  - "manual_audit_gate"
+
+check_type: "hybrid"
+mode: "blocking"
+
+evidence_required:
+  - artifact_type: "inventory_registration_record"
+    description: "Central inventory entry metadata containing assigned permanent SYS-ID, business purpose, and owner verification."
+    format: "json"
+    retention_period_years: 7
+
+exception_eligibility:
+  eligible: false
+  statutory_prohibition: true
+  minimum_compensating_controls:
+    - "No exceptions permitted. Operating uncatalogued AI systems is strictly prohibited."
+
+reference_mappings:
+  - framework: "NIST AI RMF 1.0"
+    clause_or_section: "GOVERN 1.1"
+    citation_title: "Legal and regulatory requirements involving AI are understood, managed, and documented."
+    mapping_status: "verified"
+    notes: "Baseline prerequisite for tracking regulatory scope and enterprise risk."
+  - framework: "ISO/IEC 42001:2023"
+    clause_or_section: "Clause 8.1"
+    citation_title: "Operational planning and control"
+    mapping_status: "verified"
+    notes: "Requires maintaining inventory and operational documentation for all AI assets."
+  - framework: "EU AI Act Regulation (EU) 2024/1689"
+    clause_or_section: "Article 49"
+    citation_title: "Registration of high-risk AI systems in the EU database"
+    mapping_status: "verified"
+    notes: "Statutory basis for central registration of high-risk systems; internal inventory serves as primary source."
+
+owner_placeholder: "[ROLE: Enterprise AI Governance Lead]"
+review_date_placeholder: "[YYYY-MM-DD]"
+version: "1.0.0"
+status: "DRAFT"

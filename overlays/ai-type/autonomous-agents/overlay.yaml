@@ -1,0 +1,85 @@
+# ==============================================================================
+# Autonomous Agent Architecture & Execution Guardrails Overlay
+# ==============================================================================
+# Schema: schemas/overlay.schema.json (JSON Schema Draft 2020-12)
+# Category: ai_type
+# ==============================================================================
+
+id: "ORG-OVL-ARC-AGENT-001"
+title: "Autonomous Agent Architecture & Execution Guardrails Overlay"
+category: "ai_type"
+
+target_scope:
+  applicability_summary: "Applies to all systems deploying autonomous multi-step reasoning loops, dynamic tool calling, agentic delegation, or Model Context Protocol (MCP) integrations."
+  jurisdictions:
+    - "global"
+  sectors:
+    - "all"
+  risk_tiers:
+    - "tier_2_moderate"
+    - "tier_3_high"
+    - "tier_4_critical"
+  ai_types:
+    - "autonomous_agent"
+
+baseline_compatibility: ">=0.1.0 <2.0.0"
+
+citations:
+  - source_title: "OWASP Top 10 for LLM Applications and Generative AI (2025)"
+    citation_reference: "LLM06: Excessive Agency & LLM07: System Information Leakage"
+    url: "https://owasp.org/www-project-top-10-for-large-language-model-applications/"
+    publication_date_or_version: "2025-01-01"
+    verification_status: "verified"
+  - source_title: "NIST AI 600-1 Generative AI Profile (NIST AI RMF)"
+    citation_reference: "Section 3.4 (Excessive Agency, Autonomous Execution, and Sandboxing)"
+    url: "https://doi.org/10.6028/NIST.AI.600-1"
+    publication_date_or_version: "2024-07-26"
+    verification_status: "verified"
+
+legal_review_status: "NOT_LEGAL_STATUTE_TECHNICAL_SPEC_ONLY"
+
+rules:
+  - rule_id: "R01"
+    target_control_id: "ORG-CTL-AGT-004"
+    action: "tighten_parameter"
+    parameter_tightening:
+      parameter_name: "max_execution_steps"
+      new_value: 5
+      direction: "lower_is_stricter"
+    rationale: "Strict bounded recursion limit prevents runaway agent execution loops and unbounded cascade spend; tightened from baseline 10 steps down to 5 steps."
+
+  - rule_id: "R02"
+    target_control_id: "ORG-CTL-AGT-004"
+    action: "tighten_parameter"
+    parameter_tightening:
+      parameter_name: "kill_switch_max_latency_ms"
+      new_value: 250
+      direction: "lower_is_stricter"
+    rationale: "Tightens out-of-band kill switch execution SLA from 1000ms to 250ms for autonomous tool-wielding runtimes."
+
+  - rule_id: "R03"
+    target_control_id: "ORG-CTL-AGT-003"
+    action: "restrict_exception"
+    restrict_exception:
+      disallow_exceptions: true
+      additional_mandatory_compensations:
+        - "Any emergency bypass requires two enterprise security officers to dual-key the physical gateway."
+    rationale: "Tool schema parameter validation and cryptographic approval of destructive mutations cannot be waived under standard exception."
+
+  - rule_id: "R04"
+    target_control_id: "ORG-CTL-AGT-001"
+    action: "require_additional_evidence"
+    additional_evidence:
+      - artifact_type: "agent_tool_permission_matrix"
+        description: "Machine-readable schema and permission matrix declaring all registered tools, authorization scopes, data classification levels, and human-in-the-loop triggers."
+        format: "json"
+    rationale: "Architecture governance requires explicit declaration and verification of all external agent capabilities."
+
+conflict_resolution:
+  default_behavior: "UNRESOLVED_CONFLICT_HALT"
+  resolution_escalation_path: "Enterprise AI Safety Review Board and Architecture Review Committee"
+
+owner_placeholder: "[ROLE: Principal Agent Architect]"
+review_date_placeholder: "[YYYY-MM-DD]"
+version: "0.1.0-draft"
+status: "DRAFT"

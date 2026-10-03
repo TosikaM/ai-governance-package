@@ -1,0 +1,292 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://governance.internal.net/schemas/control.schema.json",
+  "title": "AI Governance Control Specification Schema",
+  "description": "JSON Schema specification for machine-readable AI governance controls across universal, conditional, and parameterized categories.",
+  "type": "object",
+  "required": [
+    "id",
+    "title",
+    "objective",
+    "domain",
+    "type",
+    "lifecycle_stages",
+    "enforcement_points",
+    "check_type",
+    "mode",
+    "evidence_required",
+    "exception_eligibility",
+    "reference_mappings",
+    "owner_placeholder",
+    "review_date_placeholder",
+    "version",
+    "status"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^ORG-CTL-[A-Z]{3}-[0-9]{3}$",
+      "description": "Permanent canonical control identifier adhering to the enterprise scheme."
+    },
+    "title": {
+      "type": "string",
+      "minLength": 5,
+      "maxLength": 150,
+      "description": "Concise human-readable name of the governance control."
+    },
+    "objective": {
+      "type": "string",
+      "minLength": 20,
+      "description": "Clear statement of the intended risk mitigation or compliance objective."
+    },
+    "domain": {
+      "type": "string",
+      "enum": [
+        "accountability_inventory",
+        "acceptable_use_literacy",
+        "risk_classification_impact",
+        "data_quality_privacy_retention",
+        "supply_chain_third_party",
+        "intellectual_property_licensing",
+        "security_attack_mitigation",
+        "robustness_evaluation_testing",
+        "fairness_bias_accessibility",
+        "transparency_disclosure",
+        "human_oversight_redress",
+        "agent_autonomy_guardrails",
+        "monitoring_drift_incidents",
+        "cost_resource_limits",
+        "evidence_integrity_recordkeeping",
+        "retirement_decommissioning"
+      ],
+      "description": "The standardized governance domain governing this control."
+    },
+    "type": {
+      "type": "string",
+      "enum": ["universal", "conditional", "parameterized"],
+      "description": "Control classification: universal (applies to all AI systems), conditional (triggered by declared characteristics), or parameterized (context-specific threshold values)."
+    },
+    "applicability_condition": {
+      "type": "object",
+      "description": "Declarative predicate governing when this control activates. Universal controls specify always true.",
+      "required": ["predicate_type"],
+      "properties": {
+        "predicate_type": {
+          "type": "string",
+          "enum": ["always", "manifest_property_match", "composite_expression", "custom_rule"]
+        },
+        "manifest_path": {
+          "type": "string",
+          "description": "Dot-notation JSON path within the project manifest evaluated by the resolver (e.g. 'ai_system_profile.declared_characteristics.executes_tools_or_code')."
+        },
+        "operator": {
+          "type": "string",
+          "enum": ["equals", "not_equals", "in", "contains", "greater_than", "is_true", "is_false"]
+        },
+        "target_value": {
+          "description": "The expected value that triggers control applicability."
+        },
+        "description": {
+          "type": "string",
+          "description": "Human-readable summary of the applicability rule."
+        }
+      }
+    },
+    "parameters": {
+      "type": "object",
+      "description": "Configurable parameters and numeric thresholds associated with this control.",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["description", "data_type", "default_value", "approval_authority_placeholder"],
+        "properties": {
+          "description": {
+            "type": "string"
+          },
+          "data_type": {
+            "type": "string",
+            "enum": ["integer", "float", "string", "boolean", "array"]
+          },
+          "default_value": {
+            "description": "Default parameter value applicable in the baseline."
+          },
+          "allowed_range": {
+            "type": "object",
+            "properties": {
+              "min": { "type": "number" },
+              "max": { "type": "number" }
+            }
+          },
+          "allowed_values": {
+            "type": "array"
+          },
+          "monotonicity": {
+            "type": "string",
+            "enum": ["lower_is_stricter", "higher_is_stricter", "exact_match_only", "strict_subset"],
+            "description": "Merge rule behavior when overlays adjust this parameter."
+          },
+          "approval_authority_placeholder": {
+            "type": "string",
+            "description": "Placeholder designating the governance role authorized to modify this parameter (e.g. '[ROLE: Model Risk Officer]')."
+          }
+        }
+      }
+    },
+    "lifecycle_stages": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "enum": [
+          "concept_design",
+          "data_preparation",
+          "model_training",
+          "evaluation_validation",
+          "integration_ci_cd",
+          "deployment_admission",
+          "runtime_operation",
+          "incident_response",
+          "retirement_decommissioning"
+        ]
+      },
+      "description": "AI lifecycle stages in which this control is verified or enforced."
+    },
+    "enforcement_points": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "enum": [
+          "pre_commit_hook",
+          "pull_request_check",
+          "ci_build_pipeline",
+          "model_registry_admission",
+          "deployment_admission_controller",
+          "api_gateway_sidecar",
+          "agent_runtime_interceptor",
+          "periodic_automated_scan",
+          "manual_audit_gate"
+        ]
+      },
+      "description": "System architecture locations where policy checks are executed."
+    },
+    "check_type": {
+      "type": "string",
+      "enum": ["automated", "manual", "hybrid"],
+      "description": "Operational verification mechanism: automated (zero human subjectivity), manual (expert judgment), or hybrid (automated checks requiring sign-off)."
+    },
+    "mode": {
+      "type": "string",
+      "enum": ["blocking", "advisory", "review"],
+      "description": "Failure enforcement posture: blocking (halts pipeline/deployment), advisory (warns developer without halting), or review (routes to human reviewer)."
+    },
+    "evidence_required": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["artifact_type", "description", "format"],
+        "properties": {
+          "artifact_type": {
+            "type": "string",
+            "description": "Canonical artifact classification (e.g., 'eval_benchmark_report', 'sbom_json', 'tool_schema_registry', 'model_card')."
+          },
+          "description": {
+            "type": "string"
+          },
+          "format": {
+            "type": "string",
+            "enum": ["json", "yaml", "markdown", "pdf", "cyclonedx_json", "sarif_json", "csv"]
+          },
+          "retention_period_years": {
+            "type": "integer",
+            "default": 7
+          }
+        }
+      },
+      "description": "Artifacts that must be generated, collected, and attested to satisfy this control."
+    },
+    "exception_eligibility": {
+      "type": "object",
+      "required": ["eligible"],
+      "properties": {
+        "eligible": {
+          "type": "boolean",
+          "description": "Whether teams may request a time-limited exception against this control."
+        },
+        "statutory_prohibition": {
+          "type": "boolean",
+          "default": false,
+          "description": "If true, this control represents a non-derogable legal obligation; exceptions cannot be granted under any circumstance."
+        },
+        "minimum_compensating_controls": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Mandatory safety counter-measures required before an exception may be considered."
+        }
+      }
+    },
+    "reference_mappings": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["framework", "clause_or_section", "mapping_status"],
+        "properties": {
+          "framework": {
+            "type": "string",
+            "enum": [
+              "NIST AI RMF 1.0",
+              "NIST AI 600-1 (GenAI Profile)",
+              "ISO/IEC 42001:2023",
+              "ISO/IEC 23894:2023",
+              "OWASP Top 10 for LLM Applications (2025)",
+              "EU AI Act Regulation (EU) 2024/1689",
+              "Regulation (EU) 2016/679 (GDPR)",
+              "W3C Web Content Accessibility Guidelines (WCAG) 2.1",
+              "Internal Policy Reference"
+            ]
+          },
+          "clause_or_section": {
+            "type": "string",
+            "description": "Exact section or clause number (e.g. 'GOVERN 1.1', 'Clause 9.2', 'LLM01:2025')."
+          },
+          "citation_title": {
+            "type": "string"
+          },
+          "mapping_status": {
+            "type": "string",
+            "enum": ["verified", "mapping to verify"],
+            "description": "Must be 'verified' only when verified against authoritative primary source; otherwise 'mapping to verify'."
+          },
+          "notes": {
+            "type": "string"
+          }
+        }
+      },
+      "description": "Cross-framework mappings to authoritative standards and regulatory requirements."
+    },
+    "owner_placeholder": {
+      "type": "string",
+      "description": "Designated enterprise role placeholder accountable for the control (e.g. '[ROLE: Head of AI Safety]')."
+    },
+    "review_date_placeholder": {
+      "type": "string",
+      "description": "Scheduled review date placeholder (e.g. '[YYYY-MM-DD]')."
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+(-[a-z0-9.]+)?$",
+      "description": "Semantic version of this control specification."
+    },
+    "status": {
+      "type": "string",
+      "enum": ["DRAFT", "PROPOSED", "APPROVED", "ACTIVE", "DEPRECATED", "RETIRED"],
+      "description": "Current lifecycle status. All newly generated controls start in DRAFT."
+    },
+    "borderline_placement_rationale": {
+      "type": "string",
+      "description": "One-line justification required if this control was a borderline candidate between baseline and overlay."
+    }
+  },
+  "additionalProperties": false
+}

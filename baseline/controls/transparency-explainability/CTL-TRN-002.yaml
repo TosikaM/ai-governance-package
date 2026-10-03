@@ -1,0 +1,63 @@
+id: "ORG-CTL-TRN-002"
+title: "Synthetic Media Cryptographic Provenance and Watermarking (C2PA)"
+objective: "Embed machine-readable, cryptographically signed content provenance metadata (C2PA standard) and statistical watermarking into all synthetically generated images, audio, video, or deepfake-susceptible media."
+domain: "transparency_disclosure"
+type: "conditional"
+
+applicability_condition:
+  predicate_type: "manifest_property_match"
+  manifest_path: "ai_system_profile.archetype"
+  operator: "in"
+  target_value:
+    - "generative_llm"
+    - "autonomous_agent"
+    - "hybrid"
+  description: "Applies to generative systems producing synthetic audio, imagery, video, or synthetic content."
+
+lifecycle_stages:
+  - "integration_ci_cd"
+  - "deployment_admission"
+  - "runtime_operation"
+
+enforcement_points:
+  - "ci_build_pipeline"
+  - "api_gateway_sidecar"
+  - "deployment_admission_controller"
+
+check_type: "automated"
+mode: "blocking"
+
+evidence_required:
+  - artifact_type: "c2pa_provenance_verification_report"
+    description: "Automated scan output verifying that generated output media contains valid, unstripped C2PA signed metadata manifests."
+    format: "json"
+    retention_period_years: 7
+
+exception_eligibility:
+  eligible: true
+  statutory_prohibition: false
+  minimum_compensating_controls:
+    - "Visible visual/auditory watermark burned permanently into the media raster/stream."
+
+reference_mappings:
+  - framework: "EU AI Act Regulation (EU) 2024/1689"
+    clause_or_section: "Article 50(2)"
+    citation_title: "Marking and detection of synthetic audio, image, video or text content"
+    mapping_status: "verified"
+    notes: "Statutory requirement to mark AI outputs in a machine-readable format and ensure detection."
+  - framework: "NIST AI 600-1 (GenAI Profile)"
+    clause_or_section: "MEASURE 2.12"
+    citation_title: "Content provenance and synthetic media watermarking"
+    mapping_status: "verified"
+    notes: "Requires implementing open provenance standards like C2PA for synthetic content."
+  - framework: "ISO/IEC 42001:2023"
+    clause_or_section: "Clause 8.4"
+    citation_title: "Transparency of synthetic content and outputs"
+    mapping_status: "verified"
+    notes: "Mandates labeling and tracking synthetic assets to maintain organizational provenance."
+
+owner_placeholder: "[ROLE: Digital Media Integrity Lead]"
+review_date_placeholder: "[YYYY-MM-DD]"
+version: "1.0.0"
+status: "DRAFT"
+borderline_placement_rationale: "Baseline requires C2PA where multimodal/synthetic media is generated; specific jurisdictional exceptions handled in overlays."

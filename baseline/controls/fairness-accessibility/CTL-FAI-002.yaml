@@ -1,0 +1,61 @@
+id: "ORG-CTL-FAI-002"
+title: "Generative Stereotyping and Toxicity Benchmark Verification"
+objective: "Empirically measure, cap, and monitor derogatory stereotyping, hate speech, and toxicity in generative models and conversational agents against standardized benchmark suites before production promotion."
+domain: "fairness_bias_accessibility"
+type: "conditional"
+
+applicability_condition:
+  predicate_type: "manifest_property_match"
+  manifest_path: "ai_system_profile.archetype"
+  operator: "in"
+  target_value:
+    - "generative_llm"
+    - "rag_system"
+    - "autonomous_agent"
+  description: "Applies to generative models, conversational chatbots, and agentic systems producing unstructured language or multimodal content."
+
+lifecycle_stages:
+  - "evaluation_validation"
+  - "deployment_admission"
+
+enforcement_points:
+  - "ci_build_pipeline"
+  - "model_registry_admission"
+  - "deployment_admission_controller"
+
+check_type: "automated"
+mode: "blocking"
+
+evidence_required:
+  - artifact_type: "toxicity_and_bias_evaluation_report"
+    description: "Benchmark evaluation report measuring output toxicity, demographic stereotyping, and profanity against standard test suites (e.g. RealToxicityPrompts, BOLD)."
+    format: "json"
+    retention_period_years: 7
+
+exception_eligibility:
+  eligible: true
+  statutory_prohibition: false
+  minimum_compensating_controls:
+    - "Automated real-time safety guardrail sidecar on gateway dropping all outputs flagged with toxicity score > 0.01."
+
+reference_mappings:
+  - framework: "NIST AI 600-1 (GenAI Profile)"
+    clause_or_section: "MEASURE 2.11"
+    citation_title: "Mitigation of harmful bias, stereotyping, and toxic content in generative AI"
+    mapping_status: "verified"
+    notes: "Requires dedicated evaluation suites measuring generative toxicity and social bias."
+  - framework: "ISO/IEC 42001:2023"
+    clause_or_section: "Annex A.5.2"
+    citation_title: "Fairness and ethical alignment in generative outputs"
+    mapping_status: "verified"
+    notes: "Mandates verification that outputs conform to enterprise ethical standards and non-derogatory rules."
+  - framework: "OWASP Top 10 for LLM Applications (2025)"
+    clause_or_section: "LLM02:2025"
+    citation_title: "Sensitive Information Disclosure and Inappropriate Content"
+    mapping_status: "verified"
+    notes: "Addresses preventing generation of socially damaging, toxic, or discriminatory responses."
+
+owner_placeholder: "[ROLE: AI Ethics & Safety Evaluation Lead]"
+review_date_placeholder: "[YYYY-MM-DD]"
+version: "1.0.0"
+status: "DRAFT"

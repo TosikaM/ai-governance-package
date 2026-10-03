@@ -1,0 +1,54 @@
+id: "ORG-CTL-REC-002"
+title: "Cryptographic Artifact Digest Hashing and WORM Storage"
+objective: "Ensure that all supporting governance artifacts (eval reports, SBOMs, model cards) have SHA-256 digests computed and are deposited into immutable Write-Once-Read-Many (WORM) storage to guarantee tamper-evidence."
+domain: "evidence_integrity_recordkeeping"
+type: "universal"
+
+applicability_condition:
+  predicate_type: "always"
+  description: "Universal control applying to all evidence artifacts and audit trails."
+
+lifecycle_stages:
+  - "integration_ci_cd"
+  - "deployment_admission"
+
+enforcement_points:
+  - "ci_build_pipeline"
+  - "deployment_admission_controller"
+
+check_type: "automated"
+mode: "blocking"
+
+evidence_required:
+  - artifact_type: "tamper_evident_deposit_receipt"
+    description: "Cryptographic deposit receipt confirming artifacts were hashed with SHA-256 and stored in an immutable compliance bucket or transparency ledger."
+    format: "json"
+    retention_period_years: 7
+
+exception_eligibility:
+  eligible: false
+  statutory_prohibition: false
+  minimum_compensating_controls:
+    - "No exceptions permitted. Tamper-evident evidence storage is essential for regulatory audit defense."
+
+reference_mappings:
+  - framework: "ISO/IEC 42001:2023"
+    clause_or_section: "Clause 7.5.3"
+    citation_title: "Control of documented information - Protection and preservation"
+    mapping_status: "verified"
+    notes: "Requires documented information to be protected from loss of confidentiality, improper use, or loss of integrity."
+  - framework: "NIST AI RMF 1.0"
+    clause_or_section: "MANAGE 4.2"
+    citation_title: "Auditability and integrity of AI governance documentation"
+    mapping_status: "verified"
+    notes: "Mandates tamper-resistant records for governance accountability."
+  - framework: "EU AI Act Regulation (EU) 2024/1689"
+    clause_or_section: "Article 12(1)"
+    citation_title: "Logging capabilities to ensure traceability of AI functioning"
+    mapping_status: "verified"
+    notes: "Requires automatic recording of events with guaranteed data integrity throughout system lifecycle."
+
+owner_placeholder: "[ROLE: Enterprise Security & Data Integrity Lead]"
+review_date_placeholder: "[YYYY-MM-DD]"
+version: "1.0.0"
+status: "DRAFT"

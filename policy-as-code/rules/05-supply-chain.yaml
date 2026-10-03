@@ -1,0 +1,135 @@
+# ==============================================================================
+# Policy-as-Code Rules: Domain 5 - Supply Chain & Third-Party (SUP)
+# ==============================================================================
+# Schema: policy-as-code/rule-schema.json
+# Baseline Controls: ORG-CTL-SUP-001, ORG-CTL-SUP-002, ORG-CTL-SUP-003, ORG-CTL-SUP-004
+# ==============================================================================
+
+schema_version: "1.0.0"
+domain: "supply_chain_third_party"
+owner_placeholder: "[ROLE: Enterprise Supply Chain Security Lead]"
+review_date_placeholder: "[YYYY-MM-DD]"
+status: "DRAFT"
+
+rules:
+  # ----------------------------------------------------------------------------
+  # Control: ORG-CTL-SUP-001 - Third-Party Model Registration
+  # ----------------------------------------------------------------------------
+  - rule_id: "PAC-SUP-001"
+    target_control_id: "ORG-CTL-SUP-001"
+    title: "Third-Party Model Source Type Declaration"
+    description: "Verifies that all registered models declare an approved source type."
+    enforcement_points:
+      - "ci_build_pipeline"
+      - "deployment_admission_controller"
+    mode: "blocking"
+    input_context:
+      - "ai_project_manifest"
+    assertions:
+      - assertion_id: "A01"
+        description: "Primary model source_type must belong to standard classification."
+        field_path: "components.models.0.source_type"
+        operator: "in"
+        expected_value:
+          - "third_party_saas"
+          - "open_weights_internal_hosted"
+          - "custom_trained_proprietary"
+        failure_message: "Primary model source_type is missing or not an approved enterprise category."
+    remediation: "Declare source_type (third_party_saas, open_weights_internal_hosted, or custom_trained_proprietary) in components.models."
+    reference_rego: |
+      # verify against current documentation
+      package ai_governance.sup001
+      default allow = false
+      valid_sources = {"third_party_saas", "open_weights_internal_hosted", "custom_trained_proprietary"}
+      allow {
+          valid_sources[input.components.models[0].source_type]
+      }
+
+  # ----------------------------------------------------------------------------
+  # Control: ORG-CTL-SUP-002 - Model Version Declaration (MBOM Baseline)
+  # ----------------------------------------------------------------------------
+  - rule_id: "PAC-SUP-002"
+    target_control_id: "ORG-CTL-SUP-002"
+    title: "Model Version and Identity Pinning"
+    description: "Verifies that all models declare exact version strings for traceability."
+    enforcement_points:
+      - "pull_request_check"
+      - "ci_build_pipeline"
+    mode: "blocking"
+    input_context:
+      - "ai_project_manifest"
+    assertions:
+      - assertion_id: "A01"
+        description: "Primary model version must not be empty or 'latest'."
+        field_path: "components.models.0.version"
+        operator: "not_empty"
+        failure_message: "Model version must be explicitly pinned and cannot be omitted."
+      - assertion_id: "A02"
+        description: "Model version must not be floating alias 'latest'."
+        field_path: "components.models.0.version"
+        operator: "not_equals"
+        expected_value: "latest"
+        failure_message: "Floating version 'latest' is strictly prohibited for production AI models."
+    remediation: "Pin the exact immutable release tag or snapshot version in components.models[].version."
+    reference_rego: |
+      # verify against current documentation
+      package ai_governance.sup002
+      default allow = false
+      allow {
+          input.components.models[0].version != ""
+          input.components.models[0].version != "latest"
+      }
+
+  # ----------------------------------------------------------------------------
+  # Control: ORG-CTL-SUP-003 - Third-Party API External Usage Declaration
+  # ----------------------------------------------------------------------------
+  - rule_id: "PAC-SUP-003"
+    target_control_id: "ORG-CTL-SUP-003"
+    title: "External Model API Usage Consistency Check"
+    description: "Verifies consistency between third_party_saas models and uses_external_third_party_models_apis flag."
+    enforcement_points:
+      - "ci_build_pipeline"
+    mode: "blocking"
+    input_context:
+      - "ai_project_manifest"
+    assertions:
+      - assertion_id: "A01"
+        description: "uses_external_third_party_models_apis boolean must be declared."
+        field_path: "ai_system_profile.declared_characteristics.uses_external_third_party_models_apis"
+        operator: "exists"
+        failure_message: "uses_external_third_party_models_apis must be explicitly declared boolean."
+    remediation: "Set uses_external_third_party_models_apis accurately in declared_characteristics."
+    reference_rego: |
+      # verify against current documentation
+      package ai_governance.sup003
+      default allow = false
+      allow {
+          is_boolean(input.ai_system_profile.declared_characteristics.uses_external_third_party_models_apis)
+      }
+
+  # ----------------------------------------------------------------------------
+  # Control: ORG-CTL-SUP-004 - Custom Weights Training Declaration
+  # ----------------------------------------------------------------------------
+  - rule_id: "PAC-SUP-004"
+    target_control_id: "ORG-CTL-SUP-004"
+    title: "Custom Fine-Tuning & Weight Modification Declaration"
+    description: "Verifies that custom fine-tuning or proprietary weight training is explicitly declared."
+    enforcement_points:
+      - "ci_build_pipeline"
+    mode: "blocking"
+    input_context:
+      - "ai_project_manifest"
+    assertions:
+      - assertion_id: "A01"
+        description: "uses_fine_tuning_or_custom_weights must be declared."
+        field_path: "ai_system_profile.declared_characteristics.uses_fine_tuning_or_custom_weights"
+        operator: "exists"
+        failure_message: "uses_fine_tuning_or_custom_weights boolean must be declared."
+    remediation: "Declare uses_fine_tuning_or_custom_weights in ai_system_profile.declared_characteristics."
+    reference_rego: |
+      # verify against current documentation
+      package ai_governance.sup004
+      default allow = false
+      allow {
+          is_boolean(input.ai_system_profile.declared_characteristics.uses_fine_tuning_or_custom_weights)
+      }

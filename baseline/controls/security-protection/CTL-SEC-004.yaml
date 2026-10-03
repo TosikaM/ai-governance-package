@@ -1,0 +1,60 @@
+id: "ORG-CTL-SEC-004"
+title: "Pre-Production Adversarial Security Red-Teaming"
+objective: "Subject all Moderate Risk (Tier 2) and High Risk (Tier 3) systems to documented adversarial security red-teaming evaluating jailbreak resilience, prompt injection susceptibility, data leakage, and tool hijacking before production release."
+domain: "security_attack_mitigation"
+type: "conditional"
+
+applicability_condition:
+  predicate_type: "manifest_property_match"
+  manifest_path: "ai_system_profile.risk_tier"
+  operator: "in"
+  target_value:
+    - "tier_2_moderate"
+    - "tier_3_high"
+  description: "Applies to all systems classified as Tier 2 (Moderate Risk) or Tier 3 (High Risk)."
+
+lifecycle_stages:
+  - "evaluation_validation"
+  - "deployment_admission"
+
+enforcement_points:
+  - "ci_build_pipeline"
+  - "deployment_admission_controller"
+  - "manual_audit_gate"
+
+check_type: "hybrid"
+mode: "blocking"
+
+evidence_required:
+  - artifact_type: "adversarial_red_team_dossier"
+    description: "Formal red-team penetration testing report documenting adversarial attack scenarios, observed failure rates, and signed remediation sign-offs."
+    format: "markdown"
+    retention_period_years: 7
+
+exception_eligibility:
+  eligible: true
+  statutory_prohibition: false
+  minimum_compensating_controls:
+    - "System release restricted to internal employee-only beta with automated prompt logging and real-time SOC alerting."
+
+reference_mappings:
+  - framework: "NIST AI 600-1 (GenAI Profile)"
+    clause_or_section: "MEASURE 2.7"
+    citation_title: "AI system is tested for adversarial robustness and cybersecurity vulnerabilities."
+    mapping_status: "verified"
+    notes: "Requires dedicated red-teaming against generative AI failure modes and attack techniques."
+  - framework: "EU AI Act Regulation (EU) 2024/1689"
+    clause_or_section: "Article 15(1)"
+    citation_title: "High-risk AI systems resilience against attempts to alter performance or use by unauthorized third parties"
+    mapping_status: "verified"
+    notes: "Statutory mandate requiring high-risk AI to be resilient against adversarial attacks and data poisoning."
+  - framework: "ISO/IEC 42001:2023"
+    clause_or_section: "Annex A.6.2"
+    citation_title: "Verification and validation of AI systems"
+    mapping_status: "verified"
+    notes: "Mandates empirical adversarial security testing prior to operational release."
+
+owner_placeholder: "[ROLE: Enterprise Adversarial Red-Team Lead]"
+review_date_placeholder: "[YYYY-MM-DD]"
+version: "1.0.0"
+status: "DRAFT"

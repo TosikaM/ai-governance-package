@@ -1,0 +1,55 @@
+# Example Evidence Record
+# Conforms to schemas/evidence-record.schema.json
+
+evidence_id: "ORG-EVD-ROB-003-customer-assistant-agent-20261001-001"
+schema_version: "1.0.0"
+control_id: "ORG-CTL-ROB-003"
+project_id: "customer-assistant-agent"
+
+execution_context:
+  lifecycle_stage: "evaluation_validation"
+  enforcement_point: "ci_build_pipeline"
+  pipeline_run_id: "run-9847120-attempt-1"
+  commit_sha: "a1b2c3d4e5f60718293a4b5c6d7e8f9012345678"
+  git_ref: "refs/heads/release/v1.0"
+  environment: "ci"
+
+evaluator:
+  evaluator_type: "automated_tool"
+  identifier: "eval-benchmark-runner"
+  version: "2.4.1"
+  configuration_digest: "sha256:4b227777d4dd1fc61c6f884f48641d02b4d121d3fd328cb08b5531fcacdabf8a"
+
+verification_timestamp: "2026-10-01T14:30:00Z"
+result: "EXEMPTED_BY_EXCEPTION"
+active_exception_id: "ORG-EXC-2026-001"
+
+verification_summary: "Automated benchmark evaluation completed with measured hallucination rate of 0.072 (baseline threshold 0.05). Exempted under approved exception ORG-EXC-2026-001 with active compensating controls verified."
+
+quantitative_metrics:
+  hallucination_rate:
+    measured_value: 0.072
+    threshold_value: 0.05
+    passed: false
+    metric_unit: "fraction"
+  benchmark_accuracy:
+    measured_value: 0.89
+    threshold_value: 0.85
+    passed: true
+    metric_unit: "fraction"
+
+artifacts:
+  - artifact_name: "evaluation_report.json"
+    artifact_type: "eval_benchmark_report"
+    uri: "s3://internal-evidence-vault/evals/customer-assistant-agent/run-9847120/report.json"
+    sha256_hash: "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    mime_type: "application/json"
+
+cryptographic_attestation:
+  signature_format: "cosign_sigstore"
+  signer_identity: "ci-eval-bot@internal.net"
+  key_identifier: "https://sigstore.internal.net/v1/keys/ci-eval"
+  signature_payload: "MEUCIQC5v71+k3...[BASE64_SIGNATURE_PAYLOAD]"
+  timestamp: "2026-10-01T14:30:15Z"
+
+status: "VALIDATED"

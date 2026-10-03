@@ -1,0 +1,102 @@
+{
+  "project_id": "compliant-copilot",
+  "project_name": "Compliant Customer Support Copilot",
+  "description": "Production-ready enterprise AI copilot conforming to all governance baseline rules.",
+  "repository_url": "https://git.internal.net/ai-projects/compliant-copilot",
+  "schema_version": "1.0.0",
+  "owners": {
+    "business_owner": {
+      "name": "Sarah Connor",
+      "email": "sarah.connor@internal.net",
+      "role_placeholder": "[ROLE: Business Product Owner]"
+    },
+    "technical_lead": {
+      "name": "John Connor",
+      "email": "john.connor@internal.net",
+      "role_placeholder": "[ROLE: Lead AI Engineer]"
+    },
+    "risk_officer": {
+      "name": "Kyle Reese",
+      "email": "kyle.reese@internal.net",
+      "role_placeholder": "[ROLE: Divisional Risk Lead]"
+    }
+  },
+  "ai_system_profile": {
+    "archetype": "autonomous_agent",
+    "lifecycle_stage": "production",
+    "risk_tier": "tier_3_high",
+    "declared_characteristics": {
+      "executes_tools_or_code": true,
+      "processes_personal_data": true,
+      "processes_confidential_or_ip_data": true,
+      "interacts_directly_with_public": true,
+      "makes_autonomous_decisions_affecting_humans": false,
+      "generates_code_or_executable_artifacts": false,
+      "uses_external_third_party_models_apis": true,
+      "uses_fine_tuning_or_custom_weights": false,
+      "operates_in_safety_critical_context": false
+    },
+    "data_classifications": [
+      "internal",
+      "confidential",
+      "restricted_pii"
+    ],
+    "target_geographies": [
+      "US",
+      "EU"
+    ],
+    "target_sectors": [
+      "technology",
+      "financial_services"
+    ]
+  },
+  "components": {
+    "models": [
+      {
+        "name": "claude-3-5-sonnet",
+        "version": "20241022",
+        "provider": "Anthropic",
+        "source_type": "third_party_saas",
+        "uri_or_registry_id": "api.anthropic.com/v1"
+      }
+    ],
+    "agent_tools": [
+      {
+        "tool_id": "customer_order_lookup",
+        "description": "Look up customer orders and delivery status",
+        "schema_uri": "schemas/tools/customer_order_lookup.json",
+        "execution_mode": "read_only"
+      }
+    ],
+    "knowledge_stores": [
+      {
+        "store_id": "support_kb_vector_db",
+        "store_type": "vector_database",
+        "data_classification": "internal"
+      }
+    ]
+  },
+  "governance_bindings": {
+    "baseline_version_pin": "v0.1.0-draft",
+    "overlay_pins": [
+      {
+        "overlay_id": "ORG-OVL-GEO-EU-001",
+        "version_pin": "0.1.0-draft"
+      }
+    ],
+    "active_exceptions": []
+  },
+  "model_id": "claude-3-5-sonnet-20241022",
+  "total_test_cases": 250,
+  "accuracy_score": 0.94,
+  "hallucination_rate": 0.015,
+  "toxicity_score": 0.002,
+  "accessibility_violations": 0,
+  "max_recursion_steps": 4,
+  "drift_psi_score": 0.08,
+  "peak_task_tokens": 12500,
+  "record_id": "ORG-EVD-2026-0001",
+  "artifact_payload": {
+    "sha256_digest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}

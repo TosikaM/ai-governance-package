@@ -1,0 +1,89 @@
+# ==============================================================================
+# EU AI Act High-Risk System Specialization Overlay
+# ==============================================================================
+# Schema: schemas/overlay.schema.json (JSON Schema Draft 2020-12)
+# Category: geography
+# ==============================================================================
+
+id: "ORG-OVL-GEO-EU-001"
+title: "EU AI Act High-Risk System Specialization Overlay"
+category: "geography"
+
+target_scope:
+  applicability_summary: "Applies to AI systems deployed within the European Union or placing outputs on the EU market classified as High Risk under Regulation (EU) 2024/1689."
+  jurisdictions:
+    - "EU"
+  sectors:
+    - "all"
+  risk_tiers:
+    - "tier_3_high"
+    - "tier_4_critical"
+  ai_types:
+    - "generative_llm"
+    - "rag_system"
+    - "autonomous_agent"
+    - "predictive_tabular"
+
+baseline_compatibility: ">=0.1.0 <2.0.0"
+
+citations:
+  - source_title: "Regulation (EU) 2024/1689 (EU AI Act)"
+    citation_reference: "Article 15 (Accuracy, Robustness and Cybersecurity)"
+    url: "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32024R1689"
+    publication_date_or_version: "2024-07-12"
+    verification_status: "verified"
+  - source_title: "Regulation (EU) 2024/1689 (EU AI Act)"
+    citation_reference: "Annex IV (Technical Documentation referred to in Article 11(1))"
+    url: "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32024R1689"
+    publication_date_or_version: "2024-07-12"
+    verification_status: "verified"
+  - source_title: "Regulation (EU) 2024/1689 (EU AI Act)"
+    citation_reference: "Article 14 (Human Oversight) & Article 50 (Transparency Obligations)"
+    url: "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32024R1689"
+    publication_date_or_version: "2024-07-12"
+    verification_status: "verified"
+
+legal_review_status: "PENDING_QUALIFIED_LEGAL_REVIEW"
+
+rules:
+  - rule_id: "R01"
+    target_control_id: "ORG-CTL-ROB-003"
+    action: "tighten_parameter"
+    parameter_tightening:
+      parameter_name: "max_hallucination_rate"
+      new_value: 0.02
+      direction: "lower_is_stricter"
+    rationale: "Article 15(1) mandates high-risk systems achieve consistently high accuracy and resilience against errors; hallucination rate ceiling tightened from baseline 0.05 to 0.02."
+
+  - rule_id: "R02"
+    target_control_id: "ORG-CTL-ROB-003"
+    action: "require_additional_evidence"
+    additional_evidence:
+      - artifact_type: "eu_conformity_assessment_dossier"
+        description: "Technical documentation dossier verifying benchmark evaluation test suites as required under Annex IV Section 2."
+        format: "pdf"
+    rationale: "Annex IV technical documentation mandates detailed descriptions of validation metrics and pre-market benchmark verification."
+
+  - rule_id: "R03"
+    target_control_id: "ORG-CTL-HUM-004"
+    action: "upgrade_mode"
+    upgraded_mode: "blocking"
+    rationale: "Article 14(4)(b) mandates that overseers remain aware of automation bias; oversight tracking cannot remain advisory for high-risk deployments."
+
+  - rule_id: "R04"
+    target_control_id: "ORG-CTL-TRN-001"
+    action: "restrict_exception"
+    restrict_exception:
+      disallow_exceptions: true
+      additional_mandatory_compensations:
+        - "Immediate incident reporting to Lead EU AI Regulatory Counsel if automated watermarking undergoes failure."
+    rationale: "Article 50 statutory transparency and AI disclosure obligations are binding Union law and cannot be waived via internal exception."
+
+conflict_resolution:
+  default_behavior: "UNRESOLVED_CONFLICT_HALT"
+  resolution_escalation_path: "Enterprise AI Safety Review Board and Legal Counsel"
+
+owner_placeholder: "[ROLE: EU Regulatory Compliance Lead]"
+review_date_placeholder: "[YYYY-MM-DD]"
+version: "0.1.0-draft"
+status: "DRAFT"

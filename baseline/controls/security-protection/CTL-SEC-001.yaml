@@ -1,0 +1,56 @@
+id: "ORG-CTL-SEC-001"
+title: "Direct and Indirect Prompt Injection Defensive Guardrails"
+objective: "Protect generative AI interfaces, conversational endpoints, and data ingestion pipelines from direct jailbreaks and indirect prompt injection attacks through input sanitization, delimiter isolation, and guardrail classifier sidecars."
+domain: "security_attack_mitigation"
+type: "universal"
+
+applicability_condition:
+  predicate_type: "always"
+  description: "Universal control applying to all systems deploying Large Language Models or processing unstructured natural language inputs."
+
+lifecycle_stages:
+  - "evaluation_validation"
+  - "deployment_admission"
+  - "runtime_operation"
+
+enforcement_points:
+  - "ci_build_pipeline"
+  - "api_gateway_sidecar"
+  - "deployment_admission_controller"
+
+check_type: "automated"
+mode: "blocking"
+
+evidence_required:
+  - artifact_type: "injection_resilience_test_report"
+    description: "Automated security test report verifying that standard adversarial prompt injection benchmarks (e.g. JailbreakBench) are dropped with zero compromise."
+    format: "json"
+    retention_period_years: 7
+
+exception_eligibility:
+  eligible: true
+  statutory_prohibition: false
+  minimum_compensating_controls:
+    - "Model runs isolated with zero external tool access, zero internet egress, and strict output length caps."
+
+reference_mappings:
+  - framework: "OWASP Top 10 for LLM Applications (2025)"
+    clause_or_section: "LLM01:2025"
+    citation_title: "Prompt Injection"
+    mapping_status: "verified"
+    notes: "Direct mitigation for direct and indirect prompt injection threats."
+  - framework: "NIST AI 600-1 (GenAI Profile)"
+    clause_or_section: "PROTECT 1.2"
+    citation_title: "Mitigation of adversarial attacks against generative AI models"
+    mapping_status: "verified"
+    notes: "Specifies defensive mechanisms against jailbreak and injection manipulation."
+  - framework: "ISO/IEC 42001:2023"
+    clause_or_section: "Annex A.8.1"
+    citation_title: "Security controls for AI system input processing"
+    mapping_status: "verified"
+    notes: "Requires defensive handling of untrusted inputs in AI systems."
+
+owner_placeholder: "[ROLE: AI Application Security Lead]"
+review_date_placeholder: "[YYYY-MM-DD]"
+version: "1.0.0"
+status: "DRAFT"

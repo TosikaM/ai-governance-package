@@ -1,0 +1,75 @@
+# ==============================================================================
+# Policy-as-Code Rules: Domain 10 - Transparency & Disclosure (TRN)
+# ==============================================================================
+# Schema: policy-as-code/rule-schema.json
+# Baseline Controls: ORG-CTL-TRN-001, ORG-CTL-TRN-002, ORG-CTL-TRN-003, ORG-CTL-TRN-004
+# ==============================================================================
+
+schema_version: "1.0.0"
+domain: "transparency_disclosure"
+owner_placeholder: "[ROLE: Enterprise Transparency & Model Risk Lead]"
+review_date_placeholder: "[YYYY-MM-DD]"
+status: "DRAFT"
+
+rules:
+  # ----------------------------------------------------------------------------
+  # Control: ORG-CTL-TRN-001 - Public Interaction Disclosure Check
+  # ----------------------------------------------------------------------------
+  - rule_id: "PAC-TRN-001"
+    target_control_id: "ORG-CTL-TRN-001"
+    title: "Conspicuous AI Disclosure Attestation"
+    description: "Verifies that public-facing systems have declared customer transparency mechanisms."
+    enforcement_points:
+      - "ci_build_pipeline"
+      - "deployment_admission_controller"
+    mode: "blocking"
+    input_context:
+      - "ai_project_manifest"
+    assertions:
+      - assertion_id: "A01"
+        description: "Project description must be documented."
+        field_path: "description"
+        operator: "not_empty"
+        failure_message: "System description must be populated for disclosure records."
+    remediation: "Document AI system capabilities and user disclosure statements in project documentation."
+    reference_rego: |
+      # verify against current documentation
+      package ai_governance.trn001
+      default allow = false
+      allow {
+          count(input.description) > 0
+      }
+
+  # ----------------------------------------------------------------------------
+  # Control: ORG-CTL-TRN-004 - Model Card Publication Verification
+  # ----------------------------------------------------------------------------
+  - rule_id: "PAC-TRN-004"
+    target_control_id: "ORG-CTL-TRN-004"
+    title: "Registered Model Metadata Verification"
+    description: "Verifies that all primary models declare name, version, and provider."
+    enforcement_points:
+      - "model_registry_admission"
+      - "ci_build_pipeline"
+    mode: "blocking"
+    input_context:
+      - "ai_project_manifest"
+    assertions:
+      - assertion_id: "A01"
+        description: "Model name must be specified."
+        field_path: "components.models.0.name"
+        operator: "not_empty"
+        failure_message: "Primary model name is missing."
+      - assertion_id: "A02"
+        description: "Model version must be specified."
+        field_path: "components.models.0.version"
+        operator: "not_empty"
+        failure_message: "Primary model version is missing."
+    remediation: "Ensure components.models contains complete model card metadata (name, version, provider)."
+    reference_rego: |
+      # verify against current documentation
+      package ai_governance.trn004
+      default allow = false
+      allow {
+          input.components.models[0].name != ""
+          input.components.models[0].version != ""
+      }

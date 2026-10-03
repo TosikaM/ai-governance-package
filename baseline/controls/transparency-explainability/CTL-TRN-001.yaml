@@ -1,0 +1,58 @@
+id: "ORG-CTL-TRN-001"
+title: "Conspicuous AI Interaction Disclosure"
+objective: "Ensure that end-users interacting with a conversational chatbot, voice agent, or synthetic persona are explicitly and conspicuously notified of the AI nature of the system at the start of the interaction."
+domain: "transparency_disclosure"
+type: "conditional"
+
+applicability_condition:
+  predicate_type: "manifest_property_match"
+  manifest_path: "ai_system_profile.declared_characteristics.interacts_directly_with_public"
+  operator: "is_true"
+  target_value: true
+  description: "Applies to any AI system directly interfacing with customers, employees, or members of the public."
+
+lifecycle_stages:
+  - "integration_ci_cd"
+  - "deployment_admission"
+
+enforcement_points:
+  - "pull_request_check"
+  - "ci_build_pipeline"
+  - "deployment_admission_controller"
+
+check_type: "automated"
+mode: "blocking"
+
+evidence_required:
+  - artifact_type: "disclosure_ui_verification_report"
+    description: "Automated end-to-end browser/API test log verifying that conversational sessions begin with clear synthetic AI disclosure text."
+    format: "json"
+    retention_period_years: 5
+
+exception_eligibility:
+  eligible: false
+  statutory_prohibition: true
+  minimum_compensating_controls:
+    - "No exceptions permitted. Deceptive human impersonation constitutes a direct statutory violation."
+
+reference_mappings:
+  - framework: "EU AI Act Regulation (EU) 2024/1689"
+    clause_or_section: "Article 50(1)"
+    citation_title: "Transparency obligations - AI systems intended to interact directly with natural persons"
+    mapping_status: "verified"
+    notes: "Mandates that providers design AI systems so natural persons are informed they are interacting with AI."
+  - framework: "ISO/IEC 42001:2023"
+    clause_or_section: "Clause 8.4"
+    citation_title: "AI system transparency and explainability"
+    mapping_status: "verified"
+    notes: "Requires appropriate transparency regarding AI operation to affected stakeholders."
+  - framework: "NIST AI RMF 1.0"
+    clause_or_section: "GOVERN 1.2"
+    citation_title: "Transparency and disclosure mechanisms are operationalized."
+    mapping_status: "verified"
+    notes: "Direct mandate for user disclosure across customer interaction touchpoints."
+
+owner_placeholder: "[ROLE: Enterprise Customer Trust & UX Lead]"
+review_date_placeholder: "[YYYY-MM-DD]"
+version: "1.0.0"
+status: "DRAFT"

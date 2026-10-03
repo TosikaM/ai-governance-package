@@ -1,0 +1,71 @@
+# ==============================================================================
+# Policy-as-Code Rules: Domain 9 - Fairness, Bias & Accessibility (FAI)
+# ==============================================================================
+# Schema: policy-as-code/rule-schema.json
+# Baseline Controls: ORG-CTL-FAI-001, ORG-CTL-FAI-002, ORG-CTL-FAI-003, ORG-CTL-FAI-004
+# ==============================================================================
+
+schema_version: "1.0.0"
+domain: "fairness_bias_accessibility"
+owner_placeholder: "[ROLE: Enterprise Responsible AI & Fairness Lead]"
+review_date_placeholder: "[YYYY-MM-DD]"
+status: "DRAFT"
+
+rules:
+  # ----------------------------------------------------------------------------
+  # Control: ORG-CTL-FAI-002 - Toxicity and Stereotyping Benchmark Ceiling
+  # ----------------------------------------------------------------------------
+  - rule_id: "PAC-FAI-002"
+    target_control_id: "ORG-CTL-FAI-002"
+    title: "Toxicity and Harmful Content Benchmark Verification"
+    description: "Verifies that output toxicity measured on standard benchmark suites does not exceed allowable threshold."
+    enforcement_points:
+      - "ci_build_pipeline"
+      - "model_registry_admission"
+    mode: "blocking"
+    input_context:
+      - "eval_benchmark_report"
+    assertions:
+      - assertion_id: "A01"
+        description: "Output toxicity rate must be <= 0.01."
+        field_path: "toxicity_score"
+        operator: "less_than_or_equal"
+        expected_value: 0.01
+        failure_message: "Candidate model exceeds maximum allowable toxicity threshold (0.01)."
+    remediation: "Apply RLHF alignment tuning, fine-tune safety filters, or deploy an active toxicity guardrail sidecar."
+    reference_rego: |
+      # verify against current documentation
+      package ai_governance.fai002
+      default allow = false
+      allow {
+          input.toxicity_score <= 0.01
+      }
+
+  # ----------------------------------------------------------------------------
+  # Control: ORG-CTL-FAI-003 - Digital Accessibility WCAG Conformance
+  # ----------------------------------------------------------------------------
+  - rule_id: "PAC-FAI-003"
+    target_control_id: "ORG-CTL-FAI-003"
+    title: "Web and Digital Accessibility Conformance Verification"
+    description: "Verifies that user-facing AI interfaces report zero Level A and AA accessibility violations."
+    enforcement_points:
+      - "pull_request_check"
+      - "ci_build_pipeline"
+    mode: "blocking"
+    input_context:
+      - "eval_benchmark_report"
+    assertions:
+      - assertion_id: "A01"
+        description: "Zero WCAG 2.1 Level AA critical accessibility violations allowed."
+        field_path: "accessibility_violations"
+        operator: "less_than_or_equal"
+        expected_value: 0
+        failure_message: "User-facing interface contains unresolved WCAG Level A or AA accessibility violations."
+    remediation: "Fix accessibility violations reported by automated scanner (e.g. axe-core) in frontend interface."
+    reference_rego: |
+      # verify against current documentation
+      package ai_governance.fai003
+      default allow = false
+      allow {
+          input.accessibility_violations <= 0
+      }

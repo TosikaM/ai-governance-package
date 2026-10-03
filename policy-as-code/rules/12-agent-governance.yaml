@@ -1,0 +1,104 @@
+# ==============================================================================
+# Policy-as-Code Rules: Domain 12 - Agent Autonomy & Guardrails (AGT)
+# ==============================================================================
+# Schema: policy-as-code/rule-schema.json
+# Baseline Controls: ORG-CTL-AGT-001, ORG-CTL-AGT-002, ORG-CTL-AGT-003, ORG-CTL-AGT-004
+# ==============================================================================
+
+schema_version: "1.0.0"
+domain: "agent_autonomy_guardrails"
+owner_placeholder: "[ROLE: Principal Agent Architect]"
+review_date_placeholder: "[YYYY-MM-DD]"
+status: "DRAFT"
+
+rules:
+  # ----------------------------------------------------------------------------
+  # Control: ORG-CTL-AGT-001 - Outside-the-Model PEP Enforcement Check
+  # ----------------------------------------------------------------------------
+  - rule_id: "PAC-AGT-001"
+    target_control_id: "ORG-CTL-AGT-001"
+    title: "Agent External Policy Enforcement Boundary Check"
+    description: "Verifies that autonomous agents declare tool execution and enforce schema URIs outside the model."
+    enforcement_points:
+      - "ci_build_pipeline"
+      - "deployment_admission_controller"
+    mode: "blocking"
+    input_context:
+      - "ai_project_manifest"
+    assertions:
+      - assertion_id: "A01"
+        description: "Registered tools must declare valid schema_uri."
+        field_path: "components.agent_tools.0.schema_uri"
+        operator: "not_empty"
+        failure_message: "Registered agent tool is missing required schema_uri definition."
+    remediation: "Declare a valid schema_uri for every tool in components.agent_tools of ai-project-manifest.yaml."
+    reference_rego: |
+      # verify against current documentation
+      package ai_governance.agt001
+      default allow = false
+      allow {
+          input.components.agent_tools[0].schema_uri != ""
+      }
+
+  # ----------------------------------------------------------------------------
+  # Control: ORG-CTL-AGT-003 - Strict Tool-Call Schema Registration
+  # ----------------------------------------------------------------------------
+  - rule_id: "PAC-AGT-003"
+    target_control_id: "ORG-CTL-AGT-003"
+    title: "Tool Identifier and Parameter Schema Registration"
+    description: "Verifies that each agent tool has a unique tool_id and description."
+    enforcement_points:
+      - "pull_request_check"
+      - "ci_build_pipeline"
+    mode: "blocking"
+    input_context:
+      - "ai_project_manifest"
+    assertions:
+      - assertion_id: "A01"
+        description: "tool_id must be declared."
+        field_path: "components.agent_tools.0.tool_id"
+        operator: "not_empty"
+        failure_message: "Agent tool is missing required tool_id."
+      - assertion_id: "A02"
+        description: "tool description must be declared."
+        field_path: "components.agent_tools.0.description"
+        operator: "not_empty"
+        failure_message: "Agent tool is missing description."
+    remediation: "Ensure all registered tools have complete tool_id and description metadata."
+    reference_rego: |
+      # verify against current documentation
+      package ai_governance.agt003
+      default allow = false
+      allow {
+          input.components.agent_tools[0].tool_id != ""
+          input.components.agent_tools[0].description != ""
+      }
+
+  # ----------------------------------------------------------------------------
+  # Control: ORG-CTL-AGT-004 - Recursion Depth & Step Throttling SLA Check
+  # ----------------------------------------------------------------------------
+  - rule_id: "PAC-AGT-004"
+    target_control_id: "ORG-CTL-AGT-004"
+    title: "Agent Execution Depth and Kill Switch Verification"
+    description: "Verifies that autonomous agents execute with bounded recursion steps and kill switch SLA."
+    enforcement_points:
+      - "ci_build_pipeline"
+      - "deployment_admission_controller"
+    mode: "blocking"
+    input_context:
+      - "eval_benchmark_report"
+    assertions:
+      - assertion_id: "A01"
+        description: "Measured max recursion steps in tests must not exceed 25."
+        field_path: "max_recursion_steps"
+        operator: "less_than_or_equal"
+        expected_value: 25
+        failure_message: "Agent recursion depth exceeded allowable safety ceiling (25 steps)."
+    remediation: "Enforce strict recursion circuit breaker at runtime limiting execution steps."
+    reference_rego: |
+      # verify against current documentation
+      package ai_governance.agt004
+      default allow = false
+      allow {
+          input.max_recursion_steps <= 25
+      }

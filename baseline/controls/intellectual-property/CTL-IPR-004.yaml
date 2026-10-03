@@ -1,0 +1,57 @@
+id: "ORG-CTL-IPR-004"
+title: "AI-Assisted Code Secret and Vulnerability Security Gate"
+objective: "Subject all AI-generated code to automated Static Application Security Testing (SAST) and hardcoded secret scanning before merging to prevent the introduction of synthetic vulnerabilities or leaked credentials."
+domain: "intellectual_property_licensing"
+type: "conditional"
+
+applicability_condition:
+  predicate_type: "manifest_property_match"
+  manifest_path: "ai_system_profile.declared_characteristics.generates_code_or_executable_artifacts"
+  operator: "is_true"
+  target_value: true
+  description: "Applies to software repositories utilizing generative AI or autonomous agents for code generation."
+
+lifecycle_stages:
+  - "integration_ci_cd"
+
+enforcement_points:
+  - "pre_commit_hook"
+  - "pull_request_check"
+  - "ci_build_pipeline"
+
+check_type: "automated"
+mode: "blocking"
+
+evidence_required:
+  - artifact_type: "sast_security_scan_report"
+    description: "SARIF report from SAST and secret scanner confirming zero detected API tokens, private keys, or high-severity code weaknesses."
+    format: "sarif_json"
+    retention_period_years: 5
+
+exception_eligibility:
+  eligible: true
+  statutory_prohibition: false
+  minimum_compensating_controls:
+    - "Documented false-positive sign-off by Application Security Engineer in SAST tool."
+
+reference_mappings:
+  - framework: "OWASP Top 10 for LLM Applications (2025)"
+    clause_or_section: "LLM05:2025"
+    citation_title: "Improper Output Handling"
+    mapping_status: "verified"
+    notes: "Requires vulnerability analysis on synthesized code prior to build and deployment."
+  - framework: "NIST AI RMF 1.0"
+    clause_or_section: "PROTECT 1.1"
+    citation_title: "Application security practices protect AI-assisted code pipelines."
+    mapping_status: "verified"
+    notes: "Integrates SAST and secret scanning into AI-assisted development."
+  - framework: "ISO/IEC 42001:2023"
+    clause_or_section: "Annex A.8.1"
+    citation_title: "Security testing of AI software outputs"
+    mapping_status: "verified"
+    notes: "Mandates security verification of software artifacts produced with AI."
+
+owner_placeholder: "[ROLE: Application Security Lead]"
+review_date_placeholder: "[YYYY-MM-DD]"
+version: "1.0.0"
+status: "DRAFT"

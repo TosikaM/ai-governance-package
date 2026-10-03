@@ -1,0 +1,59 @@
+id: "ORG-CTL-ROB-004"
+title: "Out-of-Distribution Perturbation and Stress Testing"
+objective: "Evaluate the behavioral resilience, graceful error handling, and degradation boundaries of Moderate and High Risk AI systems under perturbed, noisy, malformed, or extreme out-of-distribution operational inputs."
+domain: "robustness_evaluation_testing"
+type: "conditional"
+
+applicability_condition:
+  predicate_type: "manifest_property_match"
+  manifest_path: "ai_system_profile.risk_tier"
+  operator: "in"
+  target_value:
+    - "tier_2_moderate"
+    - "tier_3_high"
+  description: "Applies to systems categorized as Moderate Risk (Tier 2) or High Risk (Tier 3)."
+
+lifecycle_stages:
+  - "evaluation_validation"
+  - "deployment_admission"
+
+enforcement_points:
+  - "ci_build_pipeline"
+  - "deployment_admission_controller"
+
+check_type: "automated"
+mode: "blocking"
+
+evidence_required:
+  - artifact_type: "stress_test_evaluation_report"
+    description: "Automated report documenting test results under semantic perturbations, character mutations, token truncations, and distributional shifts."
+    format: "json"
+    retention_period_years: 7
+
+exception_eligibility:
+  eligible: true
+  statutory_prohibition: false
+  minimum_compensating_controls:
+    - "Input length and character set whitelisting strictly enforced at API gateway."
+
+reference_mappings:
+  - framework: "NIST AI RMF 1.0"
+    clause_or_section: "MEASURE 2.7"
+    citation_title: "AI systems are evaluated for robustness under unexpected or perturbed conditions."
+    mapping_status: "verified"
+    notes: "Requires formal stress testing across out-of-distribution operating spaces."
+  - framework: "EU AI Act Regulation (EU) 2024/1689"
+    clause_or_section: "Article 15(1)"
+    citation_title: "Resilience of high-risk AI against errors and inconsistencies"
+    mapping_status: "verified"
+    notes: "Mandates technical solutions to ensure systems are resilient against errors and unexpected inputs."
+  - framework: "ISO/IEC 23894:2023"
+    clause_or_section: "Clause 7.4"
+    citation_title: "Robustness and resilience risk treatment"
+    mapping_status: "verified"
+    notes: "Provides risk management controls for handling AI system distribution shift and perturbations."
+
+owner_placeholder: "[ROLE: AI Robustness Engineering Lead]"
+review_date_placeholder: "[YYYY-MM-DD]"
+version: "1.0.0"
+status: "DRAFT"

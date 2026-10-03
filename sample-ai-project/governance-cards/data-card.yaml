@@ -1,0 +1,10 @@
+# Standard Data Card
+dataset_details:
+  dataset_id: "DAT-SAMPLE-AI-PROJECT-01"
+  dataset_name: "sample-ai-project Training & Context Corpus"
+  contains_pii: true
+  sanitization_applied: true
+  retention_period_years: 5
+licensing:
+  copyright_cleared: true
+  reciprocal_copyleft_free: true

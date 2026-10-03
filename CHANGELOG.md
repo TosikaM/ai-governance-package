@@ -1,0 +1,204 @@
+# Changelog
+
+All notable changes to the Enterprise AI Governance Package will be documented in this file.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+---
+
+## [Unreleased]
+
+### Planned
+- Enterprise AI Safety & Governance Review Board formal ratification for v1.0.0 release.
+
+---
+
+## [0.1.0-draft] - 2026-10-02
+
+### Added
+- **Module M9 Package Audit:**
+  - `docs/audit/package-coverage-audit.md`: Formal pre-release quality and coverage audit (`ORG-AUD-M9-001`) evaluating 100% deliverable completeness across all modules M0 to M8, 16/16 baseline domain mapping, architectural invariants verification (baseline immutability, monotonicity, outside-the-model PEP, tool neutrality), borderline placement justifications log, technical debt analysis, and comprehensive human review/ratification register.
+- **Module M8 Adoption Documentation:**
+  - `README.md`: Official repository README providing executive overview, 3-tier architecture diagram, directory index with clickable links, 5-minute developer quickstart, operating model RACI, and core governance invariants.
+  - `docs/onboarding-guide.md`: Comprehensive persona-based onboarding guide covering roles, 5-phase onboarding workflow, manifest authoring, snapshot resolution, pipeline and runtime gate integration, exception filing, and operational FAQ (`ORG-DOC-ONBOARD-001`).
+  - `docs/contribution-change-control.md`: Formal governance change-control policy covering core architectural invariants, SemVer classifications (Major, Minor, Patch), 5-stage Governance RFC lifecycle, permanent ID scheme immutability, and pre-merge validation checklists (`ORG-DOC-CHG-001`).
+  - `docs/lifecycle-procedures.md`: Standard operating procedure detailing release management with cryptographic signing, multi-stage version deprecation (Deprecated, Restricted, End-of-Life), rapid rollback protocols, and 4-hour emergency revocation / agent break-glass procedures (`ORG-DOC-LIFE-001`).
+- **Module M7 Evidence & Assessment Templates:**
+  - `templates/ai-impact-assessment.template.md`: Comprehensive Algorithmic Impact Assessment (AIIA) template covering business objectives, out-of-scope boundaries, fundamental rights risk evaluation, data governance lineage, technical robustness metrics, human oversight paradigms, and executive sign-off tables (`ORG-CTL-RSK-002`).
+  - `templates/risk-register-entry.template.yaml`: Standardized AI Risk Register entry template for recording threat scenarios, inherent/residual severity ratings, baseline control mappings, and automated telemetry alerts.
+  - `templates/model-card.template.yaml`: Standardized Model Card adhering to ISO/IEC 42001 and NIST AI RMF, documenting model architecture, training summary, evaluation benchmarks, known failure modes, and governance attestations (`ORG-CTL-TRN-004`).
+  - `templates/data-card.template.yaml`: Standardized Data Card for training, fine-tuning, and RAG knowledge vector corpora detailing collection provenance, PII sanitization pipelines, language representation, IP copyright clearance, and retention schedules (`ORG-CTL-DAT-001`, `ORG-CTL-IPR-001`).
+  - `templates/agent-tool-registry.template.yaml`: Standardized Agent & Tool Registry entry template defining machine identity (SPIFFE ID), operational bounds, execution modes (`read_only` vs `destructive_write_requires_approval`), JSON schemas, and outside-the-model PEP configurations (`ORG-CTL-AGT-001` through `004`).
+  - `templates/incident-report.template.md`: Standardized AI Safety & Security Incident Report form covering severity triage (P1–P4), timeline reconstruction, 5-Whys root cause analysis, blast radius evaluation, and corrective actions (`ORG-CTL-MON-004`).
+  - `templates/evidence-record.template.json`: Automated verifiable evidence record template conforming strictly to `schemas/evidence-record.schema.json` with execution context, evaluator metadata, quantitative measurements, artifact digests, and cryptographic attestations (`ORG-CTL-REC-001`).
+  - `templates/retirement-checklist.template.md`: Comprehensive AI System Retirement and Decommissioning Checklist verifying advance 90-day deprecation notices, ingress teardown, credential revocation, vector index purging, model weight cold archival, and lifecycle status closure (`ORG-CTL-RET-001` through `004`).
+- **Module M6 Pipeline & Runtime Plug-ins:**
+  - `plugins/pre-commit/pre-commit-config.template.yaml`: Reusable `.pre-commit-config.yaml` template configuring advisory local developer workstation hooks for manifest validation, AI secret detection, and insecure weight serialization prevention.
+  - `plugins/pre-commit/scan_secrets.py`: Local advisory script detecting plain-text API keys (OpenAI, Anthropic, HuggingFace, generic AI gateway bearer tokens).
+  - `plugins/pull-request/pr-governance-gate.yaml`: Authoritative, blocking CI pull request workflow template executing deterministic snapshot resolution, policy-as-code evaluations, and AI code review gates.
+  - `plugins/pull-request/ai_code_review_gate.py`: PR gate enforcing human peer-review sign-offs on AI-generated software (`ORG-CTL-IPR-002`) and scanning for reciprocal copyleft licenses (`ORG-CTL-IPR-003`).
+  - `plugins/cicd-gates/build_pipeline_gate.py`: Authoritative build and test pipeline barrier verifying snapshot integrity, evaluating benchmark accuracy, hallucination, and toxicity thresholds (`ORG-CTL-ROB-003`, `ORG-CTL-FAI-002`), and generating signed evidence records (`ORG-CTL-REC-001`).
+  - `plugins/model-registry/promotion_gate.py`: CT and model registry promotion barrier enforcing safe serialization (`safetensors`/`ONNX`, `ORG-CTL-SUP-003`), computing SHA-256 model digests, and verifying model card metadata (`ORG-CTL-TRN-004`).
+  - `plugins/admission-controller/admission_webhook.py`: Production deployment admission controller service (Kubernetes / container runtime) verifying cryptographic Cosign signatures (`ORG-CTL-REC-003`), blocking Tier 4 Unacceptable Risk systems (`ORG-CTL-USE-001`), and verifying snapshot hash annotations.
+  - `plugins/agent-interceptor/agent_pep_proxy.py`: Outside-the-model runtime Policy Enforcement Point (PEP) proxy intercepting autonomous agent tool calls and MCP executions. Enforces machine identity tokens (`ORG-CTL-AGT-002`), strict JSON schema parameter validation (`ORG-CTL-AGT-003`), dual-key human authorization on destructive actions (`ORG-CTL-HUM-002`), bounded recursion limits, and instantaneous out-of-band kill switches (`ORG-CTL-AGT-004`).
+  - `plugins/api-gateway/gateway_sidecar_spec.yaml`: Declarative Envoy / API gateway sidecar policy specification enforcing approved enterprise egress routing (`ORG-CTL-USE-002`), real-time PII detection and redaction (`ORG-CTL-DAT-002`), prompt injection defensive guardrails (`ORG-CTL-SEC-001`), and monthly FinOps token budgets (`ORG-CTL-CST-001`).
+- **Module M5 Policy-as-Code:**
+  - `policy-as-code/rule-schema.json`: Formal JSON Schema (Draft 2020-12) specifying declarative Policy-as-Code rules, enforcement points, assertion operators, and reference translation patterns.
+  - `policy-as-code/engine.py`: Standalone, tool-neutral Python evaluation engine for mechanically checkable rules supporting assertion operators (`exists`, `equals`, `less_than_or_equal`, `greater_than_or_equal`, `in`, `regex_match`, `is_valid_email`, `is_valid_sha256`, `is_valid_semver`).
+  - `policy-as-code/rules/`: Complete suite of 16 domain rule files implementing mechanically verifiable checks across all 61 baseline controls:
+    - `01-accountability-inventory.yaml` (`PAC-ACC-001`, `002`, `003`)
+    - `02-acceptable-use-literacy.yaml` (`PAC-USE-001`, `002`, `003`)
+    - `03-risk-classification.yaml` (`PAC-RSK-001`, `002`, `003`)
+    - `04-data-governance.yaml` (`PAC-DAT-001`, `002`, `003`, `004`)
+    - `05-supply-chain.yaml` (`PAC-SUP-001`, `002`, `003`, `004`)
+    - `06-intellectual-property.yaml` (`PAC-IPR-001`, `002`, `003`)
+    - `07-security-protection.yaml` (`PAC-SEC-001`, `002`, `003`)
+    - `08-robustness-testing.yaml` (`PAC-ROB-001`, `003`)
+    - `09-fairness-accessibility.yaml` (`PAC-FAI-002`, `003`)
+    - `10-transparency-disclosure.yaml` (`PAC-TRN-001`, `004`)
+    - `11-human-oversight.yaml` (`PAC-HUM-001`, `002`)
+    - `12-agent-governance.yaml` (`PAC-AGT-001`, `003`, `004`)
+    - `13-monitoring-incidents.yaml` (`PAC-MON-001`, `003`)
+    - `14-cost-resources.yaml` (`PAC-CST-001`, `003`)
+    - `15-evidence-recordkeeping.yaml` (`PAC-REC-001`, `002`)
+    - `16-retirement.yaml` (`PAC-RET-001`)
+  - `policy-as-code/tests/`: Automated unit test suite with test runner (`test_runner.py`), passing context fixture (`pass_context.json`), and non-compliant failing context fixture (`fail_context.json`). Verified 100% pass on compliant context and detected 36 blocking violations on failing context.
+- **Module M4 Project Integration Kit:**
+  - `project-kit/ai-project-manifest.template.yaml`: Production-ready project governance declaration template conforming to `schemas/project-manifest.schema.json` with comprehensive inline documentation covering system archetype, operational characteristics, component inventory, and pinned governance bindings.
+  - `project-kit/resolver/resolver-spec.md`: Formal specification of the Deterministic Policy Snapshot Resolver Engine detailing input ingestion, predicate evaluation logic, monotonic overlay merging, conflict detection (`UNRESOLVED_CONFLICT_HALT`), and cryptographic SHA-256 integrity hashing.
+  - `project-kit/resolver/resolve.py`: Standalone, tool-neutral Python reference implementation executing deterministic policy resolution, predicate evaluation, monotonic overlay merging, unexpired exception application, and JSON snapshot serialization. Tested and verified on sample manifests.
+  - `project-kit/exception-request.template.yaml`: Standardized variance request template conforming to `schemas/exception.schema.json`, enforcing mandatory compensating technical controls, risk assessment ratings, time-limited expirations (max 180 days), and the statutory non-waiver disclaimer certification.
+  - `project-kit/quickstart.md`: Concise 5-step adoption guide for AI project leads and engineering teams covering manifest initialization, overlay binding, snapshot resolution, CI/CD gate wiring, and exception management.
+  - Validated 100% of integration kit templates and executed end-to-end resolution tests generating cryptographically signed snapshots.
+- **Module M3 Overlay Framework & Contextual Specializations:**
+  - `docs/overlay-framework.md`: Comprehensive specification for overlay architecture, typed merge algebra, monotonicity invariant, directional numerical merging, subset intersection, and deterministic conflict resolution halting.
+  - `overlays/overlay.template.yaml`: Reusable authoring template with extensive guidance comments for authoring new overlays across geography, sector, risk-tier, AI-type, or contractual domains.
+  - `overlays/geography/eu-ai-act/overlay.yaml` (`ORG-OVL-GEO-EU-001`): Geographic overlay specializing EU AI Act (Regulation (EU) 2024/1689) obligations for High-Risk systems; tightens `ORG-CTL-ROB-003` hallucination rate ceiling to 0.02, mandates Annex IV conformity dossier evidence, upgrades automation bias monitoring (`ORG-CTL-HUM-004`) to blocking, and restricts exceptions for statutory watermarking (`ORG-CTL-TRN-001`).
+  - `overlays/sector/financial-services/overlay.yaml` (`ORG-OVL-SEC-FIN-001`): Sectoral overlay specializing Federal Reserve SR 11-7, CFPB Circular 2022-03 (ECOA Reg B), and EBA GL/2020/06; upgrades adverse action explainability (`ORG-CTL-TRN-003`) to blocking and forbids exceptions, tightens baseline evidence retention (`ORG-CTL-REC-004`) to 7 years, and mandates independent fair lending compliance attestation (`ORG-CTL-FAI-001`).
+  - `overlays/risk-tier/tier-3-high/overlay.yaml` (`ORG-OVL-RSK-TIER3-001`): Risk-tier overlay specializing ISO/IEC 42001 and NIST AI RMF for Tier 3 High-Risk deployments; upgrades automation bias monitoring (`ORG-CTL-HUM-004`) to blocking, accelerates drift evaluation cadence (`ORG-CTL-MON-003`) to 6 hours and tightens PSI threshold to 0.15 with upgraded review mode, and mandates executive CRO/CISO risk acceptance dossiers.
+  - `overlays/ai-type/autonomous-agents/overlay.yaml` (`ORG-OVL-ARC-AGENT-001`): AI architectural archetype overlay specializing OWASP Top 10 LLM06 and NIST AI 600-1 for agentic reasoning loops; tightens recursion depth (`ORG-CTL-AGT-004`) to 5 steps, accelerates kill switch latency to 250ms, restricts exceptions on tool schema validation (`ORG-CTL-AGT-003`), and mandates external agent tool permission matrices (`ORG-CTL-AGT-001`).
+  - Validated 100% of overlay templates and skeletons against `schemas/overlay.schema.json`.
+- **Module M2 Baseline Standards and Control Catalogue (Domain Group 4: Runtime Autonomy & Operational Lifecycle - Completing M2):**
+  - Added 20 machine-readable YAML controls across 5 domains (completing the full 61-control baseline catalogue across all 16 domains):
+    - **Agent Autonomy & Guardrails (`AGT`):**
+      - `ORG-CTL-AGT-001`: Outside-the-Model Policy Enforcement and Authorization Boundary (Conditional: `executes_tools_or_code: true`)
+      - `ORG-CTL-AGT-002`: Dedicated Non-Human Machine Identity and Scoped Delegation (Conditional: `executes_tools_or_code: true`)
+      - `ORG-CTL-AGT-003`: Strict Tool-Call Schema Interception and Destructive Action Approval (Conditional: `executes_tools_or_code: true`)
+      - `ORG-CTL-AGT-004`: Maximum Execution Depth, Loop Termination, and Out-of-Band Kill Switch (Parameterized)
+    - **Monitoring, Drift & Incidents (`MON`):**
+      - `ORG-CTL-MON-001`: Version-Controlled Prompt and Configuration Traceability (Universal)
+      - `ORG-CTL-MON-002`: Real-Time Operational Telemetry and Latency/Error Monitoring (Universal)
+      - `ORG-CTL-MON-003`: Automated Data and Concept Drift Detection and Alerting (Parameterized)
+      - `ORG-CTL-MON-004`: Standardized AI Incident Triage, Circuit Breaking, and RCA Reporting (Universal)
+    - **Cost & Resource Limits (`CST`):**
+      - `ORG-CTL-CST-001`: Mandatory Project Token Budgets and Hard Spending Caps (Universal)
+      - `ORG-CTL-CST-002`: Per-User and Per-Client Inference Rate Limiting (Universal)
+      - `ORG-CTL-CST-003`: Agent Step-Level Token and Compute Budget Quotas (Parameterized)
+      - `ORG-CTL-CST-004`: Semantic Caching and Architectural Model Right-Sizing (Universal)
+    - **Evidence Integrity & Recordkeeping (`REC`):**
+      - `ORG-CTL-REC-001`: Machine-Verifiable Evidence Record Generation and Schema Conformance (Universal)
+      - `ORG-CTL-REC-002`: Cryptographic Artifact Digest Hashing and WORM Storage (Universal)
+      - `ORG-CTL-REC-003`: Digital Signing and Attestation of Production Deployment Bundles (Conditional: Tier 2 & Tier 3)
+      - `ORG-CTL-REC-004`: Commit-Level Traceability and Evidentiary Retention Schedule (Parameterized)
+    - **Retirement & Decommissioning (`RET`):**
+      - `ORG-CTL-RET-001`: Formal System Retirement Intake and Registry Status Transition (Universal)
+      - `ORG-CTL-RET-002`: Secure Model Weight Cold Archiving and Data Subject Purging (Universal)
+      - `ORG-CTL-RET-003`: Vector Index Teardown and Immediate Credential Revocation (Universal)
+      - `ORG-CTL-RET-004`: Client Deprecation Notice Window and Endpoint Disposition (Parameterized)
+  - All 20 controls validated 100% against `schemas/control.schema.json`.
+- **Module M2 Baseline Standards and Control Catalogue (Domain Group 3: Trust, Quality & Human Agency):**
+  - Added 16 machine-readable YAML controls across 4 domains:
+    - **Robustness, Evaluation & Testing (`ROB`):**
+      - `ORG-CTL-ROB-001`: Mandatory Automated Domain Evaluation Harness and Test Suite (Universal)
+      - `ORG-CTL-ROB-002`: Prompt and Model Non-Regression Evaluation Gates (Universal)
+      - `ORG-CTL-ROB-003`: Pre-deployment Benchmark Evaluation & Hallucination Threshold (Parameterized)
+      - `ORG-CTL-ROB-004`: Out-of-Distribution Perturbation and Stress Testing (Conditional: Tier 2 & Tier 3)
+    - **Fairness, Accessibility & Societal Impact (`FAI`):**
+      - `ORG-CTL-FAI-001`: Demographic Parity and Disparate Impact Evaluation (Conditional: decisions affecting individuals)
+      - `ORG-CTL-FAI-002`: Generative Stereotyping and Toxicity Benchmark Verification (Conditional: generative models)
+      - `ORG-CTL-FAI-003`: Universal Web and Digital Accessibility Conformance (WCAG 2.1 AA) (Universal)
+      - `ORG-CTL-FAI-004`: Vulnerable Populations and Child Protection Safeguards (Conditional: public-facing systems)
+    - **Transparency, Explainability & Provenance (`TRN`):**
+      - `ORG-CTL-TRN-001`: Conspicuous AI Interaction Disclosure (Conditional: public-facing systems)
+      - `ORG-CTL-TRN-002`: Synthetic Media Cryptographic Provenance and Watermarking (C2PA) (Conditional: generative systems)
+      - `ORG-CTL-TRN-003`: Adverse Action Algorithmic Explainability and Feature Attribution (Conditional: decisions affecting individuals)
+      - `ORG-CTL-TRN-004`: Mandatory Model Card and System Card Publication (Universal)
+    - **Human Oversight, Contestability & Redress (`HUM`):**
+      - `ORG-CTL-HUM-001`: Mandatory Human-in-the-Loop (HITL) Authorization for High-Impact Decisions (Conditional: Tier 3 High Risk)
+      - `ORG-CTL-HUM-002`: Real-Time Human Override and Stop Telemetry (HOTL) (Conditional: autonomous agents)
+      - `ORG-CTL-HUM-003`: Accessible Decision Contestability and Human Redress Channels (Conditional: decisions affecting individuals)
+      - `ORG-CTL-HUM-004`: Operator Automation Bias Monitoring and Override Audit (Conditional: systems with human reviewers)
+  - All 16 controls validated 100% against `schemas/control.schema.json`.
+- **Module M2 Baseline Standards and Control Catalogue (Domain Group 2: Supply Chain, IP & Defensive Security):**
+  - Added 12 machine-readable YAML controls across 3 domains:
+    - **Model, Supplier & Software Supply Chain (`SUP`):**
+      - `ORG-CTL-SUP-001`: Third-Party Foundation Model & Vendor Risk Assessment (Conditional: `uses_external_third_party_models_apis: true`)
+      - `ORG-CTL-SUP-002`: Machine-Readable SBOM and Model Bill of Materials (MBOM) Generation (Universal)
+      - `ORG-CTL-SUP-003`: Insecure Model Deserialization Prohibition and SHA-256 Hash Verification (Universal)
+      - `ORG-CTL-SUP-004`: Upstream AI Dependency Vulnerability and Package Tamper Scanning (Parameterized)
+    - **Intellectual Property & Licensing (`IPR`):**
+      - `ORG-CTL-IPR-001`: Training Data and Vector Corpus Copyright and Licensing Clearance (Universal)
+      - `ORG-CTL-IPR-002`: Mandatory Human Peer Review of AI-Generated Software Code (Conditional: `generates_code_or_executable_artifacts: true`)
+      - `ORG-CTL-IPR-003`: Automated Code Similarity and Copyleft Reciprocal License Detection (Conditional: `generates_code_or_executable_artifacts: true`)
+      - `ORG-CTL-IPR-004`: AI-Assisted Code Secret and Vulnerability Security Gate (Conditional: `generates_code_or_executable_artifacts: true`)
+    - **Defensive AI Security & Attack Mitigation (`SEC`):**
+      - `ORG-CTL-SEC-001`: Direct and Indirect Prompt Injection Defensive Guardrails (Universal)
+      - `ORG-CTL-SEC-002`: Zero-Trust Retrieval Authorization at the Vector Layer (RAG Security) (Conditional: RAG/Agentic architectures)
+      - `ORG-CTL-SEC-003`: Unsafe Model Output Sanitization and Execution Sink Parameterization (Universal)
+      - `ORG-CTL-SEC-004`: Pre-Production Adversarial Security Red-Teaming (Conditional: Tier 2 & Tier 3)
+  - All 12 controls validated 100% against `schemas/control.schema.json`.
+- **Module M2 Baseline Standards and Control Catalogue (Domain Group 1: Foundational Governance & Stewardship):**
+  - Added 13 machine-readable YAML controls across 4 foundational domains:
+    - **Accountability & AI Inventory (`ACC`):**
+      - `ORG-CTL-ACC-001`: Mandatory AI System Registration in Central Inventory (Universal)
+      - `ORG-CTL-ACC-002`: Accountable System Ownership & Role Designation (Universal)
+      - `ORG-CTL-ACC-003`: Project Governance Manifest Schema Conformance (Universal)
+    - **Acceptable Use, Shadow AI & Literacy (`USE`):**
+      - `ORG-CTL-USE-001`: Prohibited AI Use Case Verification & Attestation (Universal)
+      - `ORG-CTL-USE-002`: Approved Enterprise AI Gateway Routing & Egress Control (Universal)
+      - `ORG-CTL-USE-003`: Role-Based AI Literacy & Security Training Certification (Universal)
+    - **Risk Classification & Impact (`RSK`):**
+      - `ORG-CTL-RSK-001`: Mandatory 4-Tier Risk Categorization & Manifest Declaration (Universal)
+      - `ORG-CTL-RSK-002`: Pre-Deployment Algorithmic Impact Assessment (Conditional: Tier 2 & Tier 3)
+      - `ORG-CTL-RSK-003`: Material Change Risk Re-Evaluation & Threshold Review (Parameterized)
+    - **Data Quality, Provenance, Privacy & Retention (`DAT`):**
+      - `ORG-CTL-DAT-001`: Training & Retrieval Dataset Lineage & Data Card Verification (Universal)
+      - `ORG-CTL-DAT-002`: Automated Runtime PII Detection & Sanitization (Conditional: `processes_personal_data: true`)
+      - `ORG-CTL-DAT-003`: Geographic Data Residency & Regional Inference Pinning (Parameterized)
+      - `ORG-CTL-DAT-004`: Interaction Log & Embedding Retention Expiration (Parameterized)
+  - All controls validated against `schemas/control.schema.json` with explicit separation of automated checks vs human judgment.
+- **Module M1 Baseline Principles and Policies:**
+  - **AI Principles Charter (`baseline/principles/charter.md`):** Executive-level ethical and operational charter establishing commitments across 16 foundational domains.
+  - **Machine-Readable Principle Catalogue (`baseline/principles/principles.yaml`):** Structured catalogue mapping 16 principles (`ORG-PRIN-ACC` through `ORG-PRIN-RET`) to policies and standards frameworks.
+  - **Human-Readable Baseline Policies (`baseline/policies/`):** 16 comprehensive, concise enterprise policy documents with unambiguous requirements, operational RACI, explicit separation of automated checks vs human judgment, parameterized threshold placeholders, and authoritative citations:
+    - `POL-ACC-accountability-inventory.md` (`ORG-POL-ACC-001`)
+    - `POL-USE-acceptable-use-literacy.md` (`ORG-POL-USE-001`)
+    - `POL-RSK-risk-classification-impact.md` (`ORG-POL-RSK-001`)
+    - `POL-DAT-data-privacy-retention.md` (`ORG-POL-DAT-001`)
+    - `POL-SUP-supply-chain-models.md` (`ORG-POL-SUP-001`)
+    - `POL-IPR-intellectual-property-code.md` (`ORG-POL-IPR-001`)
+    - `POL-SEC-ai-security-mitigation.md` (`ORG-POL-SEC-001`)
+    - `POL-ROB-robustness-evaluation.md` (`ORG-POL-ROB-001`)
+    - `POL-FAI-fairness-accessibility.md` (`ORG-POL-FAI-001`)
+    - `POL-TRN-transparency-disclosure.md` (`ORG-POL-TRN-001`)
+    - `POL-HUM-human-oversight-redress.md` (`ORG-POL-HUM-001`)
+    - `POL-AGT-agent-autonomy-guardrails.md` (`ORG-POL-AGT-001`)
+    - `POL-MON-monitoring-drift-incidents.md` (`ORG-POL-MON-001`)
+    - `POL-CST-cost-resource-limits.md` (`ORG-POL-CST-001`)
+    - `POL-REC-evidence-recordkeeping.md` (`ORG-POL-REC-001`)
+    - `POL-RET-retirement-decommissioning.md` (`ORG-POL-RET-001`)
+- **Module M0 Package Skeleton:** Initial architectural foundation for the Enterprise AI Governance Package.
+- **Repository Layout (`docs/repository-tree.md`):** Complete repository directory tree, separation of concerns, and placement decision tree for baseline vs. overlays.
+- **Identifier Scheme (`docs/id-scheme.md`):** Permanent naming convention with enterprise prefix `ORG`, 16 standardized 3-letter domain codes, regex constraints, and migration cross-walk from Phase A provisional IDs.
+- **Semantic Versioning Policy (`docs/versioning-policy.md`):** SemVer 2.0.0 adaptation for policy-as-code, explicit breaking change definitions, deprecation windows, and emergency security revocation procedures.
+- **Control Schema (`schemas/control.schema.json`):** JSON Schema (Draft 2020-12) defining universal, conditional, and parameterized controls with full metadata, lifecycle stages, enforcement points, and citation mappings.
+- **Overlay Schema (`schemas/overlay.schema.json`):** JSON Schema for regulatory, sectoral, and archetype overlays supporting monotonic tightening and conflict resolution metadata.
+- **Project Manifest Schema (`schemas/project-manifest.schema.json`):** JSON Schema for `ai-project-manifest.yaml` allowing project teams to declare architecture, data classifications, autonomous tools, and baseline pins.
+- **Exception Schema (`schemas/exception.schema.json`):** JSON Schema for time-limited policy deviation requests with risk evaluations, compensating controls, and statutory disclaimers.
+- **Evidence Record Schema (`schemas/evidence-record.schema.json`):** JSON Schema for verifiable compliance attestations, automated benchmark logs, and cryptographic hashes.
+- **Canonical Schema Examples (`schemas/examples/`):** Validated reference instances demonstrating valid YAML/JSON payloads for each core schema.
+- **Build Continuation Tracking (`runs/build-continuation.md`):** Initialized portable continuation record tracking package state across runs.
+
+### Governance Status
+- All generated artifacts marked as `DRAFT` pending formal review by the Enterprise AI Safety & Governance Review Board.

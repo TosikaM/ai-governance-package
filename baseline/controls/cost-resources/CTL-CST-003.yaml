@@ -1,0 +1,80 @@
+id: "ORG-CTL-CST-003"
+title: "Agent Step-Level Token and Compute Budget Quotas"
+objective: "Enforce cumulative token and financial spend ceilings on autonomous agent execution threads, halting recursive tasks that exceed predefined execution budgets."
+domain: "cost_resource_limits"
+type: "parameterized"
+
+applicability_condition:
+  predicate_type: "manifest_property_match"
+  manifest_path: "ai_system_profile.archetype"
+  operator: "in"
+  target_value:
+    - "autonomous_agent"
+    - "hybrid"
+  description: "Applies to autonomous agents, multi-agent frameworks, and iterative planning systems."
+
+parameters:
+  max_task_tokens:
+    description: "Maximum allowable cumulative tokens (prompt + completion) consumed across a single user-initiated agent task invocation."
+    data_type: "integer"
+    default_value: 50000
+    allowed_range:
+      min: 5000
+      max: 200000
+    monotonicity: "lower_is_stricter"
+    approval_authority_placeholder: "[ROLE: Enterprise Cloud FinOps Lead]"
+  max_task_cost_usd:
+    description: "Maximum allowable estimated financial spend in USD for a single agent task thread."
+    data_type: "float"
+    default_value: 0.50
+    allowed_range:
+      min: 0.05
+      max: 5.00
+    monotonicity: "lower_is_stricter"
+    approval_authority_placeholder: "[ROLE: Product Business Owner]"
+
+lifecycle_stages:
+  - "integration_ci_cd"
+  - "deployment_admission"
+  - "runtime_operation"
+
+enforcement_points:
+  - "ci_build_pipeline"
+  - "agent_runtime_interceptor"
+
+check_type: "automated"
+mode: "blocking"
+
+evidence_required:
+  - artifact_type: "agent_budget_quota_test_report"
+    description: "Automated test report verifying that agent runtime terminates execution and notifies user when cumulative task token cap is exceeded."
+    format: "json"
+    retention_period_years: 5
+
+exception_eligibility:
+  eligible: true
+  statutory_prohibition: false
+  minimum_compensating_controls:
+    - "Explicit user confirmation prompt displayed before authorizing high-cost multi-step execution."
+
+reference_mappings:
+  - framework: "OWASP Top 10 for LLM Applications (2025)"
+    clause_or_section: "LLM04:2025"
+    citation_title: "Resource Exhaustion via Uncapped Agent Loops"
+    mapping_status: "verified"
+    notes: "Requires financial and token caps per execution thread to prevent unbounded billing."
+  - framework: "NIST AI 600-1 (GenAI Profile)"
+    clause_or_section: "MANAGE 2.1"
+    citation_title: "Resource constraints and bounded operation of autonomous agent tools"
+    mapping_status: "verified"
+    notes: "Mandates resource constraints on iterative agent tool execution."
+  - framework: "ISO/IEC 42001:2023"
+    clause_or_section: "Clause 7.1"
+    citation_title: "Resource management for automated AI workflows"
+    mapping_status: "verified"
+    notes: "Requires formal tracking and limitation of resources allocated to automated processes."
+
+owner_placeholder: "[ROLE: Enterprise Cloud FinOps Lead]"
+review_date_placeholder: "[YYYY-MM-DD]"
+version: "1.0.0"
+status: "DRAFT"

@@ -1,0 +1,56 @@
+id: "ORG-CTL-TRN-004"
+title: "Mandatory Model Card and System Card Publication"
+objective: "Ensure that every production AI model and deployed agent maintains an up-to-date Model Card adhering to templates/model-card.md published in the repository and central registry."
+domain: "transparency_disclosure"
+type: "universal"
+
+applicability_condition:
+  predicate_type: "always"
+  description: "Universal control applying to all deployable AI models and agent configurations."
+
+lifecycle_stages:
+  - "concept_design"
+  - "evaluation_validation"
+  - "deployment_admission"
+
+enforcement_points:
+  - "ci_build_pipeline"
+  - "model_registry_admission"
+  - "deployment_admission_controller"
+
+check_type: "automated"
+mode: "blocking"
+
+evidence_required:
+  - artifact_type: "published_model_card"
+    description: "Completed Model Card adhering to templates/model-card.md documenting architecture, training data summary, benchmarks, intended uses, and limitations."
+    format: "markdown"
+    retention_period_years: 7
+
+exception_eligibility:
+  eligible: false
+  statutory_prohibition: false
+  minimum_compensating_controls:
+    - "No exceptions permitted. The Model Card is a non-derogable baseline documentation artifact."
+
+reference_mappings:
+  - framework: "NIST AI RMF 1.0"
+    clause_or_section: "MAP 1.5"
+    citation_title: "Organizational risk documentation includes model and system cards."
+    mapping_status: "verified"
+    notes: "Directly adopts Model Cards as the standard format for documenting technical capabilities and limitations."
+  - framework: "ISO/IEC 42001:2023"
+    clause_or_section: "Clause 7.5"
+    citation_title: "Documented information for AI systems"
+    mapping_status: "verified"
+    notes: "Requires complete technical documentation for system architecture and performance characteristics."
+  - framework: "EU AI Act Regulation (EU) 2024/1689"
+    clause_or_section: "Article 11 / Annex IV"
+    citation_title: "Technical documentation for high-risk AI systems"
+    mapping_status: "verified"
+    notes: "Internal Model Cards serve as the foundational technical documentation dossier."
+
+owner_placeholder: "[ROLE: Lead Model Documentation Specialist]"
+review_date_placeholder: "[YYYY-MM-DD]"
+version: "1.0.0"
+status: "DRAFT"

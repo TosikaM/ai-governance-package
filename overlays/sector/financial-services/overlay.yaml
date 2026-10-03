@@ -1,0 +1,96 @@
+# ==============================================================================
+# Financial Services Model Risk Management & Fair Lending Overlay
+# ==============================================================================
+# Schema: schemas/overlay.schema.json (JSON Schema Draft 2020-12)
+# Category: sector
+# ==============================================================================
+
+id: "ORG-OVL-SEC-FIN-001"
+title: "Financial Services Model Risk Management & Fair Lending Overlay"
+category: "sector"
+
+target_scope:
+  applicability_summary: "Applies to AI and machine learning systems deployed in banking, consumer lending, credit scoring, underwriting, capital markets, and algorithmic trading."
+  jurisdictions:
+    - "global"
+    - "US"
+    - "UK"
+    - "EU"
+  sectors:
+    - "financial_services"
+    - "banking"
+    - "insurance"
+    - "capital_markets"
+  risk_tiers:
+    - "tier_2_moderate"
+    - "tier_3_high"
+    - "tier_4_critical"
+  ai_types:
+    - "predictive_tabular"
+    - "generative_llm"
+    - "rag_system"
+    - "autonomous_agent"
+
+baseline_compatibility: ">=0.1.0 <2.0.0"
+
+citations:
+  - source_title: "Federal Reserve SR 11-7 / OCC 2011-12 Guidance on Model Risk Management"
+    citation_reference: "Section III (Model Development, Implementation, and Use) & Section IV (Model Validation)"
+    url: "https://www.federalreserve.gov/supervisionreg/srletters/sr1107.htm"
+    publication_date_or_version: "2011-04-04"
+    verification_status: "verified"
+  - source_title: "Consumer Financial Protection Bureau (CFPB) Circular 2022-03 / ECOA Reg B"
+    citation_reference: "12 CFR Part 1002 (Adverse Action Notice Requirements Under Equal Credit Opportunity Act)"
+    url: "https://www.consumerfinance.gov/compliance/circulars/circular-2022-03-adverse-action-notification-requirements-under-ecoa/"
+    publication_date_or_version: "2022-05-26"
+    verification_status: "verified"
+  - source_title: "European Banking Authority (EBA) Guidelines on Loan Origination and Monitoring"
+    citation_reference: "EBA/GL/2020/06, Section 4.3 (Technology and automated models for credit risk)"
+    url: "https://www.eba.europa.eu/regulation-and-policy/credit-risk/guidelines-on-loan-origination-and-monitoring"
+    publication_date_or_version: "2020-05-29"
+    verification_status: "verified"
+
+legal_review_status: "PENDING_QUALIFIED_LEGAL_REVIEW"
+
+rules:
+  - rule_id: "R01"
+    target_control_id: "ORG-CTL-TRN-003"
+    action: "upgrade_mode"
+    upgraded_mode: "blocking"
+    rationale: "CFPB Circular 2022-03 and ECOA Reg B mandate specific, accurate adverse action explanation before automated decisions can be communicated to consumers."
+
+  - rule_id: "R02"
+    target_control_id: "ORG-CTL-TRN-003"
+    action: "restrict_exception"
+    restrict_exception:
+      disallow_exceptions: true
+      additional_mandatory_compensations:
+        - "Adverse action explanations must be validated by independent Model Risk Management before production credit deployment."
+    rationale: "Statutory explanation requirements for credit denial under ECOA cannot be waived under any internal exception."
+
+  - rule_id: "R03"
+    target_control_id: "ORG-CTL-REC-004"
+    action: "tighten_parameter"
+    parameter_tightening:
+      parameter_name: "standard_retention_years"
+      new_value: 7
+      direction: "higher_is_stricter"
+    rationale: "Financial regulatory recordkeeping standards mandate preserving all model training logs, evaluation runs, and inference inputs for a minimum of 7 years across all risk tiers."
+
+  - rule_id: "R04"
+    target_control_id: "ORG-CTL-FAI-001"
+    action: "require_additional_evidence"
+    additional_evidence:
+      - artifact_type: "fair_lending_compliance_attestation"
+        description: "Independent compliance and legal sign-off certifying absence of proxy discrimination and compliance with ECOA/FHA fair lending benchmarks."
+        format: "pdf"
+    rationale: "SR 11-7 and fair lending regulatory examination standards require independent compliance validation of fairness analyses."
+
+conflict_resolution:
+  default_behavior: "UNRESOLVED_CONFLICT_HALT"
+  resolution_escalation_path: "Enterprise Model Risk Management Committee (MRMC) and Head of Regulatory Compliance"
+
+owner_placeholder: "[ROLE: Head of Model Risk Management (MRM)]"
+review_date_placeholder: "[YYYY-MM-DD]"
+version: "0.1.0-draft"
+status: "DRAFT"

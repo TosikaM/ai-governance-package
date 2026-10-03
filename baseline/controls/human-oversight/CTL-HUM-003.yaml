@@ -1,0 +1,59 @@
+id: "ORG-CTL-HUM-003"
+title: "Accessible Decision Contestability and Human Redress Channels"
+objective: "Guarantee that individuals subjected to automated decisions with significant impacts have access to a clear, accessible, and timely process to contest the decision and obtain human review and binding redress."
+domain: "human_oversight_redress"
+type: "conditional"
+
+applicability_condition:
+  predicate_type: "manifest_property_match"
+  manifest_path: "ai_system_profile.declared_characteristics.makes_autonomous_decisions_affecting_humans"
+  operator: "is_true"
+  target_value: true
+  description: "Applies to systems making or recommending decisions affecting individual rights, benefits, or status."
+
+lifecycle_stages:
+  - "concept_design"
+  - "deployment_admission"
+  - "runtime_operation"
+
+enforcement_points:
+  - "ci_build_pipeline"
+  - "deployment_admission_controller"
+  - "manual_audit_gate"
+
+check_type: "hybrid"
+mode: "blocking"
+
+evidence_required:
+  - artifact_type: "redress_workflow_conformance_dossier"
+    description: "Operational review documenting user intake portal, SLA tracking, and independent human adjudicator escalation workflows."
+    format: "markdown"
+    retention_period_years: 7
+
+exception_eligibility:
+  eligible: false
+  statutory_prohibition: true
+  minimum_compensating_controls:
+    - "No exceptions permitted. Providing human redress for automated decisions is a fundamental consumer and privacy right."
+
+reference_mappings:
+  - framework: "Regulation (EU) 2016/679 (GDPR)"
+    clause_or_section: "Article 22(3)"
+    citation_title: "Right to obtain human intervention and to contest automated decision"
+    mapping_status: "verified"
+    notes: "Express legal right to express point of view, obtain human intervention, and contest automated decision."
+  - framework: "EU AI Act Regulation (EU) 2024/1689"
+    clause_or_section: "Article 85 / Article 86"
+    citation_title: "Right to lodge a complaint and right to explanation of individual decision-making"
+    mapping_status: "verified"
+    notes: "Statutory rights for affected persons to lodge complaints and seek redress."
+  - framework: "NIST AI RMF 1.0"
+    clause_or_section: "MANAGE 2.4"
+    citation_title: "Mechanisms are in place to address disputes and provide recourse."
+    mapping_status: "verified"
+    notes: "Requires formal appeal and redress processes for impacted stakeholders."
+
+owner_placeholder: "[ROLE: Enterprise Consumer Rights & Redress Lead]"
+review_date_placeholder: "[YYYY-MM-DD]"
+version: "1.0.0"
+status: "DRAFT"

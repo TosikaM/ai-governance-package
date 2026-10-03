@@ -1,0 +1,56 @@
+id: "ORG-CTL-IPR-001"
+title: "Training Data and Vector Corpus Copyright and Licensing Clearance"
+objective: "Verify that all proprietary, commercial, and open-source datasets and text corpora used for model training, adapter fine-tuning, or vector knowledge indexing possess legally verified intellectual property rights and licensing permissions."
+domain: "intellectual_property_licensing"
+type: "universal"
+
+applicability_condition:
+  predicate_type: "always"
+  description: "Universal control applying to all data ingested into training or retrieval corpora."
+
+lifecycle_stages:
+  - "data_preparation"
+  - "model_training"
+  - "integration_ci_cd"
+
+enforcement_points:
+  - "ci_build_pipeline"
+  - "model_registry_admission"
+  - "manual_audit_gate"
+
+check_type: "hybrid"
+mode: "blocking"
+
+evidence_required:
+  - artifact_type: "ip_licensing_clearance_record"
+    description: "Legal IP assessment verifying copyright status, open-access license terms (e.g. CC-BY, Apache-2.0, MIT), and absence of incompatible copyleft restrictions."
+    format: "json"
+    retention_period_years: 7
+
+exception_eligibility:
+  eligible: false
+  statutory_prohibition: true
+  minimum_compensating_controls:
+    - "No exceptions permitted. Ingesting copyrighted data without legal authorization represents non-waivable statutory copyright infringement."
+
+reference_mappings:
+  - framework: "ISO/IEC 42001:2023"
+    clause_or_section: "Annex A.7.4"
+    citation_title: "Intellectual property rights in AI systems"
+    mapping_status: "verified"
+    notes: "Requires identification, tracking, and respect for intellectual property rights of data used in AI systems."
+  - framework: "EU AI Act Regulation (EU) 2024/1689"
+    clause_or_section: "Article 53(1)(c)"
+    citation_title: "Obligations for providers of general-purpose AI models regarding copyright"
+    mapping_status: "verified"
+    notes: "Mandates put in place a policy to comply with Union law on copyright and related rights."
+  - framework: "NIST AI RMF 1.0"
+    clause_or_section: "GOVERN 1.2"
+    citation_title: "Legal and regulatory requirements involving AI are managed."
+    mapping_status: "verified"
+    notes: "Establishes compliance with applicable intellectual property and copyright laws."
+
+owner_placeholder: "[ROLE: Enterprise Intellectual Property Legal Counsel]"
+review_date_placeholder: "[YYYY-MM-DD]"
+version: "1.0.0"
+status: "DRAFT"

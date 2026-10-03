@@ -1,0 +1,193 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://governance.internal.net/schemas/evidence-record.schema.json",
+  "title": "AI Governance Verifiable Evidence Record Schema",
+  "description": "JSON Schema specification for machine-verifiable evidence records, test logs, evaluation reports, and cryptographic audit attestations proving control satisfaction.",
+  "type": "object",
+  "required": [
+    "evidence_id",
+    "schema_version",
+    "control_id",
+    "project_id",
+    "execution_context",
+    "evaluator",
+    "verification_timestamp",
+    "result",
+    "verification_summary",
+    "artifacts",
+    "status"
+  ],
+  "properties": {
+    "evidence_id": {
+      "type": "string",
+      "pattern": "^ORG-EVD-[A-Z]{3}-[0-9]{3}-[a-z0-9_-]+-[0-9]{8}-[0-9]{3}$",
+      "description": "Canonical evidence identifier formatted as ORG-EVD-{DOMAIN}-{NUM}-{PROJECT}-{YYYYMMDD}-{SEQ}."
+    },
+    "schema_version": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+    },
+    "control_id": {
+      "type": "string",
+      "pattern": "^ORG-CTL-[A-Z]{3}-[0-9]{3}$",
+      "description": "The specific governance control evaluated."
+    },
+    "project_id": {
+      "type": "string",
+      "pattern": "^[a-z0-9_-]{3,50}$",
+      "description": "The consuming project repository or service ID."
+    },
+    "execution_context": {
+      "type": "object",
+      "required": ["lifecycle_stage", "enforcement_point", "commit_sha"],
+      "properties": {
+        "lifecycle_stage": {
+          "type": "string",
+          "enum": [
+            "concept_design",
+            "data_preparation",
+            "model_training",
+            "evaluation_validation",
+            "integration_ci_cd",
+            "deployment_admission",
+            "runtime_operation",
+            "incident_response",
+            "retirement_decommissioning"
+          ]
+        },
+        "enforcement_point": {
+          "type": "string",
+          "enum": [
+            "pre_commit_hook",
+            "pull_request_check",
+            "ci_build_pipeline",
+            "model_registry_admission",
+            "deployment_admission_controller",
+            "api_gateway_sidecar",
+            "agent_runtime_interceptor",
+            "periodic_automated_scan",
+            "manual_audit_gate"
+          ]
+        },
+        "pipeline_run_id": { "type": "string" },
+        "commit_sha": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{40}$|^[a-f0-9]{64}$",
+          "description": "Git commit SHA of the verified codebase state."
+        },
+        "git_ref": { "type": "string" },
+        "environment": {
+          "type": "string",
+          "enum": ["local", "ci", "staging", "production"]
+        }
+      }
+    },
+    "evaluator": {
+      "type": "object",
+      "required": ["evaluator_type", "identifier"],
+      "properties": {
+        "evaluator_type": {
+          "type": "string",
+          "enum": ["automated_tool", "human_reviewer", "hybrid_pipeline"]
+        },
+        "identifier": {
+          "type": "string",
+          "description": "Tool binary name, container URI, or human reviewer role placeholder (e.g. 'eval-harness-v2' or '[ROLE: AI Safety Assessor]')."
+        },
+        "version": { "type": "string" },
+        "configuration_digest": { "type": "string" }
+      }
+    },
+    "verification_timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "UTC ISO 8601 timestamp of evidence collection."
+    },
+    "result": {
+      "type": "string",
+      "enum": ["PASS", "FAIL", "WARNING", "INCONCLUSIVE", "EXEMPTED_BY_EXCEPTION"],
+      "description": "Deterministic outcome of the governance check."
+    },
+    "active_exception_id": {
+      "type": "string",
+      "pattern": "^ORG-EXC-[0-9]{4}-[0-9]{3,}$",
+      "description": "Populated only if result is EXEMPTED_BY_EXCEPTION."
+    },
+    "verification_summary": {
+      "type": "string",
+      "minLength": 10,
+      "maxLength": 1000,
+      "description": "Executive summary of the evaluation findings."
+    },
+    "quantitative_metrics": {
+      "type": "object",
+      "description": "Key-value dictionary of numerical measurements against target control parameters.",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["measured_value", "threshold_value", "passed"],
+        "properties": {
+          "measured_value": { "type": "number" },
+          "threshold_value": { "type": "number" },
+          "passed": { "type": "boolean" },
+          "metric_unit": { "type": "string" }
+        }
+      }
+    },
+    "artifacts": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["artifact_name", "artifact_type", "uri", "sha256_hash"],
+        "properties": {
+          "artifact_name": { "type": "string" },
+          "artifact_type": {
+            "type": "string",
+            "enum": [
+              "eval_benchmark_report",
+              "sbom_cyclonedx",
+              "sarif_vulnerability_scan",
+              "red_team_report",
+              "model_card",
+              "data_card",
+              "runtime_log_extract",
+              "signed_provenance_bundle"
+            ]
+          },
+          "uri": {
+            "type": "string",
+            "description": "Storage location (e.g. S3 URI, OCI artifact tag, or internal artifact repository path)."
+          },
+          "sha256_hash": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$",
+            "description": "Cryptographic SHA-256 hash ensuring tamper-evidence."
+          },
+          "mime_type": { "type": "string" }
+        }
+      },
+      "description": "Cryptographically hashed files supporting this verification record."
+    },
+    "cryptographic_attestation": {
+      "type": "object",
+      "description": "Optional digital signature proving authenticity and non-repudiation.",
+      "properties": {
+        "signature_format": {
+          "type": "string",
+          "enum": ["cosign_sigstore", "x509_pkcs7", "pgp", "internal_kms_hmac"]
+        },
+        "signer_identity": { "type": "string" },
+        "key_identifier": { "type": "string" },
+        "signature_payload": { "type": "string" },
+        "timestamp": { "type": "string", "format": "date-time" }
+      }
+    },
+    "status": {
+      "type": "string",
+      "enum": ["DRAFT", "VALIDATED", "DISPUTED", "SUPERSEDED"],
+      "default": "DRAFT",
+      "description": "Verification status of the evidence."
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,10 @@
+# Standard Data Card
+dataset_details:
+  dataset_id: "DAT-SAMPLE-HR-RESUME-SCREENING-01"
+  dataset_name: "sample-hr-resume-screening Training & Context Corpus"
+  contains_pii: true
+  sanitization_applied: true
+  retention_period_years: 5
+licensing:
+  copyright_cleared: true
+  reciprocal_copyleft_free: true

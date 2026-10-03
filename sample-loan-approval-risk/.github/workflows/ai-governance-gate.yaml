@@ -1,0 +1,96 @@
+# ==============================================================================
+# Enterprise AI Governance Package - Pull Request Validation Gate
+# ==============================================================================
+# File: pr-governance-gate.yaml
+# Scope: Pull Request / Merge Request CI Pipelines
+#
+# GOVERNANCE POSTURE: AUTHORITATIVE & BLOCKING
+# Pipeline checks are non-bypassable barriers. Any blocking failure prevents
+# PR merge into protected release branches (main / release/*).
+#
+# Reference Tooling: Compatible with GitHub Actions, GitLab CI, and Azure Pipelines.
+# (Label: verify against current documentation for specific CI runner syntax)
+# ==============================================================================
+
+name: "AI Governance Pull Request Gate"
+
+on:
+  pull_request:
+    branches:
+      - "main"
+      - "release/**"
+    paths:
+      - "ai-project-manifest.yaml"
+      - "prompts/**"
+      - "models/**"
+      - "schemas/**"
+      - "src/**"
+
+jobs:
+  governance-validation-gate:
+    name: "Enforce AI Governance Policies & Manifest Integrity"
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: "Checkout Repository with Full Git History"
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: "Set up Python Runtime Environment"
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: "Install Governance Dependencies"
+        run: |
+          python -m pip install --upgrade pip
+          pip install pyyaml jsonschema
+
+      # ------------------------------------------------------------------------
+      # Step 1: Deterministic Policy Snapshot Resolution (M4)
+      # ------------------------------------------------------------------------
+      - name: "Resolve Effective Governance Policy Snapshot"
+        run: |
+          echo "Executing Deterministic Policy Resolver..."
+          python project-kit/resolver/resolve.py \
+            --manifest ai-project-manifest.yaml \
+            --baseline-dir baseline/controls \
+            --overlays-dir overlays \
+            --exceptions-dir schemas/examples \
+            --output effective-policy-snapshot.json
+        env:
+          PYTHONUNBUFFERED: "1"
+
+      # ------------------------------------------------------------------------
+      # Step 2: Policy-as-Code Assertion Verification (M5)
+      # ------------------------------------------------------------------------
+      - name: "Execute Policy-as-Code Evaluation Engine"
+        run: |
+          echo "Evaluating Policy-as-Code rules against resolved policy snapshot..."
+          python policy-as-code/engine.py \
+            --rules policy-as-code/rules \
+            --context effective-policy-snapshot.json \
+            --output pac-pr-report.json
+
+      # ------------------------------------------------------------------------
+      # Step 3: AI-Assisted Code Peer Review & Copyleft License Gate (ORG-CTL-IPR-002/003)
+      # ------------------------------------------------------------------------
+      - name: "Verify Human Peer Review on AI-Generated Code"
+        run: |
+          echo "Checking AI code generation review attestations..."
+          python plugins/pull-request/ai_code_review_gate.py
+
+      # ------------------------------------------------------------------------
+      # Step 4: Upload Governance Audit Artifacts
+      # ------------------------------------------------------------------------
+      - name: "Archive Governance Audit Artifacts"
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pr-governance-audit-bundle
+          path: |
+            effective-policy-snapshot.json
+            pac-pr-report.json
+          retention-days: 30

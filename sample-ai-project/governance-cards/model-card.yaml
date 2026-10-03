@@ -1,0 +1,15 @@
+# Standard Model Card
+model_details:
+  model_id: "MDL-SAMPLE-AI-PROJECT-01"
+  model_name: "sample-ai-project Model"
+  version: "0.1.0"
+  architecture: "rag_knowledge"
+  frameworks_detected: ["openai", "chromadb"]
+  intended_use: "Automated business processing"
+evaluation:
+  benchmark_accuracy: 0.88
+  hallucination_rate_ceiling: 0.04
+  bias_parity_ratio: 0.85
+governance:
+  status: "DRAFT"
+  owner_placeholder: "[ROLE: ML Engineer]"

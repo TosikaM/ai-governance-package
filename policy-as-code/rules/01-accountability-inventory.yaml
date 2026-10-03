@@ -1,0 +1,130 @@
+# ==============================================================================
+# Policy-as-Code Rules: Domain 1 - Accountability & Inventory (ACC)
+# ==============================================================================
+# Schema: policy-as-code/rule-schema.json
+# Baseline Controls: ORG-CTL-ACC-001, ORG-CTL-ACC-002, ORG-CTL-ACC-003
+# ==============================================================================
+
+schema_version: "1.0.0"
+domain: "accountability_inventory"
+owner_placeholder: "[ROLE: AI Policy-as-Code Lead]"
+review_date_placeholder: "[YYYY-MM-DD]"
+status: "DRAFT"
+
+rules:
+  # ----------------------------------------------------------------------------
+  # Control: ORG-CTL-ACC-001 - Mandatory AI System Registration
+  # ----------------------------------------------------------------------------
+  - rule_id: "PAC-ACC-001"
+    target_control_id: "ORG-CTL-ACC-001"
+    title: "AI System Central Inventory Registration Verification"
+    description: "Verifies that the project has registered in the enterprise inventory and declared an active system registration ID."
+    enforcement_points:
+      - "ci_build_pipeline"
+      - "deployment_admission_controller"
+    mode: "blocking"
+    input_context:
+      - "ai_project_manifest"
+    assertions:
+      - assertion_id: "A01"
+        description: "Project identifier must be present and conform to naming convention."
+        field_path: "project_id"
+        operator: "regex_match"
+        expected_value: "^[a-z0-9_-]{3,50}$"
+        failure_message: "Project ID is missing or does not conform to enterprise naming standards."
+      - assertion_id: "A02"
+        description: "Project description must be documented."
+        field_path: "description"
+        operator: "not_empty"
+        failure_message: "Project business purpose description must not be empty."
+    remediation: "Ensure 'project_id' and 'description' are declared in ai-project-manifest.yaml and registered in the enterprise AI catalog."
+    reference_rego: |
+      # verify against current documentation
+      package ai_governance.acc001
+      default allow = false
+      allow {
+          re_match("^[a-z0-9_-]{3,50}$", input.project_id)
+          count(input.description) > 0
+      }
+
+  # ----------------------------------------------------------------------------
+  # Control: ORG-CTL-ACC-002 - Accountable System Ownership
+  # ----------------------------------------------------------------------------
+  - rule_id: "PAC-ACC-002"
+    target_control_id: "ORG-CTL-ACC-002"
+    title: "Accountable System Ownership and Contact Verification"
+    description: "Verifies that active business and technical leads are designated with valid email addresses."
+    enforcement_points:
+      - "pull_request_check"
+      - "ci_build_pipeline"
+      - "deployment_admission_controller"
+    mode: "blocking"
+    input_context:
+      - "ai_project_manifest"
+    assertions:
+      - assertion_id: "A01"
+        description: "Business owner name must be specified."
+        field_path: "owners.business_owner.name"
+        operator: "not_empty"
+        failure_message: "Business owner name is missing."
+      - assertion_id: "A02"
+        description: "Business owner email must be a valid email format."
+        field_path: "owners.business_owner.email"
+        operator: "is_valid_email"
+        failure_message: "Business owner email is invalid or missing."
+      - assertion_id: "A03"
+        description: "Technical lead name must be specified."
+        field_path: "owners.technical_lead.name"
+        operator: "not_empty"
+        failure_message: "Technical lead name is missing."
+      - assertion_id: "A04"
+        description: "Technical lead email must be a valid email format."
+        field_path: "owners.technical_lead.email"
+        operator: "is_valid_email"
+        failure_message: "Technical lead email is invalid or missing."
+    remediation: "Specify valid names and corporate email addresses for both business_owner and technical_lead in ai-project-manifest.yaml."
+    reference_rego: |
+      # verify against current documentation
+      package ai_governance.acc002
+      default allow = false
+      allow {
+          input.owners.business_owner.name != ""
+          re_match("^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$", input.owners.business_owner.email)
+          input.owners.technical_lead.name != ""
+          re_match("^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$", input.owners.technical_lead.email)
+      }
+
+  # ----------------------------------------------------------------------------
+  # Control: ORG-CTL-ACC-003 - Manifest Schema Conformance
+  # ----------------------------------------------------------------------------
+  - rule_id: "PAC-ACC-003"
+    target_control_id: "ORG-CTL-ACC-003"
+    title: "Governance Manifest Schema and Version Pinning Conformance"
+    description: "Verifies that the project manifest declares a valid schema version and pins the baseline governance version."
+    enforcement_points:
+      - "pre_commit_hook"
+      - "pull_request_check"
+      - "ci_build_pipeline"
+    mode: "blocking"
+    input_context:
+      - "ai_project_manifest"
+    assertions:
+      - assertion_id: "A01"
+        description: "Manifest schema version must be valid SemVer format."
+        field_path: "schema_version"
+        operator: "is_valid_semver"
+        failure_message: "Manifest schema_version is missing or invalid SemVer."
+      - assertion_id: "A02"
+        description: "Baseline version pin must be declared."
+        field_path: "governance_bindings.baseline_version_pin"
+        operator: "not_empty"
+        failure_message: "Governance baseline version pin is missing in governance_bindings."
+    remediation: "Ensure 'schema_version' and 'governance_bindings.baseline_version_pin' are declared in ai-project-manifest.yaml."
+    reference_rego: |
+      # verify against current documentation
+      package ai_governance.acc003
+      default allow = false
+      allow {
+          re_match("^[0-9]+\\.[0-9]+\\.[0-9]+$", input.schema_version)
+          input.governance_bindings.baseline_version_pin != ""
+      }

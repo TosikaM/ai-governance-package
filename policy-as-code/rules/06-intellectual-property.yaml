@@ -1,0 +1,97 @@
+# ==============================================================================
+# Policy-as-Code Rules: Domain 6 - Intellectual Property & Code (IPR)
+# ==============================================================================
+# Schema: policy-as-code/rule-schema.json
+# Baseline Controls: ORG-CTL-IPR-001, ORG-CTL-IPR-002, ORG-CTL-IPR-003, ORG-CTL-IPR-004
+# ==============================================================================
+
+schema_version: "1.0.0"
+domain: "intellectual_property_licensing"
+owner_placeholder: "[ROLE: Enterprise IP & Open Source Counsel]"
+review_date_placeholder: "[YYYY-MM-DD]"
+status: "DRAFT"
+
+rules:
+  # ----------------------------------------------------------------------------
+  # Control: ORG-CTL-IPR-001 - Proprietary & IP Data Processing Declaration
+  # ----------------------------------------------------------------------------
+  - rule_id: "PAC-IPR-001"
+    target_control_id: "ORG-CTL-IPR-001"
+    title: "Confidential IP Data Ingestion Declaration Check"
+    description: "Verifies that processing of proprietary intellectual property or trade secrets is explicitly declared."
+    enforcement_points:
+      - "ci_build_pipeline"
+      - "deployment_admission_controller"
+    mode: "blocking"
+    input_context:
+      - "ai_project_manifest"
+    assertions:
+      - assertion_id: "A01"
+        description: "processes_confidential_or_ip_data must be declared."
+        field_path: "ai_system_profile.declared_characteristics.processes_confidential_or_ip_data"
+        operator: "exists"
+        failure_message: "processes_confidential_or_ip_data boolean must be explicitly declared."
+    remediation: "Set processes_confidential_or_ip_data to true or false in ai-project-manifest.yaml."
+    reference_rego: |
+      # verify against current documentation
+      package ai_governance.ipr001
+      default allow = false
+      allow {
+          is_boolean(input.ai_system_profile.declared_characteristics.processes_confidential_or_ip_data)
+      }
+
+  # ----------------------------------------------------------------------------
+  # Control: ORG-CTL-IPR-002 - AI-Generated Code Declaration
+  # ----------------------------------------------------------------------------
+  - rule_id: "PAC-IPR-002"
+    target_control_id: "ORG-CTL-IPR-002"
+    title: "AI-Assisted Code Generation Capability Check"
+    description: "Verifies that systems producing code or executable scripts declare this capability."
+    enforcement_points:
+      - "pull_request_check"
+      - "ci_build_pipeline"
+    mode: "blocking"
+    input_context:
+      - "ai_project_manifest"
+    assertions:
+      - assertion_id: "A01"
+        description: "generates_code_or_executable_artifacts must be declared."
+        field_path: "ai_system_profile.declared_characteristics.generates_code_or_executable_artifacts"
+        operator: "exists"
+        failure_message: "generates_code_or_executable_artifacts boolean must be declared."
+    remediation: "Declare generates_code_or_executable_artifacts in declared_characteristics."
+    reference_rego: |
+      # verify against current documentation
+      package ai_governance.ipr002
+      default allow = false
+      allow {
+          is_boolean(input.ai_system_profile.declared_characteristics.generates_code_or_executable_artifacts)
+      }
+
+  # ----------------------------------------------------------------------------
+  # Control: ORG-CTL-IPR-003 - Repository Traceability Check
+  # ----------------------------------------------------------------------------
+  - rule_id: "PAC-IPR-003"
+    target_control_id: "ORG-CTL-IPR-003"
+    title: "Authorized Source Repository URL Verification"
+    description: "Verifies that the manifest declares a valid, approved enterprise Git repository URL."
+    enforcement_points:
+      - "ci_build_pipeline"
+    mode: "blocking"
+    input_context:
+      - "ai_project_manifest"
+    assertions:
+      - assertion_id: "A01"
+        description: "repository_url must be a valid enterprise Git URI."
+        field_path: "repository_url"
+        operator: "regex_match"
+        expected_value: "^https?://.*$"
+        failure_message: "repository_url is missing or not a valid HTTP/HTTPS URL."
+    remediation: "Specify the canonical repository URL in ai-project-manifest.yaml."
+    reference_rego: |
+      # verify against current documentation
+      package ai_governance.ipr003
+      default allow = false
+      allow {
+          re_match("^https?://.*$", input.repository_url)
+      }

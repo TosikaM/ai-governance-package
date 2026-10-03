@@ -1,0 +1,118 @@
+# ==============================================================================
+# Enterprise AI Governance Package - Policy Exception Request Template
+# ==============================================================================
+# File: exception-request.template.yaml
+# Schema: schemas/exception.schema.json (JSON Schema Draft 2020-12)
+#
+# PURPOSE:
+# Use this template to request a temporary, time-limited variance from a specific
+# governance baseline or overlay control when operational conditions prevent
+# immediate compliance.
+#
+# CRITICAL LEGAL BOUNDARY:
+# Internal enterprise exceptions NEVER waive statutory laws or regulatory
+# obligations. Internal exceptions apply solely to discretionary internal policy
+# thresholds and are void where prohibited by applicable law.
+# Any exception attempting to waive a statutory obligation will be rejected.
+# ==============================================================================
+
+# Canonical exception identifier assigned by the AI Review Board intake system.
+# Format: ORG-EXC-{YEAR}-{SEQUENCE}. Pattern: ^ORG-EXC-[0-9]{4}-[0-9]{3,}$
+exception_id: "ORG-EXC-2026-001"
+
+# Lifecycle state of the request:
+# Allowed: DRAFT | REQUESTED | UNDER_REVIEW | APPROVED | REJECTED | EXPIRED | REVOKED
+status: "DRAFT"
+
+# Requesting project identifier matching ai-project-manifest.yaml
+project_id: "starter-ai-project"
+
+# The exact baseline or overlay control identifier for which variance is requested.
+# Pattern: ^ORG-CTL-[A-Z]{3}-[0-9]{3}$ (e.g., ORG-CTL-ROB-003)
+control_id: "ORG-CTL-ROB-003"
+
+# If the control is parameterized, details of the temporary relaxed threshold:
+parameter_variations:
+  - parameter_name: "max_hallucination_rate"
+    standard_value: 0.05
+    requested_variance_value: 0.08
+
+# Date of request submission (YYYY-MM-DD)
+request_date: "2026-10-02"
+
+# Mandatory expiration date (YYYY-MM-DD). All exceptions are strictly time-limited.
+# Maximum allowable duration is 180 days without formal re-authorization.
+expiration_date: "2026-12-31"
+
+# Accountable requester details
+requester:
+  name: "[NAME: Requester Name]"
+  email: "requester@internal.net"
+  role_placeholder: "[ROLE: System Technical Lead]"
+
+# Compelling operational or business necessity explaining why adherence cannot immediately be achieved (min 30 chars)
+business_justification: "Critical business timeline requires deploying system for internal pilot testing while evaluation datasets undergo further edge-case augmentation."
+
+# Detailed architectural or engineering factor preventing immediate compliance (min 30 chars)
+technical_root_cause: "Benchmark evaluation indicates borderline failure on complex domain-specific queries due to limited domain fine-tuning data coverage."
+
+# Formal risk evaluation
+risk_assessment:
+  # Allowed: LOW | MEDIUM | HIGH | CRITICAL
+  inherent_risk_rating: "MEDIUM"
+
+  # Allowed: LOW | MEDIUM | HIGH (Residual risk after compensating controls)
+  residual_risk_rating: "LOW"
+
+  # Rationale justifying why residual risk is acceptable during the exception window (min 30 chars)
+  risk_rationale: "System is restricted to internal users only and real-time secondary validation ensures erroneous model outputs are intercepted before display."
+
+# Concrete technical or operational safeguards deployed to counteract the increased residual risk (min 1 required)
+compensating_controls:
+  - compensation_id: "CMP-01"
+    description: "Enforce secondary deterministic validator LLM on all agent conversational turns before delivery to end user."
+    # Allowed enforcement points:
+    # pre_commit_hook | pull_request_check | ci_build_pipeline | model_registry_admission |
+    # deployment_admission_controller | api_gateway_sidecar | agent_runtime_interceptor |
+    # periodic_automated_scan | manual_audit_gate
+    enforcement_point: "api_gateway_sidecar"
+    verification_mechanism: "Automated telemetry alert on disagreement between primary model and secondary validator."
+    owner_placeholder: "[ROLE: AI Platform Security Engineer]"
+
+  - compensation_id: "CMP-02"
+    description: "Daily manual spot-check audit of sample outputs conducted by domain specialist."
+    enforcement_point: "manual_audit_gate"
+    verification_mechanism: "Logged daily audit checklist in compliance tracking portal."
+    owner_placeholder: "[ROLE: QA Operations Lead]"
+
+# Mandatory legal and regulatory certification
+legal_statutory_certification:
+  # Mandatory certification that internal exceptions NEVER waive legal or regulatory obligations.
+  # Must be true.
+  disclaimer_acknowledgment: true
+
+  # Must be false. No enterprise exception may waive external statutory or regulatory mandates.
+  statutory_obligation_waived: false
+
+  # Designated regulatory legal sign-off role
+  legal_counsel_signoff_placeholder: "[ROLE: Legal Counsel - Regulatory AI]"
+
+# Formal governance approval attestations (min 1 required)
+approvals:
+  - role_placeholder: "[ROLE: Head of Model Risk Management]"
+    approver_name: "[NAME: Approver Name]"
+    # Allowed: APPROVED | REJECTED | CONDITIONALLY_APPROVED
+    decision: "APPROVED"
+    conditions: "Approved on the condition that CMP-01 secondary validation remains 100% active in blocking mode."
+    date: "2026-10-02"
+
+# Concrete remediation plan to achieve full baseline compliance before expiration
+remediation_plan:
+  target_remediation_date: "2026-12-15"
+  action_items:
+    - milestone: "Complete dataset curation and edge-case synthetic data augmentation"
+      target_date: "2026-11-15"
+      owner_placeholder: "[ROLE: Data Science Lead]"
+    - milestone: "Re-run full evaluation benchmark suite to demonstrate hallucination rate < 0.05"
+      target_date: "2026-12-01"
+      owner_placeholder: "[ROLE: Lead AI Engineer]"

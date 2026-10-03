@@ -1,0 +1,50 @@
+# ==============================================================================
+# Enterprise AI Governance Package - Pre-Commit Hook Configuration Template
+# ==============================================================================
+# File: .pre-commit-config.yaml
+# Scope: Local developer workstations (Git pre-commit phase)
+#
+# GOVERNANCE POSTURE: ADVISORY
+# Local developer checks provide fast shift-left feedback to engineers.
+# They are advisory and designed to catch syntax errors, missing manifest fields,
+# and accidental credential leaks before committing. Authoritative enforcement
+# occurs in PR, CI/CD, and runtime admission gates.
+# ==============================================================================
+
+default_install_hook_types: [pre-commit]
+default_stages: [pre-commit]
+fail_fast: false
+
+repos:
+  # ----------------------------------------------------------------------------
+  # Hook 1: Project Governance Manifest Conformance (ORG-CTL-ACC-003)
+  # ----------------------------------------------------------------------------
+  - repo: local
+    hooks:
+      - id: validate-ai-manifest
+        name: Validate AI Project Manifest
+        description: "Advisory check validating that ai-project-manifest.yaml conforms to schemas/project-manifest.schema.json."
+        entry: python project-kit/resolver/resolve.py --manifest ai-project-manifest.yaml --validate-only
+        language: system
+        files: ^ai-project-manifest\.ya?ml$
+        pass_filenames: false
+
+  # ----------------------------------------------------------------------------
+  # Hook 2: AI Credential & Secret Leakage Prevention (ORG-CTL-SEC-001)
+  # ----------------------------------------------------------------------------
+      - id: detect-ai-secrets
+        name: Detect Hardcoded AI Gateway Credentials & API Keys
+        description: "Scans staged files for raw API keys (OpenAI, Anthropic, HuggingFace, Cloud IAM tokens)."
+        entry: python plugins/pre-commit/scan_secrets.py
+        language: system
+        types: [text]
+
+  # ----------------------------------------------------------------------------
+  # Hook 3: Model Weight Pickling Check (ORG-CTL-SUP-003)
+  # ----------------------------------------------------------------------------
+      - id: check-insecure-weights
+        name: Check Insecure Model Weight Serialization
+        description: "Blocks accidental git commits of insecure legacy pickle / PyTorch .bin weights."
+        entry: python -c "import sys; bad=[f for f in sys.argv[1:] if f.endswith(('.bin', '.pkl', '.pickle'))]; sys.exit(1 if bad else 0)"
+        language: system
+        types: [file]

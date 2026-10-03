@@ -1,0 +1,21 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "enterprise-ai-governance"
+version = "0.1.0"
+description = "Automated Policy-as-Code and CI/CD validation engine for Enterprise AI projects"
+readme = "README.md"
+requires-python = ">=3.9"
+dependencies = [
+    "pyyaml>=6.0",
+]
+
+[project.scripts]
+ai-governance = "agents.governance_agent:main"
+ai-governance-mcp = "agents.mcp_server:main"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["agents*", "baseline*", "overlays*", "project-kit*", "policy-as-code*", "plugins*"]

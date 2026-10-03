@@ -1,0 +1,11 @@
+# Data Card - Remediated Privacy Metrics
+dataset_details:
+  dataset_id: "DAT-LOAN-APPLICANTS-01"
+  dataset_name: "Sanitized Loan Applications with Masked SSNs"
+  contains_pii: true
+  # REMEDIATION: PII sanitized and masked (POL-DAT-01)
+  sanitization_applied: true
+  retention_period_years: 5
+licensing:
+  copyright_cleared: true
+  reciprocal_copyleft_free: true

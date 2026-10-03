@@ -1,0 +1,76 @@
+# Example AI Project Manifest (ai-project-manifest.yaml)
+# Conforms to schemas/project-manifest.schema.json
+
+schema_version: "1.0.0"
+project_id: "customer-assistant-agent"
+project_name: "Customer Support Autonomous Copilot"
+description: "Agentic customer support system capable of querying customer records, initiating refund requests, and answering product inquiries."
+repository_url: "https://git.internal.net/ai-projects/customer-assistant-agent"
+
+owners:
+  business_owner:
+    name: "Jane Doe"
+    email: "jane.doe@example.com"
+    role_placeholder: "[ROLE: Business Product Owner]"
+  technical_lead:
+    name: "John Smith"
+    email: "john.smith@example.com"
+    role_placeholder: "[ROLE: Lead AI Engineer]"
+  risk_officer:
+    name: "Alice Johnson"
+    email: "alice.johnson@example.com"
+    role_placeholder: "[ROLE: Divisional Risk Lead]"
+
+ai_system_profile:
+  archetype: "autonomous_agent"
+  lifecycle_stage: "development"
+  risk_tier: "tier_3_high"
+  declared_characteristics:
+    executes_tools_or_code: true
+    processes_personal_data: true
+    processes_confidential_or_ip_data: false
+    interacts_directly_with_public: true
+    makes_autonomous_decisions_affecting_humans: false
+    generates_code_or_executable_artifacts: false
+    uses_external_third_party_models_apis: true
+    uses_fine_tuning_or_custom_weights: false
+    operates_in_safety_critical_context: false
+  data_classifications:
+    - "public"
+    - "internal"
+    - "restricted_pii"
+  target_geographies:
+    - "EU"
+    - "US"
+  target_sectors:
+    - "ecommerce"
+    - "financial_services"
+
+components:
+  models:
+    - name: "claude-3-5-sonnet"
+      version: "20241022"
+      provider: "Anthropic"
+      source_type: "third_party_saas"
+      uri_or_registry_id: "api.anthropic.com/v1"
+  agent_tools:
+    - tool_id: "search_customer_orders"
+      description: "Query customer past order history"
+      schema_uri: "schemas/tools/search_orders.json"
+      execution_mode: "read_only"
+    - tool_id: "initiate_refund"
+      description: "Submit refund request for supervisor review"
+      schema_uri: "schemas/tools/initiate_refund.json"
+      execution_mode: "destructive_write_requires_approval"
+  knowledge_stores:
+    - store_id: "product_kb_vector_db"
+      store_type: "vector_database"
+      data_classification: "public"
+
+governance_bindings:
+  baseline_version_pin: "v0.1.0-draft"
+  overlay_pins:
+    - overlay_id: "ORG-OVL-GEO-EU-001"
+      version_pin: "1.0.0"
+  active_exceptions:
+    - "ORG-EXC-2026-001"

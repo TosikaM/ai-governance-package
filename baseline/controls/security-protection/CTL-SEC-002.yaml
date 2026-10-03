@@ -1,0 +1,63 @@
+id: "ORG-CTL-SEC-002"
+title: "Zero-Trust Retrieval Authorization at the Vector Layer (RAG Security)"
+objective: "Enforce document access control lists (ACLs) and multi-tenant isolation strictly at the vector retrieval layer, prohibiting architectures that rely on LLM system prompts or internal model filtering to restrict unauthorized document disclosure."
+domain: "security_attack_mitigation"
+type: "conditional"
+
+applicability_condition:
+  predicate_type: "manifest_property_match"
+  manifest_path: "ai_system_profile.archetype"
+  operator: "in"
+  target_value:
+    - "rag_system"
+    - "autonomous_agent"
+    - "hybrid"
+  description: "Applies to any system utilizing vector knowledge stores, embeddings, or retrieval-augmented generation."
+
+lifecycle_stages:
+  - "evaluation_validation"
+  - "integration_ci_cd"
+  - "deployment_admission"
+  - "runtime_operation"
+
+enforcement_points:
+  - "ci_build_pipeline"
+  - "deployment_admission_controller"
+  - "api_gateway_sidecar"
+
+check_type: "automated"
+mode: "blocking"
+
+evidence_required:
+  - artifact_type: "retrieval_auth_test_report"
+    description: "Automated integration test report proving that vector search queries executed with unauthorized user context return zero unauthorized chunks."
+    format: "json"
+    retention_period_years: 7
+
+exception_eligibility:
+  eligible: false
+  statutory_prohibition: false
+  minimum_compensating_controls:
+    - "No exceptions permitted. Relying on an LLM to enforce data confidentiality is an architecturally invalid security pattern."
+
+reference_mappings:
+  - framework: "OWASP Top 10 for LLM Applications (2025)"
+    clause_or_section: "LLM02:2025"
+    citation_title: "Sensitive Information Disclosure - Insecure RAG Architecture"
+    mapping_status: "verified"
+    notes: "Direct mandate to enforce data access controls at the data retrieval layer, never via LLM system prompts."
+  - framework: "NIST AI 600-1 (GenAI Profile)"
+    clause_or_section: "PROTECT 1.1"
+    citation_title: "Access control and data leakage prevention in retrieval-augmented AI"
+    mapping_status: "verified"
+    notes: "Requires zero-trust data access enforcement for vector knowledge databases."
+  - framework: "ISO/IEC 42001:2023"
+    clause_or_section: "Annex A.8.2"
+    citation_title: "Access control and data protection in AI processing"
+    mapping_status: "verified"
+    notes: "Mandates access control policies be enforced prior to feeding context into AI processing engines."
+
+owner_placeholder: "[ROLE: AI Security & Data Architect]"
+review_date_placeholder: "[YYYY-MM-DD]"
+version: "1.0.0"
+status: "DRAFT"

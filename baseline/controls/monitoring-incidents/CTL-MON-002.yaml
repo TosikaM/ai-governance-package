@@ -1,0 +1,55 @@
+id: "ORG-CTL-MON-002"
+title: "Real-Time Operational Telemetry and Latency/Error Monitoring"
+objective: "Capture and route real-time operational telemetry (including P95/P99 latency, token consumption, HTTP status distributions, and fallback invocation rates) to the enterprise observability platform."
+domain: "monitoring_drift_incidents"
+type: "universal"
+
+applicability_condition:
+  predicate_type: "always"
+  description: "Universal control applying to all production AI runtime services and gateways."
+
+lifecycle_stages:
+  - "deployment_admission"
+  - "runtime_operation"
+
+enforcement_points:
+  - "deployment_admission_controller"
+  - "api_gateway_sidecar"
+  - "periodic_automated_scan"
+
+check_type: "automated"
+mode: "blocking"
+
+evidence_required:
+  - artifact_type: "telemetry_emission_conformance_report"
+    description: "Automated probe output confirming system exports OpenTelemetry metrics with required AI governance tags (project_id, sys_id, model_version)."
+    format: "json"
+    retention_period_years: 3
+
+exception_eligibility:
+  eligible: true
+  statutory_prohibition: false
+  minimum_compensating_controls:
+    - "Local file logging with daily automated log shippers to central SIEM."
+
+reference_mappings:
+  - framework: "ISO/IEC 42001:2023"
+    clause_or_section: "Clause 9.1"
+    citation_title: "Monitoring, measurement, analysis and evaluation"
+    mapping_status: "verified"
+    notes: "Requires continuous operational monitoring of AI system performance."
+  - framework: "NIST AI RMF 1.0"
+    clause_or_section: "MANAGE 2.4"
+    citation_title: "Mechanisms to track and manage AI risks over time"
+    mapping_status: "verified"
+    notes: "Telemetry enables continuous oversight of operational performance."
+  - framework: "EU AI Act Regulation (EU) 2024/1689"
+    clause_or_section: "Article 72"
+    citation_title: "Post-market monitoring by deployers and providers"
+    mapping_status: "verified"
+    notes: "Statutory requirement to maintain post-market monitoring systems."
+
+owner_placeholder: "[ROLE: Enterprise AI Observability Lead]"
+review_date_placeholder: "[YYYY-MM-DD]"
+version: "1.0.0"
+status: "DRAFT"

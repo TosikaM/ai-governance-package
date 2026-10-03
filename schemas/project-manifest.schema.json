@@ -1,0 +1,286 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://governance.internal.net/schemas/project-manifest.schema.json",
+  "title": "AI Project Manifest Specification Schema",
+  "description": "JSON Schema specification for project-level governance declarations (ai-project-manifest.yaml). Projects declare their characteristics, system architecture, and version pins without modifying baseline controls.",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "project_id",
+    "project_name",
+    "owners",
+    "ai_system_profile",
+    "governance_bindings"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$",
+      "description": "Version of the manifest specification schema."
+    },
+    "project_id": {
+      "type": "string",
+      "pattern": "^[a-z0-9_-]{3,50}$",
+      "description": "Unique enterprise project identifier corresponding to the CMDB or source repository."
+    },
+    "project_name": {
+      "type": "string",
+      "minLength": 3,
+      "maxLength": 100,
+      "description": "Human-readable name of the AI project or application."
+    },
+    "description": {
+      "type": "string",
+      "maxLength": 1000,
+      "description": "Concise summary of the system's business purpose and intended use-case."
+    },
+    "repository_url": {
+      "type": "string",
+      "format": "uri",
+      "description": "Source code repository containing this manifest."
+    },
+    "owners": {
+      "type": "object",
+      "required": ["business_owner", "technical_lead"],
+      "properties": {
+        "business_owner": {
+          "type": "object",
+          "required": ["name", "email", "role_placeholder"],
+          "properties": {
+            "name": { "type": "string" },
+            "email": { "type": "string", "format": "email" },
+            "role_placeholder": { "type": "string", "default": "[ROLE: Business Owner]" }
+          }
+        },
+        "technical_lead": {
+          "type": "object",
+          "required": ["name", "email", "role_placeholder"],
+          "properties": {
+            "name": { "type": "string" },
+            "email": { "type": "string", "format": "email" },
+            "role_placeholder": { "type": "string", "default": "[ROLE: Technical Lead]" }
+          }
+        },
+        "risk_officer": {
+          "type": "object",
+          "properties": {
+            "name": { "type": "string" },
+            "email": { "type": "string", "format": "email" },
+            "role_placeholder": { "type": "string", "default": "[ROLE: Risk Officer]" }
+          }
+        }
+      }
+    },
+    "ai_system_profile": {
+      "type": "object",
+      "required": [
+        "archetype",
+        "lifecycle_stage",
+        "risk_tier",
+        "declared_characteristics",
+        "data_classifications",
+        "target_geographies",
+        "target_sectors"
+      ],
+      "properties": {
+        "archetype": {
+          "type": "string",
+          "enum": [
+            "predictive_ml",
+            "generative_llm",
+            "rag_system",
+            "autonomous_agent",
+            "hybrid"
+          ],
+          "description": "Primary architectural pattern of the AI system."
+        },
+        "lifecycle_stage": {
+          "type": "string",
+          "enum": [
+            "concept_design",
+            "development",
+            "staging_validation",
+            "production",
+            "decommissioned"
+          ],
+          "description": "Current lifecycle status of the project."
+        },
+        "risk_tier": {
+          "type": "string",
+          "enum": [
+            "tier_1_minimal",
+            "tier_2_moderate",
+            "tier_3_high",
+            "tier_4_unacceptable"
+          ],
+          "description": "Self-assessed or board-confirmed risk tier based on enterprise risk classification taxonomy."
+        },
+        "declared_characteristics": {
+          "type": "object",
+          "description": "Binary declarations of operational traits that trigger conditional governance controls.",
+          "required": [
+            "executes_tools_or_code",
+            "processes_personal_data",
+            "processes_confidential_or_ip_data",
+            "interacts_directly_with_public",
+            "makes_autonomous_decisions_affecting_humans",
+            "generates_code_or_executable_artifacts",
+            "uses_external_third_party_models_apis",
+            "uses_fine_tuning_or_custom_weights",
+            "operates_in_safety_critical_context"
+          ],
+          "properties": {
+            "executes_tools_or_code": {
+              "type": "boolean",
+              "description": "System runs dynamic tools, shell commands, database queries, or external APIs on behalf of users/models."
+            },
+            "processes_personal_data": {
+              "type": "boolean",
+              "description": "System ingests, transforms, or outputs Personally Identifiable Information (PII) or sensitive personal data."
+            },
+            "processes_confidential_or_ip_data": {
+              "type": "boolean",
+              "description": "System processes proprietary corporate intellectual property, trade secrets, or non-public financial records."
+            },
+            "interacts_directly_with_public": {
+              "type": "boolean",
+              "description": "System directly interfaces with external end-users or customers without human triage."
+            },
+            "makes_autonomous_decisions_affecting_humans": {
+              "type": "boolean",
+              "description": "System outputs produce binding legal, financial, health, employment, or contractual impacts on individuals without mandatory human approval."
+            },
+            "generates_code_or_executable_artifacts": {
+              "type": "boolean",
+              "description": "System generates software source code, configurations, infrastructure scripts, or executable binaries."
+            },
+            "uses_external_third_party_models_apis": {
+              "type": "boolean",
+              "description": "System communicates with commercial LLM APIs or external SaaS model endpoints outside enterprise VPC/perimeter."
+            },
+            "uses_fine_tuning_or_custom_weights": {
+              "type": "boolean",
+              "description": "Project trains, fine-tunes, or adapts model weights using internal or acquired datasets."
+            },
+            "operates_in_safety_critical_context": {
+              "type": "boolean",
+              "description": "System failure could cause physical injury, critical infrastructure disruption, or life-safety hazard."
+            }
+          }
+        },
+        "data_classifications": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "enum": [
+              "public",
+              "internal",
+              "confidential",
+              "restricted_pii",
+              "regulated_financial",
+              "regulated_health"
+            ]
+          },
+          "description": "Data classification tiers touched by model training, retrieval, or inference."
+        },
+        "target_geographies": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string" },
+          "description": "Target geographic markets or user jurisdictions (e.g., 'EU', 'US', 'UK', 'GLOBAL')."
+        },
+        "target_sectors": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string" },
+          "description": "Target industry sectors (e.g., 'financial_services', 'healthcare', 'ecommerce', 'general')."
+        }
+      }
+    },
+    "components": {
+      "type": "object",
+      "properties": {
+        "models": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["name", "version", "source_type"],
+            "properties": {
+              "name": { "type": "string" },
+              "version": { "type": "string" },
+              "provider": { "type": "string" },
+              "source_type": {
+                "type": "string",
+                "enum": ["third_party_saas", "open_weights_internal_hosted", "custom_trained_proprietary"]
+              },
+              "uri_or_registry_id": { "type": "string" }
+            }
+          }
+        },
+        "agent_tools": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["tool_id", "schema_uri", "execution_mode"],
+            "properties": {
+              "tool_id": { "type": "string" },
+              "description": { "type": "string" },
+              "schema_uri": { "type": "string" },
+              "execution_mode": {
+                "type": "string",
+                "enum": ["read_only", "safe_write", "destructive_write_requires_approval"]
+              }
+            }
+          }
+        },
+        "knowledge_stores": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["store_id", "store_type"],
+            "properties": {
+              "store_id": { "type": "string" },
+              "store_type": { "type": "string", "enum": ["vector_database", "relational_db", "graph_db", "file_system"] },
+              "data_classification": { "type": "string" }
+            }
+          }
+        }
+      }
+    },
+    "governance_bindings": {
+      "type": "object",
+      "required": ["baseline_version_pin"],
+      "properties": {
+        "baseline_version_pin": {
+          "type": "string",
+          "description": "Pinned semantic version of the Enterprise Baseline package (e.g. 'v0.1.0-draft' or '1.0.0')."
+        },
+        "overlay_pins": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["overlay_id", "version_pin"],
+            "properties": {
+              "overlay_id": {
+                "type": "string",
+                "pattern": "^ORG-OVL-[A-Z]{3}-[A-Z0-9_-]+-[0-9]{3}$"
+              },
+              "version_pin": { "type": "string" }
+            }
+          },
+          "description": "Explicitly pinned overlay packages applicable to this project's jurisdiction, sector, or tier."
+        },
+        "active_exceptions": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^ORG-EXC-[0-9]{4}-[0-9]{3,}$"
+          },
+          "description": "Approved, unexpired exception identifiers authorized for this project repository."
+        }
+      }
+    }
+  },
+  "additionalProperties": false
+}

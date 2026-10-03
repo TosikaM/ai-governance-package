@@ -1,0 +1,89 @@
+# ==============================================================================
+# Tier 3 High-Risk System Specialization Overlay
+# ==============================================================================
+# Schema: schemas/overlay.schema.json (JSON Schema Draft 2020-12)
+# Category: risk_tier
+# ==============================================================================
+
+id: "ORG-OVL-RSK-TIER3-001"
+title: "Tier 3 High-Risk System Specialization Overlay"
+category: "risk_tier"
+
+target_scope:
+  applicability_summary: "Applies to all enterprise AI systems classified as Tier 3 (High Risk) based on material impact to human safety, civil rights, legal entitlements, financial security, or critical enterprise continuity."
+  jurisdictions:
+    - "global"
+  sectors:
+    - "all"
+  risk_tiers:
+    - "tier_3_high"
+  ai_types:
+    - "predictive_tabular"
+    - "generative_llm"
+    - "rag_system"
+    - "autonomous_agent"
+
+baseline_compatibility: ">=0.1.0 <2.0.0"
+
+citations:
+  - source_title: "ISO/IEC 42001:2023 Information technology - Artificial intelligence - Management system"
+    citation_reference: "Clause 6.1 (Actions to address risks and opportunities) and Annex A.5 (AI system impact assessment)"
+    url: "https://www.iso.org/standard/81230.html"
+    publication_date_or_version: "2023-12-18"
+    verification_status: "verified"
+  - source_title: "NIST AI Risk Management Framework (AI RMF 1.0)"
+    citation_reference: "GOVERN 1.2, MANAGE 2.2, and MEASURE 2.6"
+    url: "https://doi.org/10.6028/NIST.AI.100-1"
+    publication_date_or_version: "2023-01-26"
+    verification_status: "verified"
+
+legal_review_status: "NOT_LEGAL_STATUTE_TECHNICAL_SPEC_ONLY"
+
+rules:
+  - rule_id: "R01"
+    target_control_id: "ORG-CTL-HUM-004"
+    action: "upgrade_mode"
+    upgraded_mode: "blocking"
+    rationale: "For high-risk systems, statistical tracking of operator review duration and override rates cannot remain advisory and must block pipeline promotion if automation complacency is detected."
+
+  - rule_id: "R02"
+    target_control_id: "ORG-CTL-MON-003"
+    action: "tighten_parameter"
+    parameter_tightening:
+      parameter_name: "drift_psi_alert_threshold"
+      new_value: 0.15
+      direction: "lower_is_stricter"
+    rationale: "High-risk models require earlier warning on distributional shift; PSI alert threshold tightened from baseline 0.25 to 0.15."
+
+  - rule_id: "R03"
+    target_control_id: "ORG-CTL-MON-003"
+    action: "tighten_parameter"
+    parameter_tightening:
+      parameter_name: "drift_evaluation_cadence_hours"
+      new_value: 6
+      direction: "lower_is_stricter"
+    rationale: "Evaluation cadence accelerated from 24 hours to 6 hours for high-risk runtime monitoring."
+
+  - rule_id: "R04"
+    target_control_id: "ORG-CTL-MON-003"
+    action: "upgrade_mode"
+    upgraded_mode: "review"
+    rationale: "Drift alerts on Tier 3 systems trigger mandatory human review by the Model Risk Officer rather than remaining purely advisory."
+
+  - rule_id: "R05"
+    target_control_id: "ORG-CTL-RSK-002"
+    action: "require_additional_evidence"
+    additional_evidence:
+      - artifact_type: "executive_risk_acceptance_dossier"
+        description: "Formal risk acceptance dossier co-signed by Business Unit Executive, Enterprise Chief Risk Officer (CRO), and Chief Information Security Officer (CISO)."
+        format: "pdf"
+    rationale: "Tier 3 deployments require formal executive risk acceptance evidence before production traffic allocation."
+
+conflict_resolution:
+  default_behavior: "UNRESOLVED_CONFLICT_HALT"
+  resolution_escalation_path: "Enterprise AI Safety Review Board and Operational Risk Committee"
+
+owner_placeholder: "[ROLE: Enterprise AI Risk Lead]"
+review_date_placeholder: "[YYYY-MM-DD]"
+version: "0.1.0-draft"
+status: "DRAFT"

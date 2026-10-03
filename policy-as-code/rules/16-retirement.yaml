@@ -1,0 +1,48 @@
+# ==============================================================================
+# Policy-as-Code Rules: Domain 16 - Retirement & Decommissioning (RET)
+# ==============================================================================
+# Schema: policy-as-code/rule-schema.json
+# Baseline Controls: ORG-CTL-RET-001, ORG-CTL-RET-002, ORG-CTL-RET-003, ORG-CTL-RET-004
+# ==============================================================================
+
+schema_version: "1.0.0"
+domain: "retirement_decommissioning"
+owner_placeholder: "[ROLE: Enterprise System Lifecycle & SRE Lead]"
+review_date_placeholder: "[YYYY-MM-DD]"
+status: "DRAFT"
+
+rules:
+  # ----------------------------------------------------------------------------
+  # Control: ORG-CTL-RET-001 - Lifecycle Status Transition Verification
+  # ----------------------------------------------------------------------------
+  - rule_id: "PAC-RET-001"
+    target_control_id: "ORG-CTL-RET-001"
+    title: "System Lifecycle Status Field Conformance"
+    description: "Verifies that the manifest declares a recognized lifecycle stage."
+    enforcement_points:
+      - "ci_build_pipeline"
+      - "deployment_admission_controller"
+    mode: "blocking"
+    input_context:
+      - "ai_project_manifest"
+    assertions:
+      - assertion_id: "A01"
+        description: "lifecycle_stage must be declared and belong to standard lifecycle enum."
+        field_path: "ai_system_profile.lifecycle_stage"
+        operator: "in"
+        expected_value:
+          - "concept_design"
+          - "development"
+          - "staging_validation"
+          - "production"
+          - "decommissioned"
+        failure_message: "System lifecycle_stage is missing or invalid."
+    remediation: "Ensure ai_system_profile.lifecycle_stage is set to an approved lifecycle phase."
+    reference_rego: |
+      # verify against current documentation
+      package ai_governance.ret001
+      default allow = false
+      valid_stages = {"concept_design", "development", "staging_validation", "production", "decommissioned"}
+      allow {
+          valid_stages[input.ai_system_profile.lifecycle_stage]
+      }

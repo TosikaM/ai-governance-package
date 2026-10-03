@@ -1,0 +1,51 @@
+id: "ORG-CTL-IPR-003"
+title: "Automated Code Similarity and Copyleft Reciprocal License Detection"
+objective: "Prevent unintended copyright infringement and copyleft licensing contamination (e.g. GPL, AGPL) by running automated code matching on AI-suggested code snippets before merge."
+domain: "intellectual_property_licensing"
+type: "conditional"
+
+applicability_condition:
+  predicate_type: "manifest_property_match"
+  manifest_path: "ai_system_profile.declared_characteristics.generates_code_or_executable_artifacts"
+  operator: "is_true"
+  target_value: true
+  description: "Applies to repositories and pipelines deploying AI-assisted coding tools."
+
+lifecycle_stages:
+  - "integration_ci_cd"
+
+enforcement_points:
+  - "pull_request_check"
+  - "ci_build_pipeline"
+
+check_type: "automated"
+mode: "blocking"
+
+evidence_required:
+  - artifact_type: "code_license_scan_report"
+    description: "Automated code similarity and snippet analysis report confirming no verbatim matches against restricted reciprocal copyleft repositories."
+    format: "sarif_json"
+    retention_period_years: 5
+
+exception_eligibility:
+  eligible: true
+  statutory_prohibition: false
+  minimum_compensating_controls:
+    - "Written clearance from IP Legal Counsel confirming fair use, public domain status, or compatible dual-licensing."
+
+reference_mappings:
+  - framework: "ISO/IEC 42001:2023"
+    clause_or_section: "Annex A.7.4"
+    citation_title: "Intellectual property rights and open-source software license compliance"
+    mapping_status: "verified"
+    notes: "Requires systematic detection and prevention of unintended copyleft contamination."
+  - framework: "NIST AI RMF 1.0"
+    clause_or_section: "MANAGE 1.1"
+    citation_title: "Legal and contractual risks from AI outputs are identified and managed."
+    mapping_status: "verified"
+    notes: "Addresses licensing liabilities arising from code synthesis tools."
+
+owner_placeholder: "[ROLE: Enterprise Intellectual Property Legal Counsel]"
+review_date_placeholder: "[YYYY-MM-DD]"
+version: "1.0.0"
+status: "DRAFT"

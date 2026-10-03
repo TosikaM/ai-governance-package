@@ -1,0 +1,58 @@
+# Example Overlay Specification
+# Conforms to schemas/overlay.schema.json
+
+id: "ORG-OVL-GEO-EU-001"
+title: "EU AI Act High-Risk System Specialization Overlay"
+category: "geography"
+
+target_scope:
+  applicability_summary: "Applies to AI systems deployed within the European Union or placing outputs on the EU market classified as High Risk."
+  jurisdictions:
+    - "EU"
+  sectors:
+    - "all"
+  risk_tiers:
+    - "tier_3_high"
+  ai_types:
+    - "generative_llm"
+    - "rag_system"
+    - "autonomous_agent"
+
+baseline_compatibility: ">=0.1.0 <2.0.0"
+
+citations:
+  - source_title: "Regulation (EU) 2024/1689 (EU AI Act)"
+    citation_reference: "Article 15 (Accuracy, Robustness and Cybersecurity)"
+    url: "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32024R1689"
+    publication_date_or_version: "2024-07-12"
+    verification_status: "verified"
+
+legal_review_status: "PENDING_QUALIFIED_LEGAL_REVIEW"
+
+rules:
+  - rule_id: "R01"
+    target_control_id: "ORG-CTL-ROB-003"
+    action: "tighten_parameter"
+    parameter_tightening:
+      parameter_name: "max_hallucination_rate"
+      new_value: 0.02
+      direction: "lower_is_stricter"
+    rationale: "Article 15(1) mandates high-risk systems achieve consistently high accuracy and resilience against errors."
+
+  - rule_id: "R02"
+    target_control_id: "ORG-CTL-ROB-003"
+    action: "require_additional_evidence"
+    additional_evidence:
+      - artifact_type: "eu_conformity_assessment_dossier"
+        description: "Technical documentation dossier verifying test benchmarks as required under Annex IV."
+        format: "pdf"
+    rationale: "Annex IV technical documentation mandates detailed descriptions of validation metrics."
+
+conflict_resolution:
+  default_behavior: "UNRESOLVED_CONFLICT_HALT"
+  resolution_escalation_path: "Enterprise AI Safety Review Board and Legal Counsel"
+
+owner_placeholder: "[ROLE: EU Regulatory Compliance Lead]"
+review_date_placeholder: "[YYYY-MM-DD]"
+version: "1.0.0"
+status: "DRAFT"

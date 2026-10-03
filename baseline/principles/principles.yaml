@@ -1,0 +1,148 @@
+# Enterprise AI Principles Catalogue (Machine-Readable)
+# Version: v0.1.0-draft
+# Status: DRAFT
+
+principles:
+  - id: "ORG-PRIN-ACC"
+    domain: "accountability_inventory"
+    name: "Accountability & AI Inventory"
+    summary: "Every AI system must have identified accountable human owners and be registered in the enterprise inventory before deployment."
+    associated_policy_id: "ORG-POL-ACC-001"
+    primary_framework_mapping:
+      framework: "NIST AI RMF 1.0"
+      clause: "GOVERN 1.1"
+
+  - id: "ORG-PRIN-USE"
+    domain: "acceptable_use_literacy"
+    name: "Acceptable Use, Shadow AI & Literacy"
+    summary: "AI systems must only be deployed for approved, lawful purposes; shadow AI is prohibited, and AI literacy training is mandatory."
+    associated_policy_id: "ORG-POL-USE-001"
+    primary_framework_mapping:
+      framework: "ISO/IEC 42001:2023"
+      clause: "Clause 7.2"
+
+  - id: "ORG-PRIN-RSK"
+    domain: "risk_classification_impact"
+    name: "Risk Classification & Impact Assessment"
+    summary: "Mandatory risk tiering and algorithmic impact assessments must precede system staging and production release."
+    associated_policy_id: "ORG-POL-RSK-001"
+    primary_framework_mapping:
+      framework: "NIST AI RMF 1.0"
+      clause: "MAP 1.1"
+
+  - id: "ORG-PRIN-DAT"
+    domain: "data_quality_privacy_retention"
+    name: "Data Quality, Privacy & Stewardship"
+    summary: "Data used for training, fine-tuning, or retrieval must have verified lineage, consent, minimization, residency, and retention controls."
+    associated_policy_id: "ORG-POL-DAT-001"
+    primary_framework_mapping:
+      framework: "ISO/IEC 42001:2023"
+      clause: "Annex A.7"
+
+  - id: "ORG-PRIN-SUP"
+    domain: "supply_chain_third_party"
+    name: "Model, Supplier & Supply Chain Integrity"
+    summary: "Third-party models and components must have documented provenance, cryptographic verification, and Software/Model Bills of Materials."
+    associated_policy_id: "ORG-POL-SUP-001"
+    primary_framework_mapping:
+      framework: "NIST AI RMF 1.0"
+      clause: "GOVERN 3.2"
+
+  - id: "ORG-PRIN-IPR"
+    domain: "intellectual_property_licensing"
+    name: "Intellectual Property & Licensing"
+    summary: "Training data, knowledge bases, and AI-generated code must comply with copyright, licensing, and attribution obligations."
+    associated_policy_id: "ORG-POL-IPR-001"
+    primary_framework_mapping:
+      framework: "ISO/IEC 42001:2023"
+      clause: "Annex A.7.4"
+
+  - id: "ORG-PRIN-SEC"
+    domain: "security_attack_mitigation"
+    name: "Defensive AI Security & Attack Mitigation"
+    summary: "Defense-in-depth protection against prompt injection, jailbreaks, data leakage, and unauthorized retrieval across all interfaces."
+    associated_policy_id: "ORG-POL-SEC-001"
+    primary_framework_mapping:
+      framework: "OWASP Top 10 for LLM Applications (2025)"
+      clause: "LLM01:2025"
+
+  - id: "ORG-PRIN-ROB"
+    domain: "robustness_evaluation_testing"
+    name: "Robustness, Evaluation & Empirical Testing"
+    summary: "AI systems must pass empirical benchmark evaluations for accuracy, hallucination limits, and stability before release."
+    associated_policy_id: "ORG-POL-ROB-001"
+    primary_framework_mapping:
+      framework: "NIST AI RMF 1.0"
+      clause: "MEASURE 2.5"
+
+  - id: "ORG-PRIN-FAI"
+    domain: "fairness_bias_accessibility"
+    name: "Fairness, Accessibility & Societal Impact"
+    summary: "AI systems must be evaluated for disparate impact and bias, maintain WCAG accessibility, and evaluate societal harms."
+    associated_policy_id: "ORG-POL-FAI-001"
+    primary_framework_mapping:
+      framework: "NIST AI RMF 1.0"
+      clause: "MEASURE 2.11"
+
+  - id: "ORG-PRIN-TRN"
+    domain: "transparency_disclosure"
+    name: "Transparency, Explainability & Provenance"
+    summary: "Mandatory disclosure of AI interaction, synthetic content watermarking, decision explainability, and published model cards."
+    associated_policy_id: "ORG-POL-TRN-001"
+    primary_framework_mapping:
+      framework: "ISO/IEC 42001:2023"
+      clause: "Clause 8.4"
+
+  - id: "ORG-PRIN-HUM"
+    domain: "human_oversight_redress"
+    name: "Human Agency, Oversight & Contestability"
+    summary: "High-impact automated decisions require meaningful human oversight, with clear contestability and redress mechanisms."
+    associated_policy_id: "ORG-POL-HUM-001"
+    primary_framework_mapping:
+      framework: "EU AI Act Regulation (EU) 2024/1689"
+      clause: "Article 14"
+
+  - id: "ORG-PRIN-AGT"
+    domain: "agent_autonomy_guardrails"
+    name: "Agent Autonomy Boundaries & Verifiable Action"
+    summary: "Tool execution and delegation must be authorized outside the model via least-privilege identities, schema checks, and kill switches."
+    associated_policy_id: "ORG-POL-AGT-001"
+    primary_framework_mapping:
+      framework: "OWASP Top 10 for LLM Applications (2025)"
+      clause: "LLM06:2025"
+
+  - id: "ORG-PRIN-MON"
+    domain: "monitoring_drift_incidents"
+    name: "Continuous Monitoring, Drift & Incidents"
+    summary: "Production AI systems must be monitored continuously for drift, anomalies, and safety events, with defined incident response procedures."
+    associated_policy_id: "ORG-POL-MON-001"
+    primary_framework_mapping:
+      framework: "ISO/IEC 42001:2023"
+      clause: "Clause 9.1"
+
+  - id: "ORG-PRIN-CST"
+    domain: "cost_resource_limits"
+    name: "Cost, Compute & Resource Sustainability"
+    summary: "AI systems must establish token limits, compute quotas, rate limiting, and FinOps tracking to prevent runaway expenditure."
+    associated_policy_id: "ORG-POL-CST-001"
+    primary_framework_mapping:
+      framework: "Internal Policy Reference"
+      clause: "FINOPS-AI-01"
+
+  - id: "ORG-PRIN-REC"
+    domain: "evidence_integrity_recordkeeping"
+    name: "Evidence Integrity & Audit Trails"
+    summary: "Governance artifacts, evaluations, and decision logs must be cryptographically attested and retained in an immutable ledger."
+    associated_policy_id: "ORG-POL-REC-001"
+    primary_framework_mapping:
+      framework: "ISO/IEC 42001:2023"
+      clause: "Clause 7.5"
+
+  - id: "ORG-PRIN-RET"
+    domain: "retirement_decommissioning"
+    name: "Responsible Retirement & Decommissioning"
+    summary: "Obsolete or non-compliant models must undergo formal decommissioning, weight archiving or disposal, and cache/vector purging."
+    associated_policy_id: "ORG-POL-RET-001"
+    primary_framework_mapping:
+      framework: "NIST AI RMF 1.0"
+      clause: "MANAGE 4.3"

@@ -1,0 +1,69 @@
+# ==============================================================================
+# Policy-as-Code Rules: Domain 14 - Cost & Resource Limits (CST)
+# ==============================================================================
+# Schema: policy-as-code/rule-schema.json
+# Baseline Controls: ORG-CTL-CST-001, ORG-CTL-CST-002, ORG-CTL-CST-003, ORG-CTL-CST-004
+# ==============================================================================
+
+schema_version: "1.0.0"
+domain: "cost_resource_limits"
+owner_placeholder: "[ROLE: Enterprise FinOps Lead]"
+review_date_placeholder: "[YYYY-MM-DD]"
+status: "DRAFT"
+
+rules:
+  # ----------------------------------------------------------------------------
+  # Control: ORG-CTL-CST-001 - Project FinOps Accountability Check
+  # ----------------------------------------------------------------------------
+  - rule_id: "PAC-CST-001"
+    target_control_id: "ORG-CTL-CST-001"
+    title: "Project FinOps Ownership and Cost Allocation Check"
+    description: "Verifies that an accountable business owner is assigned for project compute spend."
+    enforcement_points:
+      - "ci_build_pipeline"
+      - "deployment_admission_controller"
+    mode: "blocking"
+    input_context:
+      - "ai_project_manifest"
+    assertions:
+      - assertion_id: "A01"
+        description: "Business owner email must be declared for cost allocation."
+        field_path: "owners.business_owner.email"
+        operator: "is_valid_email"
+        failure_message: "Business owner email is required for monthly token budget allocation."
+    remediation: "Ensure owners.business_owner has a valid corporate email address in ai-project-manifest.yaml."
+    reference_rego: |
+      # verify against current documentation
+      package ai_governance.cst001
+      default allow = false
+      allow {
+          re_match("^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$", input.owners.business_owner.email)
+      }
+
+  # ----------------------------------------------------------------------------
+  # Control: ORG-CTL-CST-003 - Per-Invocation Token Limit Verification
+  # ----------------------------------------------------------------------------
+  - rule_id: "PAC-CST-003"
+    target_control_id: "ORG-CTL-CST-003"
+    title: "Task-Level Inference Token Ceiling Check"
+    description: "Verifies that benchmark test runs do not exceed the per-task maximum token ceiling (50,000 tokens)."
+    enforcement_points:
+      - "ci_build_pipeline"
+    mode: "blocking"
+    input_context:
+      - "eval_benchmark_report"
+    assertions:
+      - assertion_id: "A01"
+        description: "Max tokens per task invocation must be <= 50000."
+        field_path: "peak_task_tokens"
+        operator: "less_than_or_equal"
+        expected_value: 50000
+        failure_message: "Execution exceeded single-task token budget cap (50,000 tokens)."
+    remediation: "Implement prompt truncation, context window management, or summarization to keep token usage within bounds."
+    reference_rego: |
+      # verify against current documentation
+      package ai_governance.cst003
+      default allow = false
+      allow {
+          input.peak_task_tokens <= 50000
+      }

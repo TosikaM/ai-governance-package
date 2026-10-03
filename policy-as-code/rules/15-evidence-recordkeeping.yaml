@@ -1,0 +1,76 @@
+# ==============================================================================
+# Policy-as-Code Rules: Domain 15 - Evidence Integrity & Recordkeeping (REC)
+# ==============================================================================
+# Schema: policy-as-code/rule-schema.json
+# Baseline Controls: ORG-CTL-REC-001, ORG-CTL-REC-002, ORG-CTL-REC-003, ORG-CTL-REC-004
+# ==============================================================================
+
+schema_version: "1.0.0"
+domain: "evidence_integrity_recordkeeping"
+owner_placeholder: "[ROLE: Enterprise AI Compliance & Audit Lead]"
+review_date_placeholder: "[YYYY-MM-DD]"
+status: "DRAFT"
+
+rules:
+  # ----------------------------------------------------------------------------
+  # Control: ORG-CTL-REC-001 - Evidence Record Schema Conformance Check
+  # ----------------------------------------------------------------------------
+  - rule_id: "PAC-REC-001"
+    target_control_id: "ORG-CTL-REC-001"
+    title: "Governance Evidence Record Schema Verification"
+    description: "Verifies that evidence records declare a valid identifier and schema version."
+    enforcement_points:
+      - "ci_build_pipeline"
+      - "deployment_admission_controller"
+    mode: "blocking"
+    input_context:
+      - "evidence_record"
+    assertions:
+      - assertion_id: "A01"
+        description: "Evidence record ID must match canonical pattern."
+        field_path: "record_id"
+        operator: "regex_match"
+        expected_value: "^ORG-EVD-[0-9]{4}-[0-9]{4,}$"
+        failure_message: "Evidence record ID does not match canonical pattern ORG-EVD-{YEAR}-{SEQ}."
+      - assertion_id: "A02"
+        description: "Evidence record schema version must be valid SemVer."
+        field_path: "schema_version"
+        operator: "is_valid_semver"
+        failure_message: "Evidence record schema_version is invalid or missing."
+    remediation: "Ensure evidence records conform to schemas/evidence-record.schema.json."
+    reference_rego: |
+      # verify against current documentation
+      package ai_governance.rec001
+      default allow = false
+      allow {
+          re_match("^ORG-EVD-[0-9]{4}-[0-9]{4,}$", input.record_id)
+          re_match("^[0-9]+\\.[0-9]+\\.[0-9]+$", input.schema_version)
+      }
+
+  # ----------------------------------------------------------------------------
+  # Control: ORG-CTL-REC-002 - Cryptographic Artifact Digest Verification
+  # ----------------------------------------------------------------------------
+  - rule_id: "PAC-REC-002"
+    target_control_id: "ORG-CTL-REC-002"
+    title: "Artifact Cryptographic SHA-256 Digest Verification"
+    description: "Verifies that all evidence artifacts declare a valid 64-character SHA-256 digest."
+    enforcement_points:
+      - "ci_build_pipeline"
+      - "deployment_admission_controller"
+    mode: "blocking"
+    input_context:
+      - "evidence_record"
+    assertions:
+      - assertion_id: "A01"
+        description: "Artifact SHA-256 digest must be a valid 64-character hex string."
+        field_path: "artifact_payload.sha256_digest"
+        operator: "is_valid_sha256"
+        failure_message: "Evidence artifact does not contain a valid 64-character SHA-256 digest."
+    remediation: "Compute the SHA-256 hash of the generated artifact before generating the evidence record."
+    reference_rego: |
+      # verify against current documentation
+      package ai_governance.rec002
+      default allow = false
+      allow {
+          re_match("^[a-fA-F0-9]{64}$", input.artifact_payload.sha256_digest)
+      }

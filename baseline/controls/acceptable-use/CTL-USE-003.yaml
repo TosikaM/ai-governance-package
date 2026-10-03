@@ -1,0 +1,57 @@
+id: "ORG-CTL-USE-003"
+title: "Role-Based AI Literacy and Security Training Certification"
+objective: "Verify that all developers, prompt engineers, and operators with commit or deployment privileges on AI systems maintain active AI safety and security training certification."
+domain: "acceptable_use_literacy"
+type: "universal"
+
+applicability_condition:
+  predicate_type: "always"
+  description: "Universal control applying to all personnel developing, deploying, or managing AI systems."
+
+lifecycle_stages:
+  - "concept_design"
+  - "integration_ci_cd"
+  - "deployment_admission"
+
+enforcement_points:
+  - "pull_request_check"
+  - "ci_build_pipeline"
+  - "manual_audit_gate"
+
+check_type: "automated"
+mode: "advisory"
+
+evidence_required:
+  - artifact_type: "training_completion_attestation"
+    description: "Enterprise learning management system query verifying that the author and committer have completed required AI security modules within 365 days."
+    format: "json"
+    retention_period_years: 3
+
+exception_eligibility:
+  eligible: true
+  statutory_prohibition: false
+  minimum_compensating_controls:
+    - "30-day grace period with mandatory peer review by a certified developer on all pull requests."
+
+reference_mappings:
+  - framework: "EU AI Act Regulation (EU) 2024/1689"
+    clause_or_section: "Article 4"
+    citation_title: "AI Literacy"
+    mapping_status: "verified"
+    notes: "Requires providers and deployers of AI systems to ensure staff have a sufficient level of AI literacy."
+  - framework: "ISO/IEC 42001:2023"
+    clause_or_section: "Clause 7.2"
+    citation_title: "Competence"
+    mapping_status: "verified"
+    notes: "Requires determining necessary competence of persons doing work affecting AI performance."
+  - framework: "NIST AI RMF 1.0"
+    clause_or_section: "GOVERN 2.2"
+    citation_title: "Workforce competence and literacy are developed and maintained."
+    mapping_status: "verified"
+    notes: "Direct mandate for continuous AI education and risk awareness."
+
+owner_placeholder: "[ROLE: Enterprise Chief Learning Officer]"
+review_date_placeholder: "[YYYY-MM-DD]"
+version: "1.0.0"
+status: "DRAFT"
+borderline_placement_rationale: "Borderline advisory placement: Enforced as advisory in baseline to prevent pipeline lockouts during enterprise onboarding."

@@ -1,0 +1,54 @@
+{
+  "evidence_id": "ORG-EVD-ROB-003-customer-copilot-20261002-001",
+  "schema_version": "1.0.0",
+  "control_id": "ORG-CTL-ROB-003",
+  "project_id": "customer-copilot",
+  "execution_context": {
+    "lifecycle_stage": "evaluation_validation",
+    "enforcement_point": "ci_build_pipeline",
+    "pipeline_run_id": "build-job-88129",
+    "commit_sha": "a1b2c3d4e5f6789012345678901234567890abcd",
+    "git_ref": "refs/heads/main",
+    "environment": "ci"
+  },
+  "evaluator": {
+    "evaluator_type": "automated_tool",
+    "identifier": "enterprise-ai-eval-harness",
+    "version": "2.4.0",
+    "configuration_digest": "4a8f9c1b2d3e4f5a6b7c8d9e0f1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a"
+  },
+  "verification_timestamp": "2026-10-02T01:40:00Z",
+  "result": "PASS",
+  "verification_summary": "Automated domain benchmark evaluation test suite completed with 500 test cases. Measured hallucination rate of 0.018 satisfies both the enterprise baseline ceiling (0.05) and EU high-risk overlay ceiling (0.02).",
+  "quantitative_metrics": {
+    "hallucination_rate": {
+      "measured_value": 0.018,
+      "threshold_value": 0.02,
+      "passed": true,
+      "metric_unit": "ratio"
+    },
+    "task_accuracy": {
+      "measured_value": 0.942,
+      "threshold_value": 0.85,
+      "passed": true,
+      "metric_unit": "score"
+    }
+  },
+  "artifacts": [
+    {
+      "artifact_name": "eval_benchmark_report.json",
+      "artifact_type": "eval_benchmark_report",
+      "uri": "s3://compliance-vault.internal.net/evidence/2026/10/eval_benchmark_report.json",
+      "sha256_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "mime_type": "application/json"
+    }
+  ],
+  "cryptographic_attestation": {
+    "signature_format": "cosign_sigstore",
+    "signer_identity": "ci-signer@internal.net",
+    "key_identifier": "kms://arn:aws:kms:us-east-1:123456789012:key/governance-signing-key",
+    "signature_payload": "MEQCIC...[TRUNCATED_SIGNATURE_PAYLOAD]...",
+    "timestamp": "2026-10-02T01:40:05Z"
+  },
+  "status": "VALIDATED"
+}

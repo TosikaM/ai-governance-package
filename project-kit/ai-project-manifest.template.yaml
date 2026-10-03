@@ -1,0 +1,150 @@
+# ==============================================================================
+# Enterprise AI Governance Package - AI Project Manifest Template
+# ==============================================================================
+# File: ai-project-manifest.yaml
+# Schema: schemas/project-manifest.schema.json (JSON Schema Draft 2020-12)
+#
+# PURPOSE:
+# This file is the primary governance declaration file that every AI development
+# team must place in the root of their project source repository. It declares the
+# system's architecture, operational characteristics, risk tier, registered
+# components, and pinned governance baseline and overlay versions.
+#
+# HOW IT WORKS:
+# The Deterministic Resolver (`resolve.py`) reads this manifest, evaluates all
+# conditional control predicates against your declared characteristics, applies
+# any pinned overlays using monotonic merge rules, verifies active exceptions,
+# and outputs an immutable `effective-policy-snapshot.json` used by CI/CD gates.
+# ==============================================================================
+
+# Schema specification version
+schema_version: "1.0.0"
+
+# Unique enterprise project identifier matching CMDB or repository slug.
+# Pattern: ^[a-z0-9_-]{3,50}$
+project_id: "starter-ai-project"
+
+# Human-readable name of the project or application
+project_name: "Starter Enterprise AI System"
+
+# Concise description of the business purpose, system capabilities, and user base
+description: "Starter template configuration for an enterprise AI system integrating an LLM and external data sources."
+
+# Canonical source repository URL
+repository_url: "https://git.internal.net/ai-projects/starter-ai-project"
+
+# Accountable individuals and role placeholders
+owners:
+  business_owner:
+    name: "[NAME: Business Owner]"
+    email: "business.owner@internal.net"
+    role_placeholder: "[ROLE: Business Product Owner]"
+  technical_lead:
+    name: "[NAME: Technical Lead]"
+    email: "tech.lead@internal.net"
+    role_placeholder: "[ROLE: Principal AI Engineer]"
+  risk_officer:
+    name: "[NAME: Risk Officer]"
+    email: "risk.officer@internal.net"
+    role_placeholder: "[ROLE: Divisional AI Risk Lead]"
+
+# Architectural, risk, and operational profile
+ai_system_profile:
+  # Primary architectural pattern:
+  # Allowed: predictive_ml | generative_llm | rag_system | autonomous_agent | hybrid
+  archetype: "rag_system"
+
+  # Current lifecycle stage:
+  # Allowed: concept_design | development | staging_validation | production | decommissioned
+  lifecycle_stage: "development"
+
+  # Risk classification tier (governed by ORG-CTL-RSK-001):
+  # Allowed: tier_1_minimal | tier_2_moderate | tier_3_high | tier_4_unacceptable
+  risk_tier: "tier_2_moderate"
+
+  # Operational traits triggering conditional controls.
+  # Set each boolean truthfully; false declarations are audited by CI/CD scanners.
+  declared_characteristics:
+    # Set to true if the system invokes dynamic tools, code interpreters, DB writes, or external APIs
+    executes_tools_or_code: false
+
+    # Set to true if training, fine-tuning, retrieval, or prompts touch Personally Identifiable Information
+    processes_personal_data: true
+
+    # Set to true if the system ingests confidential internal IP, trade secrets, or unreleased financials
+    processes_confidential_or_ip_data: true
+
+    # Set to true if the AI system converses or interacts with external customers or the public directly
+    interacts_directly_with_public: false
+
+    # Set to true if outputs produce binding legal, financial, health, or employment impacts on individuals
+    makes_autonomous_decisions_affecting_humans: false
+
+    # Set to true if system produces software code, shell scripts, or executable artifacts
+    generates_code_or_executable_artifacts: false
+
+    # Set to true if system calls commercial third-party APIs (e.g. OpenAI, Anthropic, Google Cloud)
+    uses_external_third_party_models_apis: true
+
+    # Set to true if internal teams fine-tune or train model weights on enterprise datasets
+    uses_fine_tuning_or_custom_weights: false
+
+    # Set to true if system failure could cause physical injury or critical infrastructure disruption
+    operates_in_safety_critical_context: false
+
+  # Data classification tiers handled by the system (minItems: 1)
+  # Allowed: public | internal | confidential | restricted_pii | regulated_financial | regulated_health
+  data_classifications:
+    - "internal"
+    - "confidential"
+
+  # Target geographic user jurisdictions (minItems: 1)
+  # Examples: "US", "EU", "UK", "global"
+  target_geographies:
+    - "US"
+    - "EU"
+
+  # Target industry sectors (minItems: 1)
+  # Examples: "financial_services", "healthcare", "ecommerce", "technology", "general"
+  target_sectors:
+    - "technology"
+    - "general"
+
+# Architectural component inventory
+components:
+  # Models utilized by the system
+  models:
+    - name: "claude-3-5-sonnet"
+      version: "20241022"
+      provider: "Anthropic"
+      # Allowed: third_party_saas | open_weights_internal_hosted | custom_trained_proprietary
+      source_type: "third_party_saas"
+      uri_or_registry_id: "api.anthropic.com/v1"
+
+  # Registered tools and external capabilities (required if executes_tools_or_code is true)
+  agent_tools:
+    - tool_id: "document_search"
+      description: "Search corporate knowledge repository for technical documents"
+      schema_uri: "schemas/tools/document_search.json"
+      # Allowed: read_only | safe_write | destructive_write_requires_approval
+      execution_mode: "read_only"
+
+  # Knowledge stores and vector embeddings databases
+  knowledge_stores:
+    - store_id: "corp_docs_vector_store"
+      # Allowed: vector_database | relational_db | graph_db | file_system
+      store_type: "vector_database"
+      data_classification: "internal"
+
+# Governance baseline and overlay bindings
+governance_bindings:
+  # Pinned semantic version of the Enterprise AI Governance Package baseline
+  baseline_version_pin: "v0.1.0-draft"
+
+  # Pinned overlays specialized for your jurisdiction, sector, risk tier, or archetype
+  overlay_pins:
+    - overlay_id: "ORG-OVL-GEO-EU-001"
+      version_pin: "0.1.0-draft"
+
+  # Approved, active exception identifiers granted by the Review Board (leave empty if none)
+  active_exceptions: []

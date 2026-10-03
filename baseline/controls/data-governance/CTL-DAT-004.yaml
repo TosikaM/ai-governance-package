@@ -1,0 +1,76 @@
+id: "ORG-CTL-DAT-004"
+title: "Interaction Log and Embedding Retention Expiration"
+objective: "Enforce automated data retention expiration and purging across model prompt/response logs, temporary token caches, and user embeddings to uphold storage limitation principles."
+domain: "data_quality_privacy_retention"
+type: "parameterized"
+
+applicability_condition:
+  predicate_type: "always"
+  description: "Universal control applying to all runtime log repositories, caches, and vector databases."
+
+parameters:
+  max_interaction_log_retention_days:
+    description: "Maximum calendar days user prompt and output conversational telemetry may be stored before automated purging."
+    data_type: "integer"
+    default_value: 90
+    allowed_range:
+      min: 14
+      max: 365
+    monotonicity: "lower_is_stricter"
+    approval_authority_placeholder: "[ROLE: Chief Privacy Officer]"
+  vector_erasure_sla_days:
+    description: "Maximum calendar days allowed to purge or invalidate vector embeddings following verified user deletion requests."
+    data_type: "integer"
+    default_value: 30
+    allowed_range:
+      min: 7
+      max: 60
+    monotonicity: "lower_is_stricter"
+    approval_authority_placeholder: "[ROLE: Data Protection Officer]"
+
+lifecycle_stages:
+  - "runtime_operation"
+  - "incident_response"
+  - "retirement_decommissioning"
+
+enforcement_points:
+  - "ci_build_pipeline"
+  - "periodic_automated_scan"
+  - "manual_audit_gate"
+
+check_type: "automated"
+mode: "blocking"
+
+evidence_required:
+  - artifact_type: "retention_policy_verification_report"
+    description: "Automated scan output verifying database TTL configurations and S3 lifecycle expiration policies match approved parameter thresholds."
+    format: "json"
+    retention_period_years: 5
+
+exception_eligibility:
+  eligible: true
+  statutory_prohibition: false
+  minimum_compensating_controls:
+    - "Legal hold flag authorized by General Counsel for active litigation or regulatory inquiry."
+
+reference_mappings:
+  - framework: "Regulation (EU) 2016/679 (GDPR)"
+    clause_or_section: "Article 5(1)(e)"
+    citation_title: "Storage limitation principle"
+    mapping_status: "verified"
+    notes: "Requires personal data to be kept in a form which permits identification of data subjects for no longer than necessary."
+  - framework: "ISO/IEC 42001:2023"
+    clause_or_section: "Annex A.7.3"
+    citation_title: "Data lifecycle management and retention"
+    mapping_status: "verified"
+    notes: "Mandates documented retention limits and secure disposal of AI training and operational data."
+  - framework: "NIST AI RMF 1.0"
+    clause_or_section: "MANAGE 1.2"
+    citation_title: "Mechanisms are in place to track and manage AI risks over time."
+    mapping_status: "verified"
+    notes: "Data retention controls mitigate long-term privacy and compliance liability."
+
+owner_placeholder: "[ROLE: Chief Privacy Officer]"
+review_date_placeholder: "[YYYY-MM-DD]"
+version: "1.0.0"
+status: "DRAFT"

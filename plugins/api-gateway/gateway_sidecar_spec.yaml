@@ -1,0 +1,88 @@
+# ==============================================================================
+# Enterprise AI Governance Package - LLM / API Gateway Sidecar Specification
+# ==============================================================================
+# File: gateway_sidecar_spec.yaml
+# Scope: Runtime egress and ingress sidecar proxies (Envoy / Kong / Cloud Proxy)
+#
+# GOVERNANCE POSTURE: AUTHORITATIVE & REAL-TIME
+# Evaluates every prompt invocation and model response outside client applications.
+#
+# Reference Tooling: Compatible with Envoy Wasm filters, Kong AI Gateway, and Traefik.
+# (Label: verify against current documentation for specific gateway syntax)
+# ==============================================================================
+
+version: "1.0.0"
+kind: "AIGatewayPolicy"
+metadata:
+  name: "enterprise-ai-egress-guardrails"
+  namespace: "ai-system-runtime"
+  owner_placeholder: "[ROLE: Enterprise AI Platform SRE & Security Lead]"
+  review_date_placeholder: "[YYYY-MM-DD]"
+  status: "DRAFT"
+
+spec:
+  # ----------------------------------------------------------------------------
+  # Gateway Egress & Routing Policy (ORG-CTL-USE-002)
+  # ----------------------------------------------------------------------------
+  routing:
+    enforce_enterprise_gateway_only: true
+    approved_upstreams:
+      - host: "api.anthropic.com"
+        port: 443
+        tls_enforced: true
+      - host: "api.openai.com"
+        port: 443
+        tls_enforced: true
+      - host: "bedrock-runtime.us-east-1.amazonaws.com"
+        port: 443
+        tls_enforced: true
+    drop_unapproved_egress: true
+
+  # ----------------------------------------------------------------------------
+  # PII Detection and Redaction Filter (ORG-CTL-DAT-002)
+  # ----------------------------------------------------------------------------
+  privacy_filters:
+    ingress_pii_sanitization:
+      enabled: true
+      action: "redact_and_mask"
+      patterns:
+        - name: "Social Security Numbers"
+          regex: "\\b(?!000|666|9\\d{2})\\d{3}-(?!00)\\d{2}-(?!0000)\\d{4}\\b"
+          replacement: "[REDACTED_SSN]"
+        - name: "Payment Card Numbers"
+          regex: "\\b(?:4[0-9]{12}(?:[0-9]{3})?|5[1-5][0-9]{14}|3[47][0-9]{13})\\b"
+          replacement: "[REDACTED_CARD]"
+        - name: "Email Addresses"
+          regex: "[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\\.[a-zA-Z0-9-.]+"
+          replacement: "[REDACTED_EMAIL]"
+
+  # ----------------------------------------------------------------------------
+  # Prompt Injection Defensive Guardrail (ORG-CTL-SEC-001)
+  # ----------------------------------------------------------------------------
+  security_filters:
+    prompt_injection_guard:
+      enabled: true
+      drop_on_detection: true
+      heuristics:
+        - "ignore previous instructions"
+        - "disregard all system prompts"
+        - "you are now in jailbreak mode"
+        - "DAN mode enabled"
+      max_prompt_length_characters: 32000
+
+    output_sanitization:
+      enabled: true
+      block_ssrf_schemes: ["file://", "gopher://", "dict://"]
+      strip_executable_tags: true
+
+  # ----------------------------------------------------------------------------
+  # Rate Limiting & FinOps Token Quotas (ORG-CTL-CST-001 / CST-002)
+  # ----------------------------------------------------------------------------
+  rate_limiting:
+    per_client:
+      requests_per_minute: 60
+      tokens_per_minute: 100000
+    monthly_budget_cap_usd:
+      enforced: true
+      hard_cutoff_on_breach: true
+      alert_threshold_percentage: 80

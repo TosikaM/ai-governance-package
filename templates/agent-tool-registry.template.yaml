@@ -1,0 +1,104 @@
+# ==============================================================================
+# Enterprise AI Governance Package - Agent & Tool Registry Template
+# ==============================================================================
+# File: agent-tool-registry.template.yaml
+# Scope: Autonomous Agents, Multi-Agent Systems, and Tool/MCP Server Registries
+# Governed Controls: ORG-CTL-AGT-001 through ORG-CTL-AGT-004
+# ==============================================================================
+
+schema_version: "1.0.0"
+agent_id: "ORG-AGT-2026-001"
+agent_name: "Customer Operations Autonomous Assistant"
+status: "ACTIVE"
+
+# Non-Human Machine Identity (ORG-CTL-AGT-002)
+identity:
+  spiffe_id: "spiffe://internal.net/ns/agents/sa/customer-ops-agent"
+  oauth2_client_id: "ai-svc-customer-ops-prod"
+  credential_type: "x509_mtls_and_jwt_bearer"
+  user_impersonation_allowed: false
+  least_privilege_scope: "api:customer:read api:refund:draft"
+
+# Execution Bounds & Circuit Breakers (ORG-CTL-AGT-004, CST-003)
+operational_bounds:
+  max_recursion_depth: 5                # Bounded multi-step reasoning ceiling
+  max_steps_per_task: 10                # Maximum sequential tool invocations
+  single_task_token_budget: 25000       # Token consumption ceiling
+  single_task_cost_ceiling_usd: 0.25    # Hard dollar spend stop
+  kill_switch_max_latency_ms: 500       # Out-of-band revocation SLA
+
+# Outside-the-Model Policy Enforcement Point Configuration (ORG-CTL-AGT-001)
+pep_configuration:
+  interceptor_mode: "strict_blocking_proxy"
+  pep_service_endpoint: "http://agent-pep-interceptor.security.internal:8080"
+  model_self_authorization_ignored: true
+  schema_validation_engine: "draft_2020_12"
+
+# Registered Tool Capabilities (ORG-CTL-AGT-003)
+tools:
+  # Tool 1: Read-Only Query Tool
+  - tool_id: "lookup_customer_order"
+    description: "Queries historical customer orders by customer_id and order_id."
+    schema_uri: "schemas/tools/lookup_order.json"
+    execution_mode: "read_only"
+    data_classification: "restricted_pii"
+    endpoint_url: "https://order-service.internal.net/api/v2/orders/query"
+    parameter_schema:
+      type: "object"
+      required: ["customer_id", "order_id"]
+      properties:
+        customer_id:
+          type: "string"
+          pattern: "^CUST-[0-9]{6,}$"
+        order_id:
+          type: "string"
+          pattern: "^ORD-[0-9]{8,}$"
+
+  # Tool 2: Safe State Mutation (Draft Generation)
+  - tool_id: "draft_refund_ticket"
+    description: "Creates an unapproved draft refund request in customer service portal."
+    schema_uri: "schemas/tools/draft_refund.json"
+    execution_mode: "safe_write"
+    data_classification: "internal"
+    endpoint_url: "https://refund-service.internal.net/api/v1/tickets/draft"
+    parameter_schema:
+      type: "object"
+      required: ["order_id", "amount", "justification"]
+      properties:
+        order_id:
+          type: "string"
+        amount:
+          type: "number"
+          minimum: 0.01
+          maximum: 500.00
+        justification:
+          type: "string"
+          minLength: 10
+
+  # Tool 3: Destructive State Mutation (Requires Human Dual-Key)
+  - tool_id: "execute_refund_payment"
+    description: "Executes final monetary payment refund back to customer payment card."
+    schema_uri: "schemas/tools/execute_refund.json"
+    execution_mode: "destructive_write_requires_approval"
+    data_classification: "regulated_financial"
+    endpoint_url: "https://payment-gateway.internal.net/api/v1/refunds/disburse"
+    human_approval_requirements:
+      required: true
+      approver_role_placeholder: "[ROLE: Customer Operations Tier 2 Lead]"
+      token_verification: "out_of_band_cryptographic_jwt"
+      token_max_ttl_seconds: 300
+    parameter_schema:
+      type: "object"
+      required: ["ticket_id", "authorized_amount", "approval_token"]
+      properties:
+        ticket_id:
+          type: "string"
+        authorized_amount:
+          type: "number"
+        approval_token:
+          type: "string"
+          pattern: "^OOB-AUTH-[A-Z0-9_-]{20,}$"
+
+owner_placeholder: "[ROLE: Principal Agent Architect]"
+approver_placeholder: "[ROLE: Enterprise CISO & Lead AI Architect]"
+review_date_placeholder: "[YYYY-MM-DD]"

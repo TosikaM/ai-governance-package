@@ -1,0 +1,75 @@
+# ==============================================================================
+# Enterprise AI Governance Package - Standardized Model Card Template
+# ==============================================================================
+# File: model-card.template.yaml
+# Scope: Enterprise Model Registry and Pre-Deployment Documentation
+# Reference Standards: ISO/IEC 42001:2023 Annex A.7, NIST AI RMF 1.0 (MEASURE 2.6)
+# ==============================================================================
+
+schema_version: "1.0.0"
+model_id: "ORG-MDL-2026-001"
+model_name: "Customer Support Reasoning Assistant"
+version: "1.2.0"
+release_date: "[YYYY-MM-DD]"
+status: "DRAFT"
+
+# Architectural Profile
+architecture:
+  base_foundation_model: "claude-3-5-sonnet"
+  provider: "Anthropic"
+  architecture_type: "transformer_decoder"
+  parameter_count: "approximate (proprietary closed-weights)"
+  context_window_tokens: 200000
+  fine_tuning_method: "prompt_caching_and_system_steering"
+  serialization_format: "api_saas_endpoint"
+
+# Intended Use & Boundaries
+use_profile:
+  intended_domain: "Enterprise customer order status, product inquiries, and returns triage."
+  primary_user_cohort: "Authenticated enterprise customers and internal support agents."
+  prohibited_out_of_scope_uses:
+    - "Automated binding financial credit or debt restructuring decisions."
+    - "Medical diagnosis, legal counseling, or emergency response triage."
+    - "Direct unsupervised execution of customer refund transactions > $100."
+
+# Training & Retrieval Data Summary
+data_profile:
+  training_data_summary: "Foundation weights trained by provider. Enterprise RAG corpus consists of internal product knowledge base and FAQ documents."
+  knowledge_cutoff_date: "2024-10-01"
+  data_card_reference: "templates/data-card.template.yaml"
+  pii_filtering_applied: true
+
+# Quantitative Performance & Robustness Metrics
+performance_evaluation:
+  benchmark_suite_name: "enterprise-support-eval-v3"
+  total_evaluation_test_cases: 500
+  metrics:
+    task_accuracy: 0.942
+    hallucination_rate: 0.018     # Satisfies baseline ceiling (0.05) and EU overlay (0.02)
+    factual_grounding_score: 0.965
+    latency_p95_ms: 1250
+    toxicity_score: 0.001        # Satisfies baseline ceiling (0.01)
+
+# Limitations & Known Edge Cases
+limitations:
+  known_failure_modes:
+    - "Complex nested return queries involving multiple currencies may produce ambiguous summaries."
+    - "Obsolete discontinued product codes (pre-2020) have low retrieval grounding."
+  safety_interventions:
+    - "Secondary validation LLM filters out-of-distribution queries."
+    - "Destructive actions gated behind operator approval."
+
+# Governance Attestations
+governance:
+  baseline_compliance_status: "VERIFIED"
+  evaluated_controls:
+    - "ORG-CTL-ROB-001"
+    - "ORG-CTL-ROB-003"
+    - "ORG-CTL-FAI-002"
+    - "ORG-CTL-SEC-001"
+    - "ORG-CTL-TRN-004"
+  ai_impact_assessment_reference: "ORG-AIIA-2026-CUSTOMER-COPILOT"
+
+owner_placeholder: "[ROLE: AI Model Development Lead]"
+approver_placeholder: "[ROLE: Enterprise Model Risk Officer]"
+review_date_placeholder: "[YYYY-MM-DD]"

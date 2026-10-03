@@ -1,0 +1,102 @@
+# ==============================================================================
+# Policy-as-Code Rules: Domain 7 - Defensive AI Security (SEC)
+# ==============================================================================
+# Schema: policy-as-code/rule-schema.json
+# Baseline Controls: ORG-CTL-SEC-001, ORG-CTL-SEC-002, ORG-CTL-SEC-003, ORG-CTL-SEC-004
+# ==============================================================================
+
+schema_version: "1.0.0"
+domain: "security_attack_mitigation"
+owner_placeholder: "[ROLE: AI Security Engineering Lead]"
+review_date_placeholder: "[YYYY-MM-DD]"
+status: "DRAFT"
+
+rules:
+  # ----------------------------------------------------------------------------
+  # Control: ORG-CTL-SEC-001 - Public Interaction Security Gate
+  # ----------------------------------------------------------------------------
+  - rule_id: "PAC-SEC-001"
+    target_control_id: "ORG-CTL-SEC-001"
+    title: "Public Facing Interaction Security Declaration"
+    description: "Verifies that direct public interaction is declared and gated behind enterprise security requirements."
+    enforcement_points:
+      - "ci_build_pipeline"
+      - "deployment_admission_controller"
+    mode: "blocking"
+    input_context:
+      - "ai_project_manifest"
+    assertions:
+      - assertion_id: "A01"
+        description: "interacts_directly_with_public must be declared."
+        field_path: "ai_system_profile.declared_characteristics.interacts_directly_with_public"
+        operator: "exists"
+        failure_message: "interacts_directly_with_public must be explicitly declared boolean."
+    remediation: "Set interacts_directly_with_public to true or false in ai_system_profile.declared_characteristics."
+    reference_rego: |
+      # verify against current documentation
+      package ai_governance.sec001
+      default allow = false
+      allow {
+          is_boolean(input.ai_system_profile.declared_characteristics.interacts_directly_with_public)
+      }
+
+  # ----------------------------------------------------------------------------
+  # Control: ORG-CTL-SEC-002 - Tool-Calling Authorization Boundary
+  # ----------------------------------------------------------------------------
+  - rule_id: "PAC-SEC-002"
+    target_control_id: "ORG-CTL-SEC-002"
+    title: "Tool Execution Capability Declaration Check"
+    description: "Verifies that systems executing tools or shell code explicitly declare executes_tools_or_code."
+    enforcement_points:
+      - "pull_request_check"
+      - "ci_build_pipeline"
+    mode: "blocking"
+    input_context:
+      - "ai_project_manifest"
+    assertions:
+      - assertion_id: "A01"
+        description: "executes_tools_or_code must be declared."
+        field_path: "ai_system_profile.declared_characteristics.executes_tools_or_code"
+        operator: "exists"
+        failure_message: "executes_tools_or_code must be explicitly declared boolean."
+    remediation: "Set executes_tools_or_code to true or false in ai-project-manifest.yaml."
+    reference_rego: |
+      # verify against current documentation
+      package ai_governance.sec002
+      default allow = false
+      allow {
+          is_boolean(input.ai_system_profile.declared_characteristics.executes_tools_or_code)
+      }
+
+  # ----------------------------------------------------------------------------
+  # Control: ORG-CTL-SEC-003 - Agent Tool Execution Mode Verification
+  # ----------------------------------------------------------------------------
+  - rule_id: "PAC-SEC-003"
+    target_control_id: "ORG-CTL-SEC-003"
+    title: "Registered Tool Execution Mode Classification Check"
+    description: "Verifies that all registered agent tools declare an approved execution mode."
+    enforcement_points:
+      - "ci_build_pipeline"
+      - "deployment_admission_controller"
+    mode: "blocking"
+    input_context:
+      - "ai_project_manifest"
+    assertions:
+      - assertion_id: "A01"
+        description: "Registered tool must declare an approved execution mode."
+        field_path: "components.agent_tools.0.execution_mode"
+        operator: "in"
+        expected_value:
+          - "read_only"
+          - "safe_write"
+          - "destructive_write_requires_approval"
+        failure_message: "Registered tool execution_mode is invalid or missing."
+    remediation: "Declare execution_mode (read_only, safe_write, or destructive_write_requires_approval) in components.agent_tools."
+    reference_rego: |
+      # verify against current documentation
+      package ai_governance.sec003
+      default allow = false
+      valid_modes = {"read_only", "safe_write", "destructive_write_requires_approval"}
+      allow {
+          valid_modes[input.components.agent_tools[0].execution_mode]
+      }

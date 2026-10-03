@@ -1,0 +1,130 @@
+# ==============================================================================
+# Policy-as-Code Rules: Domain 4 - Data Governance & Privacy (DAT)
+# ==============================================================================
+# Schema: policy-as-code/rule-schema.json
+# Baseline Controls: ORG-CTL-DAT-001, ORG-CTL-DAT-002, ORG-CTL-DAT-003, ORG-CTL-DAT-004
+# ==============================================================================
+
+schema_version: "1.0.0"
+domain: "data_quality_privacy_retention"
+owner_placeholder: "[ROLE: Enterprise Data Governance Lead]"
+review_date_placeholder: "[YYYY-MM-DD]"
+status: "DRAFT"
+
+rules:
+  # ----------------------------------------------------------------------------
+  # Control: ORG-CTL-DAT-001 - Dataset Lineage and Data Classification
+  # ----------------------------------------------------------------------------
+  - rule_id: "PAC-DAT-001"
+    target_control_id: "ORG-CTL-DAT-001"
+    title: "Data Classification Tier Declaration Check"
+    description: "Verifies that the project declares all data classification tiers handled by the system."
+    enforcement_points:
+      - "pull_request_check"
+      - "ci_build_pipeline"
+    mode: "blocking"
+    input_context:
+      - "ai_project_manifest"
+    assertions:
+      - assertion_id: "A01"
+        description: "Data classifications list must not be empty."
+        field_path: "ai_system_profile.data_classifications"
+        operator: "not_empty"
+        failure_message: "Project must declare at least one data classification tier."
+    remediation: "Specify applicable tiers (e.g. 'internal', 'confidential', 'restricted_pii') in ai_system_profile.data_classifications."
+    reference_rego: |
+      # verify against current documentation
+      package ai_governance.dat001
+      default allow = false
+      allow {
+          count(input.ai_system_profile.data_classifications) > 0
+      }
+
+  # ----------------------------------------------------------------------------
+  # Control: ORG-CTL-DAT-002 - PII Handling and Sanitization Declaration
+  # ----------------------------------------------------------------------------
+  - rule_id: "PAC-DAT-002"
+    target_control_id: "ORG-CTL-DAT-002"
+    title: "Personal Data Processing and Sanitization Flag Verification"
+    description: "Verifies that systems processing PII explicitly flag processes_personal_data."
+    enforcement_points:
+      - "ci_build_pipeline"
+      - "deployment_admission_controller"
+    mode: "blocking"
+    input_context:
+      - "ai_project_manifest"
+    assertions:
+      - assertion_id: "A01"
+        description: "processes_personal_data must be declared as a boolean."
+        field_path: "ai_system_profile.declared_characteristics.processes_personal_data"
+        operator: "exists"
+        failure_message: "processes_personal_data boolean must be declared in ai-project-manifest.yaml."
+    remediation: "Set processes_personal_data to true or false in ai_system_profile.declared_characteristics."
+    reference_rego: |
+      # verify against current documentation
+      package ai_governance.dat002
+      default allow = false
+      allow {
+          is_boolean(input.ai_system_profile.declared_characteristics.processes_personal_data)
+      }
+
+  # ----------------------------------------------------------------------------
+  # Control: ORG-CTL-DAT-003 - Geographic Data Residency and Pinning
+  # ----------------------------------------------------------------------------
+  - rule_id: "PAC-DAT-003"
+    target_control_id: "ORG-CTL-DAT-003"
+    title: "Geographic Target Market and Residency Declaration Check"
+    description: "Verifies that systems declare their operational jurisdictions for residency compliance."
+    enforcement_points:
+      - "ci_build_pipeline"
+      - "deployment_admission_controller"
+    mode: "blocking"
+    input_context:
+      - "ai_project_manifest"
+    assertions:
+      - assertion_id: "A01"
+        description: "Target geographies list must not be empty."
+        field_path: "ai_system_profile.target_geographies"
+        operator: "not_empty"
+        failure_message: "target_geographies must be specified (e.g. 'US', 'EU', 'global')."
+    remediation: "Declare target operational geographies in ai_system_profile.target_geographies of ai-project-manifest.yaml."
+    reference_rego: |
+      # verify against current documentation
+      package ai_governance.dat003
+      default allow = false
+      allow {
+          count(input.ai_system_profile.target_geographies) > 0
+      }
+
+  # ----------------------------------------------------------------------------
+  # Control: ORG-CTL-DAT-004 - Knowledge Store Data Classification
+  # ----------------------------------------------------------------------------
+  - rule_id: "PAC-DAT-004"
+    target_control_id: "ORG-CTL-DAT-004"
+    title: "Knowledge Store Data Classification and Type Check"
+    description: "Verifies that registered knowledge stores declare a valid storage type and classification."
+    enforcement_points:
+      - "ci_build_pipeline"
+    mode: "advisory"
+    input_context:
+      - "ai_project_manifest"
+    assertions:
+      - assertion_id: "A01"
+        description: "Primary knowledge store must declare valid storage type if present."
+        field_path: "components.knowledge_stores.0.store_type"
+        operator: "in"
+        expected_value:
+          - "vector_database"
+          - "relational_db"
+          - "graph_db"
+          - "file_system"
+        failure_message: "Registered knowledge store has invalid or missing store_type."
+    remediation: "Ensure components.knowledge_stores declare valid store_type in ai-project-manifest.yaml."
+    reference_rego: |
+      # verify against current documentation
+      package ai_governance.dat004
+      default allow = false
+      valid_stores = {"vector_database", "relational_db", "graph_db", "file_system"}
+      allow {
+          valid_stores[input.components.knowledge_stores[0].store_type]
+      }

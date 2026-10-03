@@ -1,0 +1,59 @@
+id: "ORG-CTL-AGT-003"
+title: "Strict Tool-Call Schema Interception and Destructive Action Approval"
+objective: "Intercept all agent tool-call payloads at runtime, validating all parameters against pre-registered JSON Schemas and requiring cryptographic human approval for destructive state modifications."
+domain: "agent_autonomy_guardrails"
+type: "conditional"
+
+applicability_condition:
+  predicate_type: "manifest_property_match"
+  manifest_path: "ai_system_profile.declared_characteristics.executes_tools_or_code"
+  operator: "is_true"
+  target_value: true
+  description: "Applies to any agent utilizing tool calling, function calling, or Model Context Protocol (MCP) integrations."
+
+lifecycle_stages:
+  - "integration_ci_cd"
+  - "deployment_admission"
+  - "runtime_operation"
+
+enforcement_points:
+  - "ci_build_pipeline"
+  - "deployment_admission_controller"
+  - "agent_runtime_interceptor"
+
+check_type: "hybrid"
+mode: "blocking"
+
+evidence_required:
+  - artifact_type: "tool_schema_validation_and_approval_logs"
+    description: "Structured interceptor logs demonstrating strict schema validation on tool parameters and verified cryptographic approval tokens on destructive actions."
+    format: "json"
+    retention_period_years: 7
+
+exception_eligibility:
+  eligible: true
+  statutory_prohibition: false
+  minimum_compensating_controls:
+    - "Destructive actions gated behind two-person rule in operations dashboard."
+
+reference_mappings:
+  - framework: "OWASP Top 10 for LLM Applications (2025)"
+    clause_or_section: "LLM06:2025"
+    citation_title: "Excessive Agency - Function Calling Constraints"
+    mapping_status: "verified"
+    notes: "Requires schema validation and human-in-the-loop approvals for sensitive or destructive actions."
+  - framework: "NIST AI 600-1 (GenAI Profile)"
+    clause_or_section: "PROTECT 1.3"
+    citation_title: "Defensive interception of tool and plugin invocations"
+    mapping_status: "verified"
+    notes: "Mandates schema enforcement and parameter typing on generative tool interfaces."
+  - framework: "ISO/IEC 42001:2023"
+    clause_or_section: "Annex A.8.4"
+    citation_title: "Operational boundaries for automated AI tools"
+    mapping_status: "verified"
+    notes: "Requires operational controls restricting tool execution to approved bounds."
+
+owner_placeholder: "[ROLE: Agent Security Engineering Lead]"
+review_date_placeholder: "[YYYY-MM-DD]"
+version: "1.0.0"
+status: "DRAFT"

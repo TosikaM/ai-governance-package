@@ -1,0 +1,59 @@
+id: "ORG-CTL-FAI-004"
+title: "Vulnerable Populations and Child Protection Safeguards"
+objective: "Enforce heightened privacy, behavioral exploitation protections, and ethical safeguards on AI systems designed for, marketed to, or routinely accessible by minors or vulnerable individuals."
+domain: "fairness_bias_accessibility"
+type: "conditional"
+
+applicability_condition:
+  predicate_type: "manifest_property_match"
+  manifest_path: "ai_system_profile.declared_characteristics.interacts_directly_with_public"
+  operator: "is_true"
+  target_value: true
+  description: "Applies to any public-facing AI system with potential exposure to minors or vulnerable populations."
+
+lifecycle_stages:
+  - "concept_design"
+  - "evaluation_validation"
+  - "deployment_admission"
+
+enforcement_points:
+  - "ci_build_pipeline"
+  - "deployment_admission_controller"
+  - "manual_audit_gate"
+
+check_type: "hybrid"
+mode: "blocking"
+
+evidence_required:
+  - artifact_type: "child_and_vulnerability_impact_dossier"
+    description: "Specialized ethical and privacy impact assessment evaluating age verification, child safety filters, and parental consent mechanisms."
+    format: "markdown"
+    retention_period_years: 7
+
+exception_eligibility:
+  eligible: false
+  statutory_prohibition: true
+  minimum_compensating_controls:
+    - "No exceptions permitted. Child protection and exploitation safeguards represent non-waivable statutory mandates."
+
+reference_mappings:
+  - framework: "EU AI Act Regulation (EU) 2024/1689"
+    clause_or_section: "Article 5(1)(b)"
+    citation_title: "Prohibition of exploiting vulnerabilities of specific groups of persons"
+    mapping_status: "verified"
+    notes: "Prohibits AI that exploits vulnerabilities of persons due to age or disability leading to harm."
+  - framework: "Regulation (EU) 2016/679 (GDPR)"
+    clause_or_section: "Article 8"
+    citation_title: "Conditions applicable to child's consent in relation to information society services"
+    mapping_status: "verified"
+    notes: "Requires verified parental consent for processing data of children below the statutory age."
+  - framework: "NIST AI RMF 1.0"
+    clause_or_section: "MAP 1.6"
+    citation_title: "Vulnerabilities of affected populations are identified and addressed."
+    mapping_status: "verified"
+    notes: "Mandates special risk treatment for vulnerable user communities."
+
+owner_placeholder: "[ROLE: Enterprise Child Safety & Privacy Lead]"
+review_date_placeholder: "[YYYY-MM-DD]"
+version: "1.0.0"
+status: "DRAFT"

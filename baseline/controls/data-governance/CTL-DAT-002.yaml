@@ -1,0 +1,59 @@
+id: "ORG-CTL-DAT-002"
+title: "Automated Runtime PII Detection and Sanitization"
+objective: "Prevent the unauthorized transmission of Personally Identifiable Information (PII) to external foundation model endpoints or unencrypted persistent logs by enforcing automated tokenization, redaction, or masking at the gateway layer."
+domain: "data_quality_privacy_retention"
+type: "conditional"
+
+applicability_condition:
+  predicate_type: "manifest_property_match"
+  manifest_path: "ai_system_profile.declared_characteristics.processes_personal_data"
+  operator: "is_true"
+  target_value: true
+  description: "Applies to any AI system declaring that it ingests, processes, or outputs personal data."
+
+lifecycle_stages:
+  - "integration_ci_cd"
+  - "deployment_admission"
+  - "runtime_operation"
+
+enforcement_points:
+  - "ci_build_pipeline"
+  - "deployment_admission_controller"
+  - "api_gateway_sidecar"
+
+check_type: "automated"
+mode: "blocking"
+
+evidence_required:
+  - artifact_type: "pii_redaction_verification_report"
+    description: "Automated test suite report verifying that synthetic test payloads containing synthetic PII (SSN, credit card, email, phone) are 100% sanitized before egress."
+    format: "json"
+    retention_period_years: 5
+
+exception_eligibility:
+  eligible: true
+  statutory_prohibition: false
+  minimum_compensating_controls:
+    - "Model runs in dedicated, enterprise-isolated tenant with customer BAA/DPA and zero retention agreement; egress strictly blocked to external cloud."
+
+reference_mappings:
+  - framework: "Regulation (EU) 2016/679 (GDPR)"
+    clause_or_section: "Article 25"
+    citation_title: "Data protection by design and by default"
+    mapping_status: "verified"
+    notes: "Requires implementing appropriate technical and organizational measures like pseudonymization to protect personal data."
+  - framework: "OWASP Top 10 for LLM Applications (2025)"
+    clause_or_section: "LLM02:2025"
+    citation_title: "Sensitive Information Disclosure"
+    mapping_status: "verified"
+    notes: "Directly addresses preventing proprietary and personal data leakage through LLM prompts."
+  - framework: "ISO/IEC 42001:2023"
+    clause_or_section: "Annex A.7.3"
+    citation_title: "Data privacy and protection of personal data in AI systems"
+    mapping_status: "verified"
+    notes: "Requires privacy-enhancing techniques for data processed by AI."
+
+owner_placeholder: "[ROLE: Chief Privacy Officer]"
+review_date_placeholder: "[YYYY-MM-DD]"
+version: "1.0.0"
+status: "DRAFT"

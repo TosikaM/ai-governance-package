@@ -1,0 +1,228 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://governance.internal.net/schemas/exception.schema.json",
+  "title": "AI Governance Policy Exception Record Schema",
+  "description": "JSON Schema specification for time-limited, approved governance policy deviations. Requires verified compensating controls and explicitly disallows waiving statutory legal obligations.",
+  "type": "object",
+  "required": [
+    "exception_id",
+    "status",
+    "project_id",
+    "control_id",
+    "request_date",
+    "expiration_date",
+    "requester",
+    "business_justification",
+    "risk_assessment",
+    "compensating_controls",
+    "legal_statutory_certification",
+    "approvals",
+    "remediation_plan"
+  ],
+  "properties": {
+    "exception_id": {
+      "type": "string",
+      "pattern": "^ORG-EXC-[0-9]{4}-[0-9]{3,}$",
+      "description": "Canonical exception identifier formatted as ORG-EXC-{YEAR}-{SEQUENCE}."
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "DRAFT",
+        "REQUESTED",
+        "UNDER_REVIEW",
+        "APPROVED",
+        "REJECTED",
+        "EXPIRED",
+        "REVOKED"
+      ],
+      "description": "Lifecycle state of the exception request."
+    },
+    "project_id": {
+      "type": "string",
+      "pattern": "^[a-z0-9_-]{3,50}$",
+      "description": "Project ID matching the requesting ai-project-manifest.yaml."
+    },
+    "control_id": {
+      "type": "string",
+      "pattern": "^ORG-CTL-[A-Z]{3}-[0-9]{3}$",
+      "description": "The exact baseline or overlay control identifier for which variance is requested."
+    },
+    "parameter_variations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["parameter_name", "standard_value", "requested_variance_value"],
+        "properties": {
+          "parameter_name": { "type": "string" },
+          "standard_value": {},
+          "requested_variance_value": {}
+        }
+      },
+      "description": "If the control is parameterized, details of the temporary relaxed threshold."
+    },
+    "request_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Date on which the exception was formally requested (YYYY-MM-DD)."
+    },
+    "expiration_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Mandatory expiration date. All exceptions are strictly time-limited (maximum duration: 180 days without explicit ARB re-authorization)."
+    },
+    "requester": {
+      "type": "object",
+      "required": ["name", "email", "role_placeholder"],
+      "properties": {
+        "name": { "type": "string" },
+        "email": { "type": "string", "format": "email" },
+        "role_placeholder": { "type": "string", "default": "[ROLE: System Technical Lead]" }
+      }
+    },
+    "business_justification": {
+      "type": "string",
+      "minLength": 30,
+      "description": "Compelling operational or business necessity explaining why adherence cannot immediately be achieved."
+    },
+    "technical_root_cause": {
+      "type": "string",
+      "minLength": 30,
+      "description": "Detailed architectural or engineering factor preventing compliance."
+    },
+    "risk_assessment": {
+      "type": "object",
+      "required": ["inherent_risk_rating", "residual_risk_rating", "risk_rationale"],
+      "properties": {
+        "inherent_risk_rating": {
+          "type": "string",
+          "enum": ["LOW", "MEDIUM", "HIGH", "CRITICAL"]
+        },
+        "residual_risk_rating": {
+          "type": "string",
+          "enum": ["LOW", "MEDIUM", "HIGH"]
+        },
+        "risk_rationale": {
+          "type": "string",
+          "minLength": 30
+        }
+      }
+    },
+    "compensating_controls": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "compensation_id",
+          "description",
+          "enforcement_point",
+          "verification_mechanism",
+          "owner_placeholder"
+        ],
+        "properties": {
+          "compensation_id": {
+            "type": "string",
+            "pattern": "^CMP-[0-9]{2,3}$"
+          },
+          "description": {
+            "type": "string"
+          },
+          "enforcement_point": {
+            "type": "string",
+            "enum": [
+              "pre_commit_hook",
+              "pull_request_check",
+              "ci_build_pipeline",
+              "model_registry_admission",
+              "deployment_admission_controller",
+              "api_gateway_sidecar",
+              "agent_runtime_interceptor",
+              "periodic_automated_scan",
+              "manual_audit_gate"
+            ]
+          },
+          "verification_mechanism": {
+            "type": "string",
+            "description": "Automated log, telemetry alert, or weekly human inspection validating that compensation is operational."
+          },
+          "owner_placeholder": {
+            "type": "string",
+            "default": "[ROLE: AI Security Engineer]"
+          }
+        }
+      },
+      "description": "Concrete technical or operational safeguards deployed to counteract the increased residual risk."
+    },
+    "legal_statutory_certification": {
+      "type": "object",
+      "required": [
+        "disclaimer_acknowledgment",
+        "statutory_obligation_waived",
+        "legal_counsel_signoff_placeholder"
+      ],
+      "properties": {
+        "disclaimer_acknowledgment": {
+          "type": "boolean",
+          "const": true,
+          "description": "Mandatory certification that internal exceptions NEVER waive legal or regulatory obligations. Applies strictly to internal policy thresholds and is void where prohibited by applicable law."
+        },
+        "statutory_obligation_waived": {
+          "type": "boolean",
+          "const": false,
+          "description": "Must be false. No enterprise exception may waive external statutory or regulatory mandates."
+        },
+        "legal_counsel_signoff_placeholder": {
+          "type": "string",
+          "default": "[ROLE: Legal Counsel - Regulatory AI]"
+        }
+      }
+    },
+    "approvals": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["role_placeholder", "decision", "date"],
+        "properties": {
+          "role_placeholder": {
+            "type": "string",
+            "description": "Authorizing role placeholder (e.g. '[ROLE: Chief Risk Officer]', '[ROLE: AI Review Board Chair]')."
+          },
+          "approver_name": { "type": "string" },
+          "decision": {
+            "type": "string",
+            "enum": ["APPROVED", "REJECTED", "CONDITIONALLY_APPROVED"]
+          },
+          "conditions": { "type": "string" },
+          "date": { "type": "string", "format": "date" }
+        }
+      },
+      "description": "Formal governance approval attestations."
+    },
+    "remediation_plan": {
+      "type": "object",
+      "required": ["target_remediation_date", "action_items"],
+      "properties": {
+        "target_remediation_date": {
+          "type": "string",
+          "format": "date"
+        },
+        "action_items": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": ["milestone", "target_date", "owner_placeholder"],
+            "properties": {
+              "milestone": { "type": "string" },
+              "target_date": { "type": "string", "format": "date" },
+              "owner_placeholder": { "type": "string" }
+            }
+          }
+        }
+      }
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,160 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://governance.internal.net/schemas/pac-rule.schema.json",
+  "title": "Policy-as-Code Declarative Rule Specification Schema",
+  "description": "JSON Schema specification for tool-neutral Policy-as-Code rules enforcing AI governance controls across CI/CD pipelines, admission controllers, and runtime interceptors.",
+  "type": "object",
+  "required": ["schema_version", "domain", "rules"],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+    },
+    "domain": {
+      "type": "string",
+      "description": "Baseline domain category (e.g. accountability_inventory, robustness_evaluation_testing)."
+    },
+    "owner_placeholder": {
+      "type": "string",
+      "description": "Designated role placeholder (e.g. [ROLE: AI Policy-as-Code Engineer])."
+    },
+    "review_date_placeholder": {
+      "type": "string",
+      "description": "Scheduled review date placeholder (e.g. [YYYY-MM-DD])."
+    },
+    "status": {
+      "type": "string",
+      "enum": ["DRAFT", "PROPOSED", "APPROVED", "ACTIVE", "DEPRECATED", "RETIRED"]
+    },
+    "rules": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "rule_id",
+          "target_control_id",
+          "title",
+          "enforcement_points",
+          "mode",
+          "input_context",
+          "assertions",
+          "remediation"
+        ],
+        "properties": {
+          "rule_id": {
+            "type": "string",
+            "pattern": "^PAC-[A-Z]{3}-[0-9]{3}(-[A-Z0-9]+)?$",
+            "description": "Permanent canonical PAC rule identifier."
+          },
+          "target_control_id": {
+            "type": "string",
+            "pattern": "^ORG-CTL-[A-Z]{3}-[0-9]{3}$",
+            "description": "Baseline control ID enforced by this rule."
+          },
+          "title": {
+            "type": "string",
+            "minLength": 5,
+            "maxLength": 150
+          },
+          "description": {
+            "type": "string"
+          },
+          "enforcement_points": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "string",
+              "enum": [
+                "pre_commit_hook",
+                "pull_request_check",
+                "ci_build_pipeline",
+                "model_registry_admission",
+                "deployment_admission_controller",
+                "api_gateway_sidecar",
+                "agent_runtime_interceptor",
+                "periodic_automated_scan",
+                "manual_audit_gate"
+              ]
+            }
+          },
+          "mode": {
+            "type": "string",
+            "enum": ["blocking", "review", "advisory"]
+          },
+          "input_context": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "string",
+              "enum": [
+                "ai_project_manifest",
+                "effective_policy_snapshot",
+                "eval_benchmark_report",
+                "sbom_mbom_manifest",
+                "evidence_record",
+                "git_commit_metadata",
+                "runtime_telemetry",
+                "security_scan_sarif"
+              ]
+            }
+          },
+          "assertions": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "required": ["assertion_id", "description", "field_path", "operator", "failure_message"],
+              "properties": {
+                "assertion_id": {
+                  "type": "string",
+                  "pattern": "^A[0-9]{2,3}$"
+                },
+                "description": {
+                  "type": "string"
+                },
+                "field_path": {
+                  "type": "string",
+                  "description": "Dot-delimited path into the evaluated context document."
+                },
+                "operator": {
+                  "type": "string",
+                  "enum": [
+                    "exists",
+                    "not_empty",
+                    "equals",
+                    "not_equals",
+                    "less_than_or_equal",
+                    "greater_than_or_equal",
+                    "in",
+                    "not_in",
+                    "contains",
+                    "not_contains",
+                    "regex_match",
+                    "is_valid_email",
+                    "is_valid_sha256",
+                    "is_valid_semver"
+                  ]
+                },
+                "expected_value": {},
+                "failure_message": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "remediation": {
+            "type": "string",
+            "description": "Clear step-by-step guidance for developers to remediate rule failure."
+          },
+          "reference_rego": {
+            "type": "string",
+            "description": "Tool-neutral reference Rego / policy snippet labeled 'verify against current documentation'."
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,55 @@
+id: "ORG-CTL-USE-001"
+title: "Prohibited AI Use Case Verification and Attestation"
+objective: "Prevent the development, deployment, or operation of unacceptable-risk AI systems involving subliminal manipulation, social scoring, unapproved biometric surveillance, or deceptive impersonation."
+domain: "acceptable_use_literacy"
+type: "universal"
+
+applicability_condition:
+  predicate_type: "always"
+  description: "Universal control applying to all AI initiatives and use-case intake submissions."
+
+lifecycle_stages:
+  - "concept_design"
+  - "deployment_admission"
+
+enforcement_points:
+  - "ci_build_pipeline"
+  - "deployment_admission_controller"
+  - "manual_audit_gate"
+
+check_type: "hybrid"
+mode: "blocking"
+
+evidence_required:
+  - artifact_type: "prohibited_use_attestation"
+    description: "Signed attestation from Business Owner certifying that system objectives do not engage in prohibited practices per ORG-POL-USE-001."
+    format: "json"
+    retention_period_years: 7
+
+exception_eligibility:
+  eligible: false
+  statutory_prohibition: true
+  minimum_compensating_controls:
+    - "No exceptions permitted. Prohibited practices represent non-derogable legal and ethical violations."
+
+reference_mappings:
+  - framework: "EU AI Act Regulation (EU) 2024/1689"
+    clause_or_section: "Article 5"
+    citation_title: "Prohibited Artificial Intelligence Practices"
+    mapping_status: "verified"
+    notes: "Direct statutory alignment prohibiting manipulative, exploitative, and social scoring AI systems."
+  - framework: "ISO/IEC 42001:2023"
+    clause_or_section: "Annex A.5.1"
+    citation_title: "Assessment of AI system impact on individuals and society"
+    mapping_status: "verified"
+    notes: "Requires formal identification and exclusion of socially unacceptable AI harms."
+  - framework: "NIST AI RMF 1.0"
+    clause_or_section: "GOVERN 1.1"
+    citation_title: "Legal and ethical boundaries for AI deployment are defined and operationalized."
+    mapping_status: "verified"
+    notes: "Mandates operational mechanisms to block unethical AI deployments."
+
+owner_placeholder: "[ROLE: Enterprise Ethics & Compliance Officer]"
+review_date_placeholder: "[YYYY-MM-DD]"
+version: "1.0.0"
+status: "DRAFT"

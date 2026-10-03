@@ -1,0 +1,79 @@
+id: "ORG-CTL-AGT-004"
+title: "Maximum Execution Depth, Loop Termination, and Out-of-Band Kill Switch"
+objective: "Constrain autonomous agent recursion depth to prevent runaway loops and mandate an instantaneous out-of-band kill switch capable of invalidating credentials and halting execution immediately."
+domain: "agent_autonomy_guardrails"
+type: "parameterized"
+
+applicability_condition:
+  predicate_type: "manifest_property_match"
+  manifest_path: "ai_system_profile.declared_characteristics.executes_tools_or_code"
+  operator: "is_true"
+  target_value: true
+  description: "Applies to autonomous agents, recursive task planners, and multi-agent systems."
+
+parameters:
+  max_execution_steps:
+    description: "Maximum allowable sequential tool-call steps in a single task execution thread before requiring operator confirmation."
+    data_type: "integer"
+    default_value: 10
+    allowed_range:
+      min: 1
+      max: 50
+    monotonicity: "lower_is_stricter"
+    approval_authority_placeholder: "[ROLE: Principal Agent Architect]"
+  kill_switch_max_latency_ms:
+    description: "Maximum allowable milliseconds for out-of-band kill switch to terminate active agent execution threads and revoke credentials."
+    data_type: "integer"
+    default_value: 1000
+    allowed_range:
+      min: 100
+      max: 5000
+    monotonicity: "lower_is_stricter"
+    approval_authority_placeholder: "[ROLE: Enterprise CISO]"
+
+lifecycle_stages:
+  - "integration_ci_cd"
+  - "deployment_admission"
+  - "runtime_operation"
+
+enforcement_points:
+  - "ci_build_pipeline"
+  - "deployment_admission_controller"
+  - "agent_runtime_interceptor"
+
+check_type: "automated"
+mode: "blocking"
+
+evidence_required:
+  - artifact_type: "agent_kill_switch_and_recursion_test_report"
+    description: "Automated integration test verifying that runaway recursion aborts at step limit and out-of-band kill switch terminates processes within SLA."
+    format: "json"
+    retention_period_years: 5
+
+exception_eligibility:
+  eligible: true
+  statutory_prohibition: false
+  minimum_compensating_controls:
+    - "Manual step-by-step confirmation in operator console for long-running batch migrations."
+
+reference_mappings:
+  - framework: "OWASP Top 10 for LLM Applications (2025)"
+    clause_or_section: "LLM06:2025"
+    citation_title: "Excessive Agency - Autonomy Limits"
+    mapping_status: "verified"
+    notes: "Requires rate limiting and hard recursion limits to mitigate autonomous runaway loops."
+  - framework: "NIST AI 600-1 (GenAI Profile)"
+    clause_or_section: "MANAGE 2.3"
+    citation_title: "Fail-safe termination mechanisms for autonomous AI systems"
+    mapping_status: "verified"
+    notes: "Mandates out-of-band kill switch capabilities for active agents."
+  - framework: "ISO/IEC 42001:2023"
+    clause_or_section: "Annex A.8.4"
+    citation_title: "Operational limits and kill switches for AI systems"
+    mapping_status: "verified"
+    notes: "Requires documented emergency shutdown procedures for automated systems."
+
+owner_placeholder: "[ROLE: Principal Agent Architect & SOC Lead]"
+review_date_placeholder: "[YYYY-MM-DD]"
+version: "1.0.0"
+status: "DRAFT"

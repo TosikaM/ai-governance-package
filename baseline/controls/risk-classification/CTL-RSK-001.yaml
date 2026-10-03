@@ -1,0 +1,56 @@
+id: "ORG-CTL-RSK-001"
+title: "Mandatory 4-Tier Risk Categorization and Manifest Declaration"
+objective: "Ensure that every AI system is systematically evaluated and assigned to an authorized enterprise risk tier (Tier 1 to Tier 4) documented in its manifest."
+domain: "risk_classification_impact"
+type: "universal"
+
+applicability_condition:
+  predicate_type: "always"
+  description: "Universal control applying to all AI projects."
+
+lifecycle_stages:
+  - "concept_design"
+  - "integration_ci_cd"
+  - "deployment_admission"
+
+enforcement_points:
+  - "ci_build_pipeline"
+  - "deployment_admission_controller"
+  - "manual_audit_gate"
+
+check_type: "automated"
+mode: "blocking"
+
+evidence_required:
+  - artifact_type: "risk_classification_record"
+    description: "Manifest extract and risk assessment metadata confirming assigned risk tier and validation by Risk Officer."
+    format: "json"
+    retention_period_years: 7
+
+exception_eligibility:
+  eligible: false
+  statutory_prohibition: true
+  minimum_compensating_controls:
+    - "No exceptions permitted. Operating with an unclassified risk tier is strictly prohibited."
+
+reference_mappings:
+  - framework: "NIST AI RMF 1.0"
+    clause_or_section: "MAP 1.1"
+    citation_title: "Context is established and understood."
+    mapping_status: "verified"
+    notes: "Requires formal risk categorization based on intended deployment context."
+  - framework: "ISO/IEC 23894:2023"
+    clause_or_section: "Clause 6.2"
+    citation_title: "AI risk assessment"
+    mapping_status: "verified"
+    notes: "Mandates structured categorization of AI risk sources and potential consequences."
+  - framework: "EU AI Act Regulation (EU) 2024/1689"
+    clause_or_section: "Article 6"
+    citation_title: "Classification rules for high-risk AI systems"
+    mapping_status: "verified"
+    notes: "Establishes legal risk tiering criteria across minimal, limited, high, and unacceptable risk."
+
+owner_placeholder: "[ROLE: Enterprise AI Risk Officer]"
+review_date_placeholder: "[YYYY-MM-DD]"
+version: "1.0.0"
+status: "DRAFT"

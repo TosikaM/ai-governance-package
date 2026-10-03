@@ -1,0 +1,68 @@
+# Example Policy Exception Record
+# Conforms to schemas/exception.schema.json
+
+exception_id: "ORG-EXC-2026-001"
+status: "APPROVED"
+project_id: "customer-assistant-agent"
+control_id: "ORG-CTL-ROB-003"
+
+parameter_variations:
+  - parameter_name: "max_hallucination_rate"
+    standard_value: 0.05
+    requested_variance_value: 0.08
+
+request_date: "2026-10-01"
+expiration_date: "2026-12-30"
+
+requester:
+  name: "John Smith"
+  email: "john.smith@example.com"
+  role_placeholder: "[ROLE: System Technical Lead]"
+
+business_justification: "Critical beta launch of customer support copilot scheduled for Q4. Current evaluation harness indicates 0.075 hallucination rate on domain edge cases, which is currently undergoing active synthetic data augmentation."
+technical_root_cause: "Fine-tuning dataset for edge-case returns has not yet finished synthetic augmentation, causing borderline domain benchmark failures on niche return queries."
+
+risk_assessment:
+  inherent_risk_rating: "HIGH"
+  residual_risk_rating: "MEDIUM"
+  risk_rationale: "Increased hallucination rate could lead to minor customer misinformation on niche return policies; financial loss is completely prevented by blocking direct tool execution."
+
+compensating_controls:
+  - compensation_id: "CMP-01"
+    description: "Enforce secondary deterministic validator LLM on all agent conversational turns before delivery to end user."
+    enforcement_point: "api_gateway_sidecar"
+    verification_mechanism: "Automated telemetry alert on disagreement between primary model and secondary validator."
+    owner_placeholder: "[ROLE: AI Platform Security Engineer]"
+
+  - compensation_id: "CMP-02"
+    description: "Route 100% of generated refund drafts to human supervisor queue; block automated tool execution of refund actions."
+    enforcement_point: "agent_runtime_interceptor"
+    verification_mechanism: "RBAC check blocking automated execution token without supervisor sign-off."
+    owner_placeholder: "[ROLE: Customer Operations Lead]"
+
+legal_statutory_certification:
+  disclaimer_acknowledgment: true
+  statutory_obligation_waived: false
+  legal_counsel_signoff_placeholder: "[ROLE: Legal Counsel - Regulatory AI]"
+
+approvals:
+  - role_placeholder: "[ROLE: Head of Model Risk Management]"
+    approver_name: "Marcus Vance"
+    decision: "APPROVED"
+    conditions: "Must maintain 100% secondary validator sidecar in active blocking mode."
+    date: "2026-10-01"
+  - role_placeholder: "[ROLE: AI Review Board Chair]"
+    approver_name: "Elena Rostova"
+    decision: "APPROVED"
+    conditions: "Expires strictly in 90 days on 2026-12-30."
+    date: "2026-10-01"
+
+remediation_plan:
+  target_remediation_date: "2026-12-15"
+  action_items:
+    - milestone: "Complete synthetic data augmentation and re-train adapter"
+      target_date: "2026-11-15"
+      owner_placeholder: "[ROLE: ML Engineer]"
+    - milestone: "Re-run full evaluation benchmark suite to achieve hallucination rate < 0.05"
+      target_date: "2026-12-01"
+      owner_placeholder: "[ROLE: AI Evaluation Lead]"

@@ -1,0 +1,68 @@
+id: "ORG-CTL-RET-004"
+title: "Client Deprecation Notice Window and Endpoint Disposition"
+objective: "Enforce mandatory advance deprecation notice periods for downstream consumers of retiring AI APIs and configure terminated endpoints to return standardized HTTP 410 Gone or HTTP 301 Permanent Redirect responses."
+domain: "retirement_decommissioning"
+type: "parameterized"
+
+applicability_condition:
+  predicate_type: "always"
+  description: "Universal control applying to all retiring public and internal AI service endpoints."
+
+parameters:
+  deprecation_notice_window_days:
+    description: "Minimum calendar days advance notice provided to downstream consumers prior to terminating API endpoint availability."
+    data_type: "integer"
+    default_value: 90
+    allowed_range:
+      min: 14
+      max: 180
+    monotonicity: "higher_is_stricter"
+    approval_authority_placeholder: "[ROLE: Enterprise Architecture Review Board]"
+  endpoint_tombstone_ttl_days:
+    description: "Duration in days terminated endpoint must serve HTTP 410 Gone or 301 Redirect before DNS removal."
+    data_type: "integer"
+    default_value: 60
+    allowed_range:
+      min: 30
+      max: 180
+    monotonicity: "higher_is_stricter"
+    approval_authority_placeholder: "[ROLE: API Gateway Lead]"
+
+lifecycle_stages:
+  - "retirement_decommissioning"
+
+enforcement_points:
+  - "deployment_admission_controller"
+  - "api_gateway_sidecar"
+
+check_type: "automated"
+mode: "blocking"
+
+evidence_required:
+  - artifact_type: "endpoint_deprecation_audit_report"
+    description: "Synthetic HTTP monitor output verifying that decommissioned endpoints return HTTP 410 or HTTP 301 with designated successor redirect."
+    format: "json"
+    retention_period_years: 3
+
+exception_eligibility:
+  eligible: true
+  statutory_prohibition: false
+  minimum_compensating_controls:
+    - "Immediate shutdown authorized under emergency security advisory with broadcast notification to registered clients."
+
+reference_mappings:
+  - framework: "ISO/IEC 42001:2023"
+    clause_or_section: "Clause 8.2"
+    citation_title: "AI system retirement communication and consumer notification"
+    mapping_status: "verified"
+    notes: "Requires formal communication to users and dependent systems when retiring AI assets."
+  - framework: "NIST AI RMF 1.0"
+    clause_or_section: "MANAGE 4.3"
+    citation_title: "Stakeholders are notified during AI system phase-out."
+    mapping_status: "verified"
+    notes: "Mandates orderly transition and clear notification for retiring systems."
+
+owner_placeholder: "[ROLE: Enterprise Architecture & API Gateway Lead]"
+review_date_placeholder: "[YYYY-MM-DD]"
+version: "1.0.0"
+status: "DRAFT"

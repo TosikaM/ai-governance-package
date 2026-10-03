@@ -1,0 +1,59 @@
+id: "ORG-CTL-FAI-001"
+title: "Demographic Parity and Disparate Impact Evaluation"
+objective: "Evaluate predictive scoring, ranking, and classification algorithms across protected demographic attributes to measure, document, and mitigate unlawful disparate impact and demographic bias prior to deployment."
+domain: "fairness_bias_accessibility"
+type: "conditional"
+
+applicability_condition:
+  predicate_type: "manifest_property_match"
+  manifest_path: "ai_system_profile.declared_characteristics.makes_autonomous_decisions_affecting_humans"
+  operator: "is_true"
+  target_value: true
+  description: "Applies to any system making or materially informing decisions affecting individuals (e.g. credit, employment, eligibility)."
+
+lifecycle_stages:
+  - "data_preparation"
+  - "evaluation_validation"
+  - "deployment_admission"
+
+enforcement_points:
+  - "ci_build_pipeline"
+  - "deployment_admission_controller"
+  - "manual_audit_gate"
+
+check_type: "hybrid"
+mode: "blocking"
+
+evidence_required:
+  - artifact_type: "fairness_disparate_impact_audit"
+    description: "Statistical disparate impact report computing selection ratios, false positive/negative rate parity across protected groups, and mitigation justification."
+    format: "json"
+    retention_period_years: 7
+
+exception_eligibility:
+  eligible: false
+  statutory_prohibition: true
+  minimum_compensating_controls:
+    - "No exceptions permitted. Unlawful demographic disparate impact constitutes non-waivable civil rights violations."
+
+reference_mappings:
+  - framework: "NIST AI RMF 1.0"
+    clause_or_section: "MEASURE 2.11"
+    citation_title: "Fairness and bias are evaluated and documented."
+    mapping_status: "verified"
+    notes: "Requires formal measurement and documentation of demographic parity and algorithmic bias."
+  - framework: "ISO/IEC 42001:2023"
+    clause_or_section: "Annex A.5.2"
+    citation_title: "Fairness and prevention of algorithmic discrimination"
+    mapping_status: "verified"
+    notes: "Mandates processes ensuring fairness and non-discrimination across AI decision workflows."
+  - framework: "EU AI Act Regulation (EU) 2024/1689"
+    clause_or_section: "Article 10(2)(f)"
+    citation_title: "Examination of possible biases in data governance for high-risk AI"
+    mapping_status: "verified"
+    notes: "Statutory requirement to examine and mitigate biases that could lead to discrimination."
+
+owner_placeholder: "[ROLE: Enterprise Responsible AI & Fairness Lead]"
+review_date_placeholder: "[YYYY-MM-DD]"
+version: "1.0.0"
+status: "DRAFT"

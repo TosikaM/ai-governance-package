@@ -1,0 +1,73 @@
+id: "ORG-CTL-MON-003"
+title: "Automated Data and Concept Drift Detection and Alerting"
+objective: "Calculate statistical divergence metrics on production inference inputs and output distributions against baseline reference sets to generate automated alerts before model degradation affects business operations."
+domain: "monitoring_drift_incidents"
+type: "parameterized"
+
+applicability_condition:
+  predicate_type: "manifest_property_match"
+  manifest_path: "ai_system_profile.risk_tier"
+  operator: "in"
+  target_value:
+    - "tier_2_moderate"
+    - "tier_3_high"
+  description: "Applies to Moderate Risk and High Risk systems in production."
+
+parameters:
+  drift_psi_alert_threshold:
+    description: "Population Stability Index (PSI) threshold triggering automated drift warning to technical lead."
+    data_type: "float"
+    default_value: 0.25
+    allowed_range:
+      min: 0.10
+      max: 0.50
+    monotonicity: "lower_is_stricter"
+    approval_authority_placeholder: "[ROLE: Model Risk Officer]"
+  drift_evaluation_cadence_hours:
+    description: "Frequency of batch drift metric calculations over production window."
+    data_type: "integer"
+    default_value: 24
+    allowed_range:
+      min: 1
+      max: 168
+    monotonicity: "lower_is_stricter"
+    approval_authority_placeholder: "[ROLE: AI SRE Lead]"
+
+lifecycle_stages:
+  - "runtime_operation"
+
+enforcement_points:
+  - "periodic_automated_scan"
+
+check_type: "automated"
+mode: "advisory"
+
+evidence_required:
+  - artifact_type: "drift_monitoring_report"
+    description: "Automated report calculating statistical divergence (PSI, KS-test, Wasserstein distance) of production features against baseline sets."
+    format: "json"
+    retention_period_years: 5
+
+exception_eligibility:
+  eligible: true
+  statutory_prohibition: false
+  minimum_compensating_controls:
+    - "Manual weekly performance spot-checks by data science lead."
+
+reference_mappings:
+  - framework: "NIST AI RMF 1.0"
+    clause_or_section: "MANAGE 3.1"
+    citation_title: "AI system performance is monitored for drift and decay."
+    mapping_status: "verified"
+    notes: "Requires active measurement of data drift and concept drift."
+  - framework: "ISO/IEC 42001:2023"
+    clause_or_section: "Clause 9.1"
+    citation_title: "Monitoring of AI model drift and degradation"
+    mapping_status: "verified"
+    notes: "Mandates statistical tracking of model degradation over operational time."
+
+owner_placeholder: "[ROLE: Model Risk Officer & MLOps Lead]"
+review_date_placeholder: "[YYYY-MM-DD]"
+version: "1.0.0"
+status: "DRAFT"
+borderline_placement_rationale: "Advisory mode in baseline ensures alerting without automatically halting production pipelines."

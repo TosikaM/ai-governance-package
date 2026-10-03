@@ -1,0 +1,59 @@
+id: "ORG-CTL-HUM-004"
+title: "Operator Automation Bias Monitoring and Override Audit"
+objective: "Continuously monitor and statistically audit human operator approval, rejection, and override rates across supervised AI workflows to detect and prevent automation bias and rubber-stamping."
+domain: "human_oversight_redress"
+type: "conditional"
+
+applicability_condition:
+  predicate_type: "manifest_property_match"
+  manifest_path: "ai_system_profile.risk_tier"
+  operator: "in"
+  target_value:
+    - "tier_2_moderate"
+    - "tier_3_high"
+  description: "Applies to Moderate Risk and High Risk systems incorporating human review queues."
+
+lifecycle_stages:
+  - "runtime_operation"
+
+enforcement_points:
+  - "periodic_automated_scan"
+  - "manual_audit_gate"
+
+check_type: "hybrid"
+mode: "advisory"
+
+evidence_required:
+  - artifact_type: "automation_bias_telemetry_audit"
+    description: "Statistical telemetry report tracking reviewer review duration, rejection rates, and override distributions across operator cohorts."
+    format: "json"
+    retention_period_years: 5
+
+exception_eligibility:
+  eligible: true
+  statutory_prohibition: false
+  minimum_compensating_controls:
+    - "Periodic double-blind sampling of operator decisions by quality assurance."
+
+reference_mappings:
+  - framework: "EU AI Act Regulation (EU) 2024/1689"
+    clause_or_section: "Article 14(4)(b)"
+    citation_title: "Awareness of automation bias in high-risk AI oversight"
+    mapping_status: "verified"
+    notes: "Requires overseers to remain aware of the possible tendency of automatically relying on the output."
+  - framework: "ISO/IEC 42001:2023"
+    clause_or_section: "Annex A.5.4"
+    citation_title: "Human oversight effectiveness"
+    mapping_status: "verified"
+    notes: "Requires evaluating the ongoing effectiveness of human oversight mechanisms."
+  - framework: "NIST AI RMF 1.0"
+    clause_or_section: "GOVERN 2.3"
+    citation_title: "Workforce processes address cognitive biases in human-AI interaction."
+    mapping_status: "verified"
+    notes: "Direct mandate addressing automation complacency and cognitive biases."
+
+owner_placeholder: "[ROLE: Enterprise Human Oversight Operations Lead]"
+review_date_placeholder: "[YYYY-MM-DD]"
+version: "1.0.0"
+status: "DRAFT"
+borderline_placement_rationale: "Advisory mode in baseline ensures continuous monitoring without halting active human operational queues."

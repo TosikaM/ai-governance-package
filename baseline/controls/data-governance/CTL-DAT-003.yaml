@@ -1,0 +1,78 @@
+id: "ORG-CTL-DAT-003"
+title: "Geographic Data Residency and Regional Inference Pinning"
+objective: "Enforce cloud region boundaries and prevent cross-border data transfer violations by pinning vector search indices, cache stores, and inference routing to authorized sovereign cloud geographies."
+domain: "data_quality_privacy_retention"
+type: "parameterized"
+
+applicability_condition:
+  predicate_type: "manifest_property_match"
+  manifest_path: "ai_system_profile.data_classifications"
+  operator: "contains"
+  target_value: "restricted_pii"
+  description: "Applies to systems processing data classified as restricted PII, regulated financial, or regulated health data."
+
+parameters:
+  allowed_cloud_regions:
+    description: "Whitelisted cloud infrastructure regions permitted to process model inference and persist vector indices."
+    data_type: "array"
+    default_value:
+      - "eu-west-1"
+      - "eu-central-1"
+      - "us-east-1"
+      - "us-west-2"
+    allowed_values:
+      - "eu-west-1"
+      - "eu-central-1"
+      - "us-east-1"
+      - "us-west-2"
+      - "ap-southeast-1"
+    monotonicity: "strict_subset"
+    approval_authority_placeholder: "[ROLE: Chief Privacy Officer & Cloud Infrastructure Architect]"
+  enforce_strict_local_routing:
+    description: "If true, rejects automated cloud cross-region failover even during vendor availability degradation."
+    data_type: "boolean"
+    default_value: true
+    approval_authority_placeholder: "[ROLE: Enterprise Data Protection Officer]"
+
+lifecycle_stages:
+  - "integration_ci_cd"
+  - "deployment_admission"
+  - "runtime_operation"
+
+enforcement_points:
+  - "ci_build_pipeline"
+  - "deployment_admission_controller"
+  - "api_gateway_sidecar"
+
+check_type: "automated"
+mode: "blocking"
+
+evidence_required:
+  - artifact_type: "residency_compliance_attestation"
+    description: "Cloud infrastructure configuration audit confirming vector storage, VPC endpoints, and model inference APIs reside in approved regions."
+    format: "json"
+    retention_period_years: 7
+
+exception_eligibility:
+  eligible: true
+  statutory_prohibition: false
+  minimum_compensating_controls:
+    - "Execution of Standard Contractual Clauses (SCCs) and Transfer Impact Assessment (TIA) approved by Legal Counsel."
+
+reference_mappings:
+  - framework: "Regulation (EU) 2016/679 (GDPR)"
+    clause_or_section: "Chapter V (Articles 44-50)"
+    citation_title: "Transfers of personal data to third countries or international organizations"
+    mapping_status: "verified"
+    notes: "Strict legal basis for restricting cross-border transfers outside the EEA without adequacy decisions or SCCs."
+  - framework: "ISO/IEC 42001:2023"
+    clause_or_section: "Annex A.7.3"
+    citation_title: "Data privacy and data residency in AI systems"
+    mapping_status: "verified"
+    notes: "Requires compliance with jurisdictional data residency requirements."
+
+owner_placeholder: "[ROLE: Chief Privacy Officer]"
+review_date_placeholder: "[YYYY-MM-DD]"
+version: "1.0.0"
+status: "DRAFT"
+borderline_placement_rationale: "Baseline parameterization allows enterprise-wide regional enforcement, while specific jurisdictions (e.g. EU) tighten via overlays."

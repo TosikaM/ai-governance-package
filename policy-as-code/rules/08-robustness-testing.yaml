@@ -1,0 +1,85 @@
+# ==============================================================================
+# Policy-as-Code Rules: Domain 8 - Robustness, Evaluation & Testing (ROB)
+# ==============================================================================
+# Schema: policy-as-code/rule-schema.json
+# Baseline Controls: ORG-CTL-ROB-001, ORG-CTL-ROB-002, ORG-CTL-ROB-003, ORG-CTL-ROB-004
+# ==============================================================================
+
+schema_version: "1.0.0"
+domain: "robustness_evaluation_testing"
+owner_placeholder: "[ROLE: AI Evaluation Lead]"
+review_date_placeholder: "[YYYY-MM-DD]"
+status: "DRAFT"
+
+rules:
+  # ----------------------------------------------------------------------------
+  # Control: ORG-CTL-ROB-001 - Benchmark Report Conformance
+  # ----------------------------------------------------------------------------
+  - rule_id: "PAC-ROB-001"
+    target_control_id: "ORG-CTL-ROB-001"
+    title: "Domain Evaluation Benchmark Report Existence Check"
+    description: "Verifies that an automated evaluation benchmark report has been generated for the candidate model."
+    enforcement_points:
+      - "ci_build_pipeline"
+      - "model_registry_admission"
+    mode: "blocking"
+    input_context:
+      - "eval_benchmark_report"
+    assertions:
+      - assertion_id: "A01"
+        description: "Benchmark evaluation report must declare model identifier."
+        field_path: "model_id"
+        operator: "not_empty"
+        failure_message: "eval_benchmark_report is missing model_id."
+      - assertion_id: "A02"
+        description: "Total evaluation test count must be greater than zero."
+        field_path: "total_test_cases"
+        operator: "greater_than_or_equal"
+        expected_value: 10
+        failure_message: "Evaluation test suite executed fewer than minimum 10 test cases."
+    remediation: "Execute domain benchmark test suite and generate eval_benchmark_report.json before promotion."
+    reference_rego: |
+      # verify against current documentation
+      package ai_governance.rob001
+      default allow = false
+      allow {
+          input.model_id != ""
+          input.total_test_cases >= 10
+      }
+
+  # ----------------------------------------------------------------------------
+  # Control: ORG-CTL-ROB-003 - Hallucination Rate Threshold Check
+  # ----------------------------------------------------------------------------
+  - rule_id: "PAC-ROB-003"
+    target_control_id: "ORG-CTL-ROB-003"
+    title: "Pre-Deployment Hallucination Rate Ceiling Check"
+    description: "Verifies that the measured hallucination rate does not exceed the allowed threshold (baseline 0.05 or overlay 0.02)."
+    enforcement_points:
+      - "ci_build_pipeline"
+      - "model_registry_admission"
+      - "deployment_admission_controller"
+    mode: "blocking"
+    input_context:
+      - "eval_benchmark_report"
+    assertions:
+      - assertion_id: "A01"
+        description: "Measured hallucination rate must be <= 0.05 (or tighter overlay threshold)."
+        field_path: "hallucination_rate"
+        operator: "less_than_or_equal"
+        expected_value: 0.05
+        failure_message: "Candidate model exceeds maximum allowable hallucination rate threshold."
+      - assertion_id: "A02"
+        description: "Measured accuracy score must be >= 0.85."
+        field_path: "accuracy_score"
+        operator: "greater_than_or_equal"
+        expected_value: 0.85
+        failure_message: "Candidate model fails to meet minimum accuracy score floor (0.85)."
+    remediation: "Improve factual grounding, refine system prompts, or request a time-limited variance (exception) if compensations exist."
+    reference_rego: |
+      # verify against current documentation
+      package ai_governance.rob003
+      default allow = false
+      allow {
+          input.hallucination_rate <= 0.05
+          input.accuracy_score >= 0.85
+      }

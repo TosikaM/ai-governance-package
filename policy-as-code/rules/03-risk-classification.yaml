@@ -1,0 +1,110 @@
+# ==============================================================================
+# Policy-as-Code Rules: Domain 3 - Risk Classification & Impact (RSK)
+# ==============================================================================
+# Schema: policy-as-code/rule-schema.json
+# Baseline Controls: ORG-CTL-RSK-001, ORG-CTL-RSK-002, ORG-CTL-RSK-003
+# ==============================================================================
+
+schema_version: "1.0.0"
+domain: "risk_classification_impact"
+owner_placeholder: "[ROLE: Enterprise AI Risk Lead]"
+review_date_placeholder: "[YYYY-MM-DD]"
+status: "DRAFT"
+
+rules:
+  # ----------------------------------------------------------------------------
+  # Control: ORG-CTL-RSK-001 - Mandatory 4-Tier Risk Categorization
+  # ----------------------------------------------------------------------------
+  - rule_id: "PAC-RSK-001"
+    target_control_id: "ORG-CTL-RSK-001"
+    title: "Mandatory Risk Tier Classification Declaration"
+    description: "Verifies that the project declares a valid risk tier according to enterprise taxonomy."
+    enforcement_points:
+      - "pull_request_check"
+      - "ci_build_pipeline"
+      - "deployment_admission_controller"
+    mode: "blocking"
+    input_context:
+      - "ai_project_manifest"
+    assertions:
+      - assertion_id: "A01"
+        description: "System risk tier must be declared and belong to standard taxonomy."
+        field_path: "ai_system_profile.risk_tier"
+        operator: "in"
+        expected_value:
+          - "tier_1_minimal"
+          - "tier_2_moderate"
+          - "tier_3_high"
+          - "tier_4_unacceptable"
+        failure_message: "System risk_tier is missing or not a recognized enterprise risk tier."
+    remediation: "Declare a valid risk_tier (tier_1_minimal, tier_2_moderate, tier_3_high) in ai_system_profile of ai-project-manifest.yaml."
+    reference_rego: |
+      # verify against current documentation
+      package ai_governance.rsk001
+      default allow = false
+      valid_tiers = {"tier_1_minimal", "tier_2_moderate", "tier_3_high", "tier_4_unacceptable"}
+      allow {
+          valid_tiers[input.ai_system_profile.risk_tier]
+      }
+
+  # ----------------------------------------------------------------------------
+  # Control: ORG-CTL-RSK-002 - Pre-Deployment Algorithmic Impact Assessment
+  # ----------------------------------------------------------------------------
+  - rule_id: "PAC-RSK-002"
+    target_control_id: "ORG-CTL-RSK-002"
+    title: "High-Risk Algorithmic Impact Assessment Verification"
+    description: "Verifies that High Risk (Tier 3) systems declare designated risk oversight contacts."
+    enforcement_points:
+      - "deployment_admission_controller"
+      - "manual_audit_gate"
+    mode: "blocking"
+    input_context:
+      - "ai_project_manifest"
+    assertions:
+      - assertion_id: "A01"
+        description: "Risk officer must be designated if classified as high risk."
+        field_path: "owners.risk_officer.name"
+        operator: "not_empty"
+        failure_message: "Risk officer designation is required for Tier 2 and Tier 3 systems."
+    remediation: "Assign a certified risk_officer in owners of ai-project-manifest.yaml."
+    reference_rego: |
+      # verify against current documentation
+      package ai_governance.rsk002
+      default allow = false
+      allow {
+          input.owners.risk_officer.name != ""
+      }
+
+  # ----------------------------------------------------------------------------
+  # Control: ORG-CTL-RSK-003 - Material Change Risk Re-Evaluation
+  # ----------------------------------------------------------------------------
+  - rule_id: "PAC-RSK-003"
+    target_control_id: "ORG-CTL-RSK-003"
+    title: "Operational Characteristic Materiality Declaration"
+    description: "Verifies that binary declared characteristics are explicitly documented."
+    enforcement_points:
+      - "pull_request_check"
+      - "ci_build_pipeline"
+    mode: "blocking"
+    input_context:
+      - "ai_project_manifest"
+    assertions:
+      - assertion_id: "A01"
+        description: "Safety critical operational context must be explicitly declared."
+        field_path: "ai_system_profile.declared_characteristics.operates_in_safety_critical_context"
+        operator: "exists"
+        failure_message: "operates_in_safety_critical_context must be explicitly declared boolean."
+      - assertion_id: "A02"
+        description: "Autonomous decision making capability must be explicitly declared."
+        field_path: "ai_system_profile.declared_characteristics.makes_autonomous_decisions_affecting_humans"
+        operator: "exists"
+        failure_message: "makes_autonomous_decisions_affecting_humans must be explicitly declared boolean."
+    remediation: "Ensure all declared_characteristics flags are explicitly set in ai-project-manifest.yaml."
+    reference_rego: |
+      # verify against current documentation
+      package ai_governance.rsk003
+      default allow = false
+      allow {
+          is_boolean(input.ai_system_profile.declared_characteristics.operates_in_safety_critical_context)
+          is_boolean(input.ai_system_profile.declared_characteristics.makes_autonomous_decisions_affecting_humans)
+      }

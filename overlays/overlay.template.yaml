@@ -1,0 +1,128 @@
+# ==============================================================================
+# Enterprise AI Governance Package - Reusable Overlay Template
+# ==============================================================================
+# Schema: schemas/overlay.schema.json (JSON Schema Draft 2020-12)
+# Purpose: Authoring template for creating regulatory, sectoral, risk-tier,
+#          architectural, or contractual governance overlays.
+#
+# CORE INVARIANT: MONOTONICITY (ADD OR TIGHTEN ONLY)
+# Overlays MUST NEVER weaken, relax, or waive baseline controls. An overlay can:
+#   1. Add new controls not present in the baseline (action: add_control)
+#   2. Tighten numerical parameters in a stricter direction (action: tighten_parameter)
+#   3. Upgrade enforcement modes, e.g. advisory -> blocking (action: upgrade_mode)
+#   4. Require additional evidence artifacts (action: require_additional_evidence)
+#   5. Restrict or eliminate exception eligibility (action: restrict_exception)
+#
+# INCOMPATIBLE OBLIGATIONS:
+# If two overlays define mutually incompatible requirements with no mathematical
+# ordering relation, the merge engine halts with UNRESOLVED_CONFLICT_HALT.
+# ==============================================================================
+
+# Permanent canonical overlay identifier. Pattern: ^ORG-OVL-[A-Z]{3}-[A-Z0-9_-]+-[0-9]{3}$
+# Examples: ORG-OVL-GEO-EU-001, ORG-OVL-SEC-FIN-001, ORG-OVL-RSK-TIER3-001, ORG-OVL-ARC-AGENT-001
+id: "ORG-OVL-TMP-SAMPLE-001"
+
+# Human-readable title of this overlay specialization
+title: "Standard Enterprise Governance Overlay Authoring Template"
+
+# Overlay category. Allowed: geography | sector | risk_tier | ai_type | contractual
+category: "geography"
+
+# Target scope: conditions under which a project manifest attaches this overlay
+target_scope:
+  applicability_summary: "Descriptive explanation of when, where, and why this overlay attaches to an AI project manifest."
+  jurisdictions:
+    - "EU"
+    - "US"
+    - "global"
+  sectors:
+    - "all"
+    - "financial_services"
+    - "healthcare"
+  risk_tiers:
+    - "tier_2_moderate"
+    - "tier_3_high"
+    - "tier_4_critical"
+  ai_types:
+    - "predictive_tabular"
+    - "generative_llm"
+    - "rag_system"
+    - "autonomous_agent"
+
+# Baseline compatibility range expression (SemVer 2.0.0)
+baseline_compatibility: ">=0.1.0 <2.0.0"
+
+# Authoritative statutory, regulatory, or technical citations underpinning this overlay
+citations:
+  - source_title: "Authoritative Governing Standard or Law (e.g., Regulation (EU) 2024/1689)"
+    citation_reference: "Specific Article, Clause, or Section (e.g., Article 15(1))"
+    url: "https://example.org/statute-reference"
+    publication_date_or_version: "YYYY-MM-DD or Version String"
+    # Verification status: 'verified' (if verified against primary source) or 'verify against primary source'
+    verification_status: "verify against primary source"
+
+# Explicit legal review status gate. Regulatory overlays require qualified counsel review before release.
+# Allowed: PENDING_QUALIFIED_LEGAL_REVIEW | QUALIFIED_LEGAL_REVIEW_APPROVED | NOT_LEGAL_STATUTE_TECHNICAL_SPEC_ONLY
+legal_review_status: "PENDING_QUALIFIED_LEGAL_REVIEW"
+
+# Monotonic enhancement and tightening rules
+# Every rule targets either an existing baseline control ID or declares a new overlay control.
+rules:
+  # ----------------------------------------------------------------------------
+  # Rule Example 1: Tighten a numerical parameter (lower_is_stricter or higher_is_stricter)
+  # ----------------------------------------------------------------------------
+  - rule_id: "R01"
+    target_control_id: "ORG-CTL-ROB-003"
+    action: "tighten_parameter"
+    parameter_tightening:
+      parameter_name: "max_hallucination_rate"
+      new_value: 0.02
+      direction: "lower_is_stricter"
+    rationale: "Statutory accuracy mandate requires tightening hallucination ceiling from baseline 0.05 to 0.02."
+
+  # ----------------------------------------------------------------------------
+  # Rule Example 2: Upgrade enforcement mode (advisory -> review -> blocking)
+  # ----------------------------------------------------------------------------
+  - rule_id: "R02"
+    target_control_id: "ORG-CTL-HUM-004"
+    action: "upgrade_mode"
+    upgraded_mode: "blocking"
+    rationale: "For high-risk systems, automation bias review cannot remain advisory and must block promotion."
+
+  # ----------------------------------------------------------------------------
+  # Rule Example 3: Require additional evidentiary artifacts beyond baseline
+  # ----------------------------------------------------------------------------
+  - rule_id: "R03"
+    target_control_id: "ORG-CTL-ROB-003"
+    action: "require_additional_evidence"
+    additional_evidence:
+      - artifact_type: "statutory_conformity_assessment_dossier"
+        description: "Technical validation dossier verifying compliance with statutory evaluation benchmarks."
+        format: "pdf"
+    rationale: "Mandated technical documentation for pre-market conformity assessment."
+
+  # ----------------------------------------------------------------------------
+  # Rule Example 4: Restrict or eliminate exception eligibility
+  # ----------------------------------------------------------------------------
+  - rule_id: "R04"
+    target_control_id: "ORG-CTL-TRN-001"
+    action: "restrict_exception"
+    restrict_exception:
+      disallow_exceptions: true
+      additional_mandatory_compensations:
+        - "Mandatory legal review if automated watermarking undergoes degradation."
+    rationale: "Public transparency disclosures are legally binding statutes; internal exceptions are strictly disallowed."
+
+# Conflict resolution policy when multiple overlays touch the same control
+conflict_resolution:
+  # Allowed: UNRESOLVED_CONFLICT_HALT | MOST_RESTRICTIVE_ENVELOPE
+  default_behavior: "UNRESOLVED_CONFLICT_HALT"
+  resolution_escalation_path: "Enterprise AI Safety Review Board and Legal Counsel"
+
+# Accountability placeholders
+owner_placeholder: "[ROLE: Designated Overlay Owner / Regulatory Affairs Lead]"
+review_date_placeholder: "[YYYY-MM-DD]"
+
+# Version and lifecycle status
+version: "0.1.0-draft"
+status: "DRAFT"
