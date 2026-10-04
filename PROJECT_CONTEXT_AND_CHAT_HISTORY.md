@@ -279,6 +279,21 @@ Below is the complete, sequential breakdown of the conversations, requests, chal
 
 ---
 
+### Phase 14: Interactive Architectural Flow & Guardrails Placement Map
+* **User Request:** "can you share the complete architectural flow diagram in html for better understanding, it should covere what guardrails are implied and where is these guardrails sitting ?"
+* **Actions Taken & Architecture Visualized:**
+  * Created standalone interactive architectural application: [`governance-architectural-flow.html`](file:///c:/ai-governance-package/governance-architectural-flow.html).
+  * Mapped all **5 physical & logical guardrail locations**:
+    1. **Stage 1: Developer IDE & Workstation (.git/hooks)**: `POL-SEC` (Pre-commit API key & entropy scanner), `POL-ACC` (Project manifest validation). Stops leaks with zero cloud exposure (< 0.2s latency).
+    2. **Stage 2: CI/CD Pull Request Gate (GitHub Actions / GitLab CI Runner)**: `POL-IPR` (Blocks reciprocal copyleft AGPL/GPL-3.0), `POL-HUM` (Mandatory human peer approval `PR_HUMAN_APPROVED: true`), `POL-DAT` (Data card commercial rights clearance).
+    3. **Stage 3: Policy-as-Code Evaluation Engine (Build Engine & Resolver)**: `POL-FAI` (Mathematical disparity ratio ≥ 0.80 four-fifths check), `POL-ROB` (Safety & robustness evaluations), Overlays (EU AI Act, SEC, HIPAA). Yields SHA-256 sealed snapshot.
+    4. **Stage 4: Universal MCP & Agent Interceptor (Port 3335 / stdio & PEP Sidecar)**: `PEP-PROXY` (PreToolUse interceptor blocking unauthorized terminal/DB operations), `POL-ROB` (Hard recursion limit: 20 steps to prevent infinite loops), `POL-DAT` (Real-time PII masking).
+    5. **Stage 5: Live Production Telemetry (Continuous Log Stream)**: `POL-MON` (Live accuracy & concept drift detection > 5%), `POL-FAI` (Production demographic bias shifts), `POL-HUM` (Emergency human kill-switch / manual override).
+  * Built an interactive terminal simulator allowing users to trigger real-time failure scenarios (leaked OpenAI key, AGPL code injection, disparate impact failure, runaway agent loop) with live terminal diagnostics.
+  * Verified end-to-end rendering and interactive state transitions in browser subagent.
+
+---
+
 ## 5. Current System State & Git Repositories
 
 | Repository / Directory | Path | Git Branch / Commit | Status |

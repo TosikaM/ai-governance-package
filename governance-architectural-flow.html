@@ -1,0 +1,1495 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Enterprise AI Governance - End-to-End Architectural Flow & Guardrails Map</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-primary: #0a0e17;
+      --bg-secondary: #111827;
+      --bg-card: rgba(17, 24, 39, 0.85);
+      --bg-card-hover: rgba(30, 41, 59, 0.95);
+      --border-color: #1e293b;
+      --border-highlight: #334155;
+      --text-main: #f1f5f9;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
+      --accent-cyan: #06b6d4;
+      --accent-blue: #3b82f6;
+      --accent-purple: #8b5cf6;
+      --accent-emerald: #10b981;
+      --accent-rose: #f43f5e;
+      --accent-amber: #f59e0b;
+      --font-display: 'Outfit', sans-serif;
+      --font-body: 'Plus Jakarta Sans', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+      --glow-blue: 0 0 25px rgba(59, 130, 246, 0.25);
+      --glow-cyan: 0 0 25px rgba(6, 182, 212, 0.25);
+      --glow-rose: 0 0 25px rgba(244, 63, 94, 0.25);
+    }
+
+    [data-theme="light"] {
+      --bg-primary: #f8fafc;
+      --bg-secondary: #ffffff;
+      --bg-card: rgba(255, 255, 255, 0.9);
+      --bg-card-hover: #f1f5f9;
+      --border-color: #e2e8f0;
+      --border-highlight: #cbd5e1;
+      --text-main: #0f172a;
+      --text-muted: #475569;
+      --text-dim: #94a3b8;
+      --glow-blue: 0 10px 25px rgba(59, 130, 246, 0.12);
+      --glow-cyan: 0 10px 25px rgba(6, 182, 212, 0.12);
+      --glow-rose: 0 10px 25px rgba(244, 63, 94, 0.12);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      transition: background-color 0.25s ease, border-color 0.25s ease;
+    }
+
+    body {
+      background-color: var(--bg-primary);
+      color: var(--text-main);
+      font-family: var(--font-body);
+      line-height: 1.6;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Top Navigation Bar */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: var(--bg-card);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border-color);
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+    }
+
+    .brand-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 1.25rem;
+      color: #fff;
+      box-shadow: var(--glow-cyan);
+    }
+
+    .brand-text h1 {
+      font-family: var(--font-display);
+      font-size: 1.15rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    .brand-text p {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 0.75rem;
+      align-items: center;
+    }
+
+    .nav-btn {
+      padding: 0.5rem 1rem;
+      font-size: 0.85rem;
+      font-weight: 600;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      background: var(--bg-secondary);
+      color: var(--text-main);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      transition: all 0.2s ease;
+      text-decoration: none;
+    }
+
+    .nav-btn:hover {
+      border-color: var(--accent-blue);
+      color: var(--accent-blue);
+      transform: translateY(-1px);
+    }
+
+    .nav-btn.primary {
+      background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+      color: white;
+      border: none;
+    }
+
+    .nav-btn.primary:hover {
+      box-shadow: var(--glow-blue);
+    }
+
+    /* Main Container */
+    main {
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: 2.5rem 2rem;
+    }
+
+    /* Hero Banner */
+    .hero {
+      text-align: center;
+      margin-bottom: 3rem;
+      max-width: 900px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .badge-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.35rem 0.85rem;
+      border-radius: 9999px;
+      background: rgba(6, 182, 212, 0.12);
+      border: 1px solid rgba(6, 182, 212, 0.3);
+      color: var(--accent-cyan);
+      font-size: 0.8rem;
+      font-weight: 600;
+      margin-bottom: 1.25rem;
+    }
+
+    .badge-pill .pulse-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--accent-cyan);
+      animation: pulse 1.8s infinite;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(6, 182, 212, 0.7); }
+      70% { transform: scale(1); box-shadow: 0 0 0 8px rgba(6, 182, 212, 0); }
+      100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(6, 182, 212, 0); }
+    }
+
+    .hero h2 {
+      font-family: var(--font-display);
+      font-size: 2.75rem;
+      font-weight: 800;
+      line-height: 1.15;
+      margin-bottom: 1rem;
+      letter-spacing: -0.03em;
+      background: linear-gradient(135deg, #ffffff 30%, var(--accent-cyan) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    [data-theme="light"] .hero h2 {
+      background: linear-gradient(135deg, #0f172a 30%, var(--accent-blue) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero p {
+      font-size: 1.1rem;
+      color: var(--text-muted);
+      max-width: 780px;
+      margin: 0 auto;
+    }
+
+    /* Filter Toolbar */
+    .filter-bar {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 1.25rem 1.75rem;
+      margin-bottom: 2.5rem;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1.25rem;
+    }
+
+    .filter-group {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      flex-wrap: wrap;
+    }
+
+    .filter-label {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-right: 0.25rem;
+    }
+
+    .filter-chip {
+      padding: 0.4rem 0.85rem;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      color: var(--text-muted);
+      transition: all 0.2s ease;
+    }
+
+    .filter-chip:hover {
+      border-color: var(--accent-cyan);
+      color: var(--text-main);
+    }
+
+    .filter-chip.active {
+      background: rgba(6, 182, 212, 0.15);
+      border-color: var(--accent-cyan);
+      color: var(--accent-cyan);
+    }
+
+    .filter-chip.danger.active {
+      background: rgba(244, 63, 94, 0.15);
+      border-color: var(--accent-rose);
+      color: var(--accent-rose);
+    }
+
+    .filter-chip.purple.active {
+      background: rgba(139, 92, 246, 0.15);
+      border-color: var(--accent-purple);
+      color: var(--accent-purple);
+    }
+
+    /* Architecture Flow Stage Section */
+    .flow-wrapper {
+      margin-bottom: 4rem;
+      position: relative;
+    }
+
+    .flow-timeline {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 1.25rem;
+      position: relative;
+    }
+
+    @media (max-width: 1200px) {
+      .flow-timeline {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 768px) {
+      .flow-timeline {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Stage Card */
+    .stage-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .stage-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: var(--accent-color, var(--accent-blue));
+      opacity: 0.8;
+      transition: height 0.2s ease;
+    }
+
+    .stage-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--border-highlight);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
+    }
+
+    .stage-card:hover::before {
+      height: 6px;
+    }
+
+    .stage-card.selected {
+      border-color: var(--accent-color, var(--accent-blue));
+      box-shadow: 0 0 25px rgba(6, 182, 212, 0.2);
+    }
+
+    .stage-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 1rem;
+    }
+
+    .stage-number {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--text-dim);
+      background: var(--bg-secondary);
+      padding: 0.2rem 0.55rem;
+      border-radius: 6px;
+      border: 1px solid var(--border-color);
+    }
+
+    .stage-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.15rem;
+      background: var(--icon-bg, rgba(59, 130, 246, 0.12));
+      color: var(--accent-color, var(--accent-blue));
+    }
+
+    .stage-title {
+      font-family: var(--font-display);
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin-bottom: 0.35rem;
+      line-height: 1.25;
+    }
+
+    .sitting-location {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      font-size: 0.76rem;
+      font-weight: 600;
+      color: var(--accent-color, var(--accent-blue));
+      background: var(--icon-bg, rgba(59, 130, 246, 0.1));
+      padding: 0.2rem 0.6rem;
+      border-radius: 6px;
+      margin-bottom: 1rem;
+      align-self: flex-start;
+    }
+
+    .sitting-location svg {
+      width: 12px;
+      height: 12px;
+      fill: currentColor;
+    }
+
+    .stage-desc {
+      font-size: 0.83rem;
+      color: var(--text-muted);
+      margin-bottom: 1.25rem;
+      flex-grow: 1;
+    }
+
+    /* Guardrails List inside card */
+    .guardrails-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .guardrail-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 0.45rem 0.65rem;
+      font-size: 0.75rem;
+      transition: border-color 0.2s ease;
+    }
+
+    .guardrail-item:hover {
+      border-color: var(--border-highlight);
+    }
+
+    .guardrail-tag {
+      font-family: var(--font-mono);
+      font-weight: 700;
+      color: var(--accent-cyan);
+    }
+
+    .guardrail-action {
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 0.15rem 0.45rem;
+      border-radius: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    .action-block {
+      background: rgba(244, 63, 94, 0.15);
+      color: var(--accent-rose);
+      border: 1px solid rgba(244, 63, 94, 0.3);
+    }
+
+    .action-gate {
+      background: rgba(245, 158, 11, 0.15);
+      color: var(--accent-amber);
+      border: 1px solid rgba(245, 158, 11, 0.3);
+    }
+
+    .action-pass {
+      background: rgba(16, 185, 129, 0.15);
+      color: var(--accent-emerald);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+
+    .action-intercept {
+      background: rgba(139, 92, 246, 0.15);
+      color: var(--accent-purple);
+      border: 1px solid rgba(139, 92, 246, 0.3);
+    }
+
+    .card-footer {
+      border-top: 1px solid var(--border-color);
+      padding-top: 0.85rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.76rem;
+      color: var(--text-dim);
+    }
+
+    .card-footer span {
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    /* Inspector Detail Drawer */
+    .inspector-panel {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 2rem;
+      margin-bottom: 3.5rem;
+      position: relative;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    }
+
+    .inspector-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 1.5rem;
+      padding-bottom: 1.25rem;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .inspector-title-area h3 {
+      font-family: var(--font-display);
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 0.35rem;
+    }
+
+    .inspector-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 2rem;
+    }
+
+    @media (max-width: 900px) {
+      .inspector-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .detail-section h4 {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--accent-cyan);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.85rem;
+    }
+
+    .detail-card {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 1.25rem;
+      margin-bottom: 1rem;
+    }
+
+    .detail-card h5 {
+      font-size: 0.95rem;
+      font-weight: 700;
+      margin-bottom: 0.35rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .detail-card p {
+      font-size: 0.84rem;
+      color: var(--text-muted);
+      margin-bottom: 0.5rem;
+    }
+
+    .code-snippet {
+      background: #060911;
+      border: 1px solid #1a2234;
+      border-radius: 8px;
+      padding: 0.85rem 1rem;
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      color: #38bdf8;
+      overflow-x: auto;
+      margin-top: 0.65rem;
+    }
+
+    /* Master Table of Guardrails */
+    .section-title {
+      font-family: var(--font-display);
+      font-size: 1.85rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      letter-spacing: -0.02em;
+    }
+
+    .section-subtitle {
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      margin-bottom: 1.5rem;
+    }
+
+    .table-container {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      overflow: hidden;
+      margin-bottom: 4rem;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 0.85rem;
+    }
+
+    thead {
+      background: var(--bg-secondary);
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    th {
+      padding: 1rem 1.25rem;
+      font-weight: 700;
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+    }
+
+    td {
+      padding: 1.1rem 1.25rem;
+      border-bottom: 1px solid var(--border-color);
+      vertical-align: middle;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    tr:hover td {
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .pill-location {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 0.25rem 0.6rem;
+      border-radius: 6px;
+      background: rgba(59, 130, 246, 0.1);
+      color: var(--accent-blue);
+      border: 1px solid rgba(59, 130, 246, 0.25);
+    }
+
+    .file-link {
+      font-family: var(--font-mono);
+      font-size: 0.76rem;
+      color: var(--accent-cyan);
+      text-decoration: none;
+      background: rgba(6, 182, 212, 0.08);
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      border: 1px solid rgba(6, 182, 212, 0.2);
+      transition: all 0.2s ease;
+      display: inline-block;
+    }
+
+    .file-link:hover {
+      background: rgba(6, 182, 212, 0.18);
+      border-color: var(--accent-cyan);
+    }
+
+    /* Simulator Section */
+    .simulator-box {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 2rem;
+      margin-bottom: 4rem;
+    }
+
+    .scenario-buttons {
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+      margin-bottom: 1.5rem;
+    }
+
+    .scenario-btn {
+      padding: 0.65rem 1.1rem;
+      border-radius: 10px;
+      font-size: 0.84rem;
+      font-weight: 600;
+      cursor: pointer;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all 0.2s ease;
+    }
+
+    .scenario-btn:hover {
+      border-color: var(--accent-cyan);
+    }
+
+    .scenario-btn.active {
+      background: rgba(6, 182, 212, 0.15);
+      border-color: var(--accent-cyan);
+      color: var(--accent-cyan);
+    }
+
+    .sim-result-card {
+      background: #080c14;
+      border: 1px solid #1a2234;
+      border-radius: 12px;
+      padding: 1.5rem;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+    }
+
+    @media (max-width: 800px) {
+      .sim-result-card {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .sim-column h5 {
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-dim);
+      margin-bottom: 0.75rem;
+    }
+
+    .terminal-window {
+      background: #030712;
+      border: 1px solid #1f2937;
+      border-radius: 8px;
+      padding: 1rem;
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: #94a3b8;
+      max-height: 220px;
+      overflow-y: auto;
+    }
+
+    .terminal-window .log-red { color: #f43f5e; font-weight: 600; }
+    .terminal-window .log-green { color: #10b981; font-weight: 600; }
+    .terminal-window .log-cyan { color: #38bdf8; }
+    .terminal-window .log-amber { color: #fbbf24; }
+
+    /* Footer */
+    footer {
+      border-top: 1px solid var(--border-color);
+      padding: 2.5rem 2rem;
+      text-align: center;
+      font-size: 0.85rem;
+      color: var(--text-dim);
+      background: var(--bg-secondary);
+    }
+
+    footer a {
+      color: var(--accent-cyan);
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body data-theme="dark">
+
+  <!-- Header -->
+  <header>
+    <div class="brand">
+      <div class="brand-icon">&#x26E8;</div>
+      <div class="brand-text">
+        <h1>Enterprise AI Governance Architecture</h1>
+        <p>Complete Lifecycle Flow & Guardrail Placement Map</p>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button class="nav-btn" id="themeToggle" onclick="toggleTheme()">
+        <span id="themeIcon">&#x2600;</span> Theme
+      </button>
+      <button class="nav-btn" onclick="window.print()">
+        <span>&#x1F5B6;</span> Save as PDF
+      </button>
+      <a class="nav-btn primary" href="AI_Governance_Novice_Guide.html" target="_blank">
+        <span>&#x1F4CB;</span> Executive Slide Deck
+      </a>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main>
+
+    <!-- Hero Title -->
+    <div class="hero">
+      <div class="badge-pill">
+        <span class="pulse-dot"></span>
+        Zero-Friction Machine-Enforced Policy-as-Code
+      </div>
+      <h2>Where Do AI Guardrails Sit & How Do They Protect You?</h2>
+      <p>
+        AI Governance cannot just be a policy manual. It is an automated shield embedded across 
+        <strong>5 distinct stages</strong>: from the engineer's IDE laptop to live cloud inference. 
+        Explore below what guardrails exist, where they physically sit, and how they prevent violations.
+      </p>
+    </div>
+
+    <!-- Filter Bar -->
+    <div class="filter-bar">
+      <div class="filter-group">
+        <span class="filter-label">Filter Guardrail Type:</span>
+        <button class="filter-chip active" onclick="filterGuardrails('all', this)">All Guardrails (16)</button>
+        <button class="filter-chip danger" onclick="filterGuardrails('security', this)">Cybersecurity & Secrets</button>
+        <button class="filter-chip" onclick="filterGuardrails('copyright', this)">Copyright & Licensing</button>
+        <button class="filter-chip purple" onclick="filterGuardrails('agent', this)">Agentic & Safety</button>
+        <button class="filter-chip" onclick="filterGuardrails('fairness', this)">Fairness & Bias</button>
+      </div>
+      <div class="filter-group">
+        <span class="filter-label">Quick Action:</span>
+        <button class="nav-btn" onclick="selectStage(0)">Stage 1: Laptop</button>
+        <button class="nav-btn" onclick="selectStage(1)">Stage 2: PR Gate</button>
+        <button class="nav-btn" onclick="selectStage(4)">Stage 5: Live Drift</button>
+      </div>
+    </div>
+
+    <!-- 5-Stage Interactive Architecture Flow -->
+    <section class="flow-wrapper">
+      <div class="flow-timeline" id="stageCardsContainer">
+        
+        <!-- Stage 1 -->
+        <div class="stage-card selected" style="--accent-color: var(--accent-cyan); --icon-bg: rgba(6, 182, 212, 0.12);" onclick="selectStage(0)">
+          <div class="stage-header">
+            <span class="stage-number">STAGE 01</span>
+            <div class="stage-icon">&#x1F4BB;</div>
+          </div>
+          <h3 class="stage-title">Developer IDE & Pre-Commit</h3>
+          <div class="sitting-location">
+            <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+            Sits on: Developer Laptop (.git/hooks)
+          </div>
+          <p class="stage-desc">
+            Instantly stops leaked secrets, un-manifested models, and unencrypted credentials before code is ever committed or uploaded to Git.
+          </p>
+          <div class="guardrails-list">
+            <div class="guardrail-item" data-category="security">
+              <span class="guardrail-tag">POL-SEC</span>
+              <span>API Key / Secret Scanner</span>
+              <span class="guardrail-action action-block">BLOCKS COMMIT</span>
+            </div>
+            <div class="guardrail-item" data-category="security">
+              <span class="guardrail-tag">POL-ACC</span>
+              <span>Manifest Existence</span>
+              <span class="guardrail-action action-gate">MANDATORY</span>
+            </div>
+            <div class="guardrail-item" data-category="agent">
+              <span class="guardrail-tag">MCP CLI</span>
+              <span>Local Agent Inspector</span>
+              <span class="guardrail-action action-pass">AUTONOMOUS</span>
+            </div>
+          </div>
+          <div class="card-footer">
+            <span>Latency: &lt; 0.2 sec</span>
+            <span>Zero Cloud Leak</span>
+          </div>
+        </div>
+
+        <!-- Stage 2 -->
+        <div class="stage-card" style="--accent-color: var(--accent-rose); --icon-bg: rgba(244, 63, 94, 0.12);" onclick="selectStage(1)">
+          <div class="stage-header">
+            <span class="stage-number">STAGE 02</span>
+            <div class="stage-icon">&#x1F6E1;</div>
+          </div>
+          <h3 class="stage-title">CI/CD Pull Request Gate</h3>
+          <div class="sitting-location">
+            <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+            Sits on: GitHub Actions / GitLab CI Runner
+          </div>
+          <p class="stage-desc">
+            Blocks Pull Request merges if reciprocal copyleft (GPL/AGPL), unreviewed AI agent code, or unvetted data cards are detected.
+          </p>
+          <div class="guardrails-list">
+            <div class="guardrail-item" data-category="copyright">
+              <span class="guardrail-tag">POL-IPR</span>
+              <span>AGPL/GPL Copyleft Scan</span>
+              <span class="guardrail-action action-block">BLOCKS MERGE</span>
+            </div>
+            <div class="guardrail-item" data-category="copyright">
+              <span class="guardrail-tag">POL-HUM</span>
+              <span>Human Peer Sign-off</span>
+              <span class="guardrail-action action-block">BLOCKS MERGE</span>
+            </div>
+            <div class="guardrail-item" data-category="copyright">
+              <span class="guardrail-tag">POL-DAT</span>
+              <span>Data Commercial Rights</span>
+              <span class="guardrail-action action-gate">CARD CHECK</span>
+            </div>
+          </div>
+          <div class="card-footer">
+            <span>Enforcement: Hard Gate (exit 1)</span>
+            <span>Cryptographic Proof</span>
+          </div>
+        </div>
+
+        <!-- Stage 3 -->
+        <div class="stage-card" style="--accent-color: var(--accent-blue); --icon-bg: rgba(59, 130, 246, 0.12);" onclick="selectStage(2)">
+          <div class="stage-header">
+            <span class="stage-number">STAGE 03</span>
+            <div class="stage-icon">&#x2699;</div>
+          </div>
+          <h3 class="stage-title">Policy-as-Code Engine</h3>
+          <div class="sitting-location">
+            <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+            Sits in: Build Engine & SHA-256 Resolver
+          </div>
+          <p class="stage-desc">
+            Binds enterprise standards (16 policies, 60 controls) + contextual overlays (EU AI Act, SEC, HIPAA) into an immutable audit snapshot.
+          </p>
+          <div class="guardrails-list">
+            <div class="guardrail-item" data-category="fairness">
+              <span class="guardrail-tag">POL-FAI</span>
+              <span>Disparity Ratio &ge; 0.80</span>
+              <span class="guardrail-action action-gate">MATH AUDIT</span>
+            </div>
+            <div class="guardrail-item" data-category="security">
+              <span class="guardrail-tag">POL-ROB</span>
+              <span>Fallback & Safety Tests</span>
+              <span class="guardrail-action action-gate">EVALUATION</span>
+            </div>
+            <div class="guardrail-item" data-category="security">
+              <span class="guardrail-tag">OVERLAYS</span>
+              <span>EU AI Act / HIPAA Flags</span>
+              <span class="guardrail-action action-pass">SEALED JSON</span>
+            </div>
+          </div>
+          <div class="card-footer">
+            <span>Artifact: effective-policy-snapshot</span>
+            <span>SHA-256 Sealed</span>
+          </div>
+        </div>
+
+        <!-- Stage 4 -->
+        <div class="stage-card" style="--accent-color: var(--accent-purple); --icon-bg: rgba(139, 92, 246, 0.12);" onclick="selectStage(3)">
+          <div class="stage-header">
+            <span class="stage-number">STAGE 04</span>
+            <div class="stage-icon">&#x26A1;</div>
+          </div>
+          <h3 class="stage-title">MCP & Agent Interceptor</h3>
+          <div class="sitting-location">
+            <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+            Sits in: Universal MCP Gateway & PEP Proxy
+          </div>
+          <p class="stage-desc">
+            Intercepts tool execution in real-time. Cuts runaway recursion loops, blocks dangerous commands, and masks confidential PII.
+          </p>
+          <div class="guardrails-list">
+            <div class="guardrail-item" data-category="agent">
+              <span class="guardrail-tag">PEP-PROXY</span>
+              <span>PreToolUse Verification</span>
+              <span class="guardrail-action action-intercept">INTERCEPT</span>
+            </div>
+            <div class="guardrail-item" data-category="agent">
+              <span class="guardrail-tag">POL-ROB</span>
+              <span>Max Recursion Ceiling (20)</span>
+              <span class="guardrail-action action-block">LOOP CUT</span>
+            </div>
+            <div class="guardrail-item" data-category="security">
+              <span class="guardrail-tag">POL-DAT</span>
+              <span>Real-time PII Scrubbing</span>
+              <span class="guardrail-action action-intercept">MASKED</span>
+            </div>
+          </div>
+          <div class="card-footer">
+            <span>Protocol: Model Context Protocol</span>
+            <span>Port 3335 / stdio</span>
+          </div>
+        </div>
+
+        <!-- Stage 5 -->
+        <div class="stage-card" style="--accent-color: var(--accent-emerald); --icon-bg: rgba(16, 185, 129, 0.12);" onclick="selectStage(4)">
+          <div class="stage-header">
+            <span class="stage-number">STAGE 05</span>
+            <div class="stage-icon">&#x1F4CA;</div>
+          </div>
+          <h3 class="stage-title">Live Production Monitoring</h3>
+          <div class="sitting-location">
+            <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+            Sits in: Production Telemetry & Log Stream
+          </div>
+          <p class="stage-desc">
+            Monitors live inference for accuracy degradation, demographic bias drift, hallucination spikes, and provides a 1-click human kill-switch.
+          </p>
+          <div class="guardrails-list">
+            <div class="guardrail-item" data-category="fairness">
+              <span class="guardrail-tag">POL-MON</span>
+              <span>Drift & Accuracy Tracker</span>
+              <span class="guardrail-action action-gate">ALERT P1</span>
+            </div>
+            <div class="guardrail-item" data-category="fairness">
+              <span class="guardrail-tag">POL-FAI</span>
+              <span>Live Disparity Drift</span>
+              <span class="guardrail-action action-gate">FLAG SHIFT</span>
+            </div>
+            <div class="guardrail-item" data-category="agent">
+              <span class="guardrail-tag">POL-HUM</span>
+              <span>Human Kill-Switch / Rollback</span>
+              <span class="guardrail-action action-block">DISENGAGE</span>
+            </div>
+          </div>
+          <div class="card-footer">
+            <span>Frequency: Continuous Stream</span>
+            <span>Audit-Ready Logs</span>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Deep Dive Inspector Panel -->
+    <section class="inspector-panel" id="inspectorPanel">
+      <div class="inspector-header">
+        <div class="inspector-title-area">
+          <span class="stage-number" id="inspStageNum">STAGE 01 INSPECTION</span>
+          <h3 id="inspStageTitle">Developer IDE & Pre-Commit Hook</h3>
+          <p id="inspStageLoc" style="color: var(--accent-cyan); font-weight: 600; font-size: 0.85rem;">
+            Physical Location: Developer Workstation Git Hook (.git/hooks/pre-commit)
+          </p>
+        </div>
+        <div class="badge-pill" id="inspLatency">Latency: &lt; 200 milliseconds</div>
+      </div>
+
+      <div class="inspector-grid">
+        <div class="detail-section">
+          <h4>Guardrails Implied & Operating Mechanism</h4>
+          
+          <div class="detail-card">
+            <h5><span>&#x1F511;</span> Secret & Credential Guardrail (POL-SEC-001)</h5>
+            <p>
+              Scans all staged source code and configuration files using high-entropy regex patterns to detect OpenAI keys (<code>sk-...</code>), Anthropic keys, AWS secrets, and database passwords before they can leave the machine.
+            </p>
+            <p><strong>Enforcement:</strong> If any match is found, the git commit is aborted immediately with exit code 1.</p>
+            <div class="code-snippet" id="inspSnippet1">
+# File: plugins/pre-commit/scan_secrets.py
+pattern = r'(?i)(api[_-]?key|secret|token|password)[\s]*[:=][\s]*["\']([a-zA-Z0-9_\-]{16,})["\']'
+if re.search(pattern, diff):
+    print("❌ FATAL: Hardcoded credential detected. Commit rejected.")
+    sys.exit(1)
+            </div>
+          </div>
+
+          <div class="detail-card">
+            <h5><span>&#x1F4DC;</span> Manifest Registration Guardrail (POL-ACC-001)</h5>
+            <p>
+              Checks that every AI application repository contains a registered <code>ai-project-manifest.yaml</code> declaring project owner, risk tier, models used, and business purpose.
+            </p>
+            <p><strong>Enforcement:</strong> Prevents "shadow AI" projects from being created silently.</p>
+          </div>
+        </div>
+
+        <div class="detail-section">
+          <h4>Exact Files in Repository & Artifact Links</h4>
+          <div class="detail-card">
+            <h5><span>&#x1F4C1;</span> Package Source Files</h5>
+            <p>You can view and inspect the exact code powering this guardrail:</p>
+            <ul style="list-style: none; display: flex; flex-direction: column; gap: 0.5rem; margin-top: 0.5rem;">
+              <li><a class="file-link" href="file:///c:/ai-governance-package/plugins/pre-commit/scan_secrets.py">plugins/pre-commit/scan_secrets.py</a></li>
+              <li><a class="file-link" href="file:///c:/ai-governance-package/plugins/pre-commit/pre-commit-config.template.yaml">plugins/pre-commit/pre-commit-config.template.yaml</a></li>
+              <li><a class="file-link" href="file:///c:/ai-governance-package/baseline/policies/POL-SEC-cybersecurity-prompt-defense.md">baseline/policies/POL-SEC.md</a></li>
+            </ul>
+          </div>
+
+          <div class="detail-card">
+            <h5><span>&#x2705;</span> Why This Location Matters</h5>
+            <p>
+              <strong>Zero-Cloud Leakage:</strong> Once an API key is pushed to GitHub, it is considered compromised within seconds by automated scraping bots. Stopping it at the laptop guarantees total credential safety.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Master Guardrail Placement Matrix -->
+    <section>
+      <h3 class="section-title">Master Guardrails Placement Matrix</h3>
+      <p class="section-subtitle">A clear breakdown of what each guardrail enforces, where it physically sits, and what file controls it.</p>
+
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Layer / Sitting Location</th>
+              <th>Guardrail & Policy Code</th>
+              <th>What It Checks / Implies</th>
+              <th>Enforcement Action</th>
+              <th>Repository Implementation File</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                <span class="pill-location">&#x1F4BB; Developer Laptop</span>
+              </td>
+              <td>
+                <strong>POL-SEC-001</strong><br>
+                <small style="color: var(--text-dim);">Secret & Key Scanner</small>
+              </td>
+              <td>Detects OpenAI, Anthropic, AWS, GCP, and HuggingFace API keys in staged files</td>
+              <td><span class="guardrail-action action-block">BLOCKS COMMIT</span></td>
+              <td><a class="file-link" href="file:///c:/ai-governance-package/plugins/pre-commit/scan_secrets.py">plugins/pre-commit/scan_secrets.py</a></td>
+            </tr>
+            <tr>
+              <td>
+                <span class="pill-location">&#x1F4BB; Developer Laptop</span>
+              </td>
+              <td>
+                <strong>POL-ACC-001</strong><br>
+                <small style="color: var(--text-dim);">Project Registration</small>
+              </td>
+              <td>Verifies existence of valid <code>ai-project-manifest.yaml</code></td>
+              <td><span class="guardrail-action action-gate">MANDATORY HOOK</span></td>
+              <td><a class="file-link" href="file:///c:/ai-governance-package/project-kit/init.py">project-kit/init.py</a></td>
+            </tr>
+            <tr>
+              <td>
+                <span class="pill-location">&#x2601; GitHub Actions CI/CD</span>
+              </td>
+              <td>
+                <strong>POL-IPR-001</strong><br>
+                <small style="color: var(--text-dim);">Copyright & Copyleft</small>
+              </td>
+              <td>Scans git diffs for <code>GPL-2.0</code>, <code>GPL-3.0</code>, <code>AGPL-3.0</code> markers to prevent proprietary contamination</td>
+              <td><span class="guardrail-action action-block">BLOCKS PR MERGE</span></td>
+              <td><a class="file-link" href="file:///c:/ai-governance-package/plugins/pull-request/ai_code_review_gate.py">plugins/pull-request/ai_code_review_gate.py</a></td>
+            </tr>
+            <tr>
+              <td>
+                <span class="pill-location">&#x2601; GitHub Actions CI/CD</span>
+              </td>
+              <td>
+                <strong>POL-HUM-001</strong><br>
+                <small style="color: var(--text-dim);">Human Authorship Check</small>
+              </td>
+              <td>Enforces <code>PR_HUMAN_APPROVED: true</code> to ensure US Copyright Office ownership eligibility</td>
+              <td><span class="guardrail-action action-block">BLOCKS PR MERGE</span></td>
+              <td><a class="file-link" href="file:///c:/ai-governance-package/baseline/policies/POL-HUM-human-oversight-agency.md">baseline/policies/POL-HUM.md</a></td>
+            </tr>
+            <tr>
+              <td>
+                <span class="pill-location">&#x2601; GitHub Actions CI/CD</span>
+              </td>
+              <td>
+                <strong>POL-DAT-001</strong><br>
+                <small style="color: var(--text-dim);">Data Clearance</small>
+              </td>
+              <td>Validates <code>data-card.yaml</code> has <code>commercial_use_cleared: true</code> and no unvetted PII</td>
+              <td><span class="guardrail-action action-gate">HARD GATE CHECK</span></td>
+              <td><a class="file-link" href="file:///c:/ai-governance-package/templates/data-card.template.yaml">templates/data-card.template.yaml</a></td>
+            </tr>
+            <tr>
+              <td>
+                <span class="pill-location">&#x2699; Policy Engine</span>
+              </td>
+              <td>
+                <strong>POL-FAI-001</strong><br>
+                <small style="color: var(--text-dim);">Fairness & Bias Audit</small>
+              </td>
+              <td>Enforces disparate impact ratio &ge; 0.80 across protected demographic groups</td>
+              <td><span class="guardrail-action action-gate">DISPARITY AUDIT</span></td>
+              <td><a class="file-link" href="file:///c:/ai-governance-package/policy-as-code/engine.py">policy-as-code/engine.py</a></td>
+            </tr>
+            <tr>
+              <td>
+                <span class="pill-location">&#x2699; Policy Engine</span>
+              </td>
+              <td>
+                <strong>ORG-OVL-GEO-EU</strong><br>
+                <small style="color: var(--text-dim);">EU AI Act Overlay</small>
+              </td>
+              <td>Binds high-risk requirements (CE marking, risk management, human fallback)</td>
+              <td><span class="guardrail-action action-pass">SEALED IN JSON</span></td>
+              <td><a class="file-link" href="file:///c:/ai-governance-package/overlays/geography/ORG-OVL-GEO-EU-001.yaml">overlays/geography/EU-001.yaml</a></td>
+            </tr>
+            <tr>
+              <td>
+                <span class="pill-location">&#x26A1; Runtime Proxy / MCP</span>
+              </td>
+              <td>
+                <strong>PEP-INTERCEPT-001</strong><br>
+                <small style="color: var(--text-dim);">Tool Dispatch Guardrail</small>
+              </td>
+              <td>Intercepts autonomous agent tool execution (e.g. destructive shell, DB drops)</td>
+              <td><span class="guardrail-action action-intercept">PRE-TOOL INTERCEPT</span></td>
+              <td><a class="file-link" href="file:///c:/ai-governance-package/plugins/agent-interceptor/agent_pep_proxy.py">plugins/agent-interceptor/agent_pep_proxy.py</a></td>
+            </tr>
+            <tr>
+              <td>
+                <span class="pill-location">&#x26A1; Runtime Proxy / MCP</span>
+              </td>
+              <td>
+                <strong>POL-ROB-002</strong><br>
+                <small style="color: var(--text-dim);">Recursion Ceiling Guardrail</small>
+              </td>
+              <td>Limits agentic loop steps (<code>max_recursion_steps: 20</code>) preventing infinite billing loops</td>
+              <td><span class="guardrail-action action-block">ABORT RECURSION</span></td>
+              <td><a class="file-link" href="file:///c:/ai-governance-package/mcp_server.py">mcp_server.py</a></td>
+            </tr>
+            <tr>
+              <td>
+                <span class="pill-location">&#x1F4CA; Live Production</span>
+              </td>
+              <td>
+                <strong>POL-MON-001</strong><br>
+                <small style="color: var(--text-dim);">Continuous Drift Tracker</small>
+              </td>
+              <td>Tracks accuracy degradation (&gt; 5%), latency spikes, and hallucination alerts</td>
+              <td><span class="guardrail-action action-gate">TRIGGER P1 ALERT</span></td>
+              <td><a class="file-link" href="file:///c:/ai-governance-package/agents/governance_agent.py">agents/governance_agent.py</a></td>
+            </tr>
+            <tr>
+              <td>
+                <span class="pill-location">&#x1F4CA; Live Production</span>
+              </td>
+              <td>
+                <strong>POL-HUM-002</strong><br>
+                <small style="color: var(--text-dim);">Emergency Kill-Switch</small>
+              </td>
+              <td>Enables human clinician or risk officer to instantly divert AI traffic to rules/human triage</td>
+              <td><span class="guardrail-action action-block">MANUAL OVERRIDE</span></td>
+              <td><a class="file-link" href="file:///c:/ai-governance-package/baseline/policies/POL-HUM-human-oversight-agency.md">baseline/policies/POL-HUM.md</a></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Interactive Failure Simulation Sandbox -->
+    <section class="simulator-box">
+      <h3 class="section-title">Interactive Guardrail Enforcement Simulator</h3>
+      <p class="section-subtitle">Click any violation below to see exactly which guardrail trips, where it catches it, and the terminal output generated.</p>
+
+      <div class="scenario-buttons">
+        <button class="scenario-btn active" onclick="runScenario('secret', this)">
+          <span>&#x1F511;</span> Scenario A: Hardcoded OpenAI Secret Key
+        </button>
+        <button class="scenario-btn" onclick="runScenario('copyleft', this)">
+          <span>&#x1F4DC;</span> Scenario B: Copilot Pastes AGPL-3.0 Code
+        </button>
+        <button class="scenario-btn" onclick="runScenario('bias', this)">
+          <span>&#x2696;</span> Scenario C: Credit Model Disparity 0.68
+        </button>
+        <button class="scenario-btn" onclick="runScenario('agent_loop', this)">
+          <span>&#x1F504;</span> Scenario D: Agent Runs in Infinite Tool Loop
+        </button>
+      </div>
+
+      <div class="sim-result-card" id="simResultCard">
+        <div class="sim-column">
+          <h5>Enforcement Summary</h5>
+          <h4 id="simGuardrailTitle" style="font-family: var(--font-display); font-size: 1.25rem; margin-bottom: 0.5rem; color: var(--accent-rose);">
+            POL-SEC-001 (Secret Scanner Hook)
+          </h4>
+          <p id="simGuardrailWhere" style="font-size: 0.85rem; color: var(--accent-cyan); font-weight: 600; margin-bottom: 0.75rem;">
+            Where It Sits: Workstation Git Pre-Commit Hook (.git/hooks/pre-commit)
+          </p>
+          <p id="simGuardrailDesc" style="font-size: 0.84rem; color: var(--text-muted); line-height: 1.5;">
+            The developer staged <code>config.py</code> containing an active OpenAI API secret key. The pre-commit scanner detected the high-entropy token in under 0.1 seconds and blocked the git commit. The credential never reached GitHub.
+          </p>
+        </div>
+
+        <div class="sim-column">
+          <h5>Terminal Output & Diagnostic</h5>
+          <div class="terminal-window" id="simTerminal">
+$ git commit -m "Add new prompt service"
+<span class="log-cyan">[AI Governance Pre-Commit Hook v2.4.0] Scanning staged files...</span>
+Scanning: src/config.py
+<span class="log-red">❌ [VIOLATION] POL-SEC-001: High-entropy secret key detected!</span>
+  Pattern: OpenAI API Secret (sk-proj-98aBcD...)
+  File: src/config.py:14
+<span class="log-red">⛔ COMMIT REJECTED: Unencrypted credentials cannot be committed.</span>
+Remediation: Store your secret in environment variables or vault.
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    <p>
+      Enterprise AI Governance Package &bull; Production Architecture Reference &bull;
+      <a href="PROJECT_CONTEXT_AND_CHAT_HISTORY.md">View Master Project Context</a> &bull;
+      <a href="AI_Governance_Novice_Guide.html">View Executive Slide Presentation</a>
+    </p>
+  </footer>
+
+  <script>
+    // Stage Data Dictionary
+    const stagesData = [
+      {
+        num: "STAGE 01 INSPECTION",
+        title: "Developer IDE & Pre-Commit Hook",
+        location: "Physical Location: Developer Workstation Git Hook (.git/hooks/pre-commit)",
+        latency: "Latency: < 200 milliseconds",
+        guardrailTitle: "Secret & Credential Guardrail (POL-SEC-001)",
+        guardrailDesc: "Scans all staged source code and configuration files using high-entropy regex patterns to detect OpenAI keys (sk-...), Anthropic keys, AWS secrets, and database passwords before they can leave the machine.",
+        enforce: "If any match is found, the git commit is aborted immediately with exit code 1.",
+        snippet: `# File: plugins/pre-commit/scan_secrets.py\npattern = r'(?i)(api[_-]?key|secret|token|password)[\\s]*[:=][\\s]*["\\']([a-zA-Z0-9_\\-]{16,})["\\']'\nif re.search(pattern, diff):\n    print("❌ FATAL: Hardcoded credential detected. Commit rejected.")\n    sys.exit(1)`,
+        files: [
+          { name: "plugins/pre-commit/scan_secrets.py", url: "file:///c:/ai-governance-package/plugins/pre-commit/scan_secrets.py" },
+          { name: "plugins/pre-commit/pre-commit-config.template.yaml", url: "file:///c:/ai-governance-package/plugins/pre-commit/pre-commit-config.template.yaml" },
+          { name: "baseline/policies/POL-SEC-cybersecurity-prompt-defense.md", url: "file:///c:/ai-governance-package/baseline/policies/POL-SEC-cybersecurity-prompt-defense.md" }
+        ],
+        why: "Zero-Cloud Leakage: Once an API key is pushed to GitHub, automated scrapers steal it within 3 seconds. Stopping it at the laptop prevents catastrophic security breaches."
+      },
+      {
+        num: "STAGE 02 INSPECTION",
+        title: "CI/CD Pull Request Gate",
+        location: "Physical Location: GitHub Actions / GitLab CI Cloud Runner (PR Check)",
+        latency: "Latency: ~ 12-25 seconds",
+        guardrailTitle: "Copyleft & Human Review Guardrail (POL-IPR-001 & POL-HUM-001)",
+        guardrailDesc: "Scans incoming Pull Request diffs for reciprocal copyleft licenses (GPL-2.0, GPL-3.0, AGPL-3.0) and validates that AI-assisted code has explicit human peer approval (PR_HUMAN_APPROVED: true).",
+        enforce: "Returns exit code 1 to GitHub Actions, causing the red 'X' status check to prevent pull request merge.",
+        snippet: `# File: plugins/pull-request/ai_code_review_gate.py\nFORBIDDEN = ["GPL-2.0", "GPL-3.0", "AGPL-3.0"]\nfor line in pr_diff:\n    if any(lic in line for lic in FORBIDDEN):\n        print("❌ CRITICAL: Reciprocal copyleft code detected! Legal risk.")\n        sys.exit(1)`,
+        files: [
+          { name: "plugins/pull-request/ai_code_review_gate.py", url: "file:///c:/ai-governance-package/plugins/pull-request/ai_code_review_gate.py" },
+          { name: "plugins/pull-request/pr-governance-gate.yaml", url: "file:///c:/ai-governance-package/plugins/pull-request/pr-governance-gate.yaml" },
+          { name: "action.yml", url: "file:///c:/ai-governance-package/action.yml" }
+        ],
+        why: "IP Cleanliness & Human Agency: Prevents legal viral contagion of enterprise proprietary software while ensuring human authors retain copyright eligibility."
+      },
+      {
+        num: "STAGE 03 INSPECTION",
+        title: "Policy-as-Code Evaluation Engine",
+        location: "Physical Location: Deterministic Policy Engine & Snapshot Resolver",
+        latency: "Latency: ~ 1.5 seconds",
+        guardrailTitle: "Deterministic Compliance & Fairness Audit (POL-FAI-001 & Overlays)",
+        guardrailDesc: "Evaluates the project manifest and telemetry against 16 domain rule suites. Verifies mathematical demographic disparity >= 0.80 and binds regulatory overlays (EU AI Act, SEC, HIPAA).",
+        enforce: "Compiles effective-policy-snapshot.json and seals it with a SHA-256 cryptographic hash.",
+        snippet: `# File: project-kit/resolver/resolve.py\nsnapshot_bytes = json.dumps(resolved_controls, sort_keys=True).encode()\nsha256_hash = hashlib.sha256(snapshot_bytes).hexdigest()\nsnapshot["provenance"]["snapshot_sha256"] = sha256_hash\n# Guaranteed immutable proof for regulatory auditors`,
+        files: [
+          { name: "policy-as-code/engine.py", url: "file:///c:/ai-governance-package/policy-as-code/engine.py" },
+          { name: "project-kit/resolver/resolve.py", url: "file:///c:/ai-governance-package/project-kit/resolver/resolve.py" },
+          { name: "baseline/policies/POL-FAI-fairness-bias-evaluation.md", url: "file:///c:/ai-governance-package/baseline/policies/POL-FAI-fairness-bias-evaluation.md" }
+        ],
+        why: "Zero Discretion: Policy decisions are not subjective opinions. They are mathematical code evaluations that produce undeniable audit trails."
+      },
+      {
+        num: "STAGE 04 INSPECTION",
+        title: "Universal MCP & Agent Interceptor",
+        location: "Physical Location: Universal MCP Gateway (Port 3335 / stdio) & PEP Sidecar",
+        latency: "Latency: < 5 milliseconds",
+        guardrailTitle: "Tool Interception & Recursion Ceiling (PEP-PROXY & POL-ROB-002)",
+        guardrailDesc: "Acts as a transparent proxy between autonomous LLM agents and the real world. Intercepts terminal tool calls before execution and enforces a strict recursion ceiling of 20 steps.",
+        enforce: "Rejects unapproved destructive commands and abruptly halts runaway infinite agent loops.",
+        snippet: `# File: plugins/agent-interceptor/agent_pep_proxy.py\nif tool_name in DESTRUCTIVE_TOOLS and not human_approved:\n    return {"error": "POL-HUM-002: Tool requires explicit human approval."}\nif current_step > MAX_RECURSION_STEPS:\n    return {"error": "POL-ROB-002: Recursion ceiling exceeded (max: 20)." }`,
+        files: [
+          { name: "plugins/agent-interceptor/agent_pep_proxy.py", url: "file:///c:/ai-governance-package/plugins/agent-interceptor/agent_pep_proxy.py" },
+          { name: "mcp_server.py", url: "file:///c:/ai-governance-package/mcp_server.py" },
+          { name: "agents/governance_agent.py", url: "file:///c:/ai-governance-package/agents/governance_agent.py" }
+        ],
+        why: "Agentic Safety: Autonomous agents can enter infinite reasoning loops or accidentally execute destructive operations. The PEP Proxy guarantees hard boundaries."
+      },
+      {
+        num: "STAGE 05 INSPECTION",
+        title: "Live Production Monitoring & Drift Detection",
+        location: "Physical Location: Production Telemetry Pipeline & Alert Manager",
+        latency: "Latency: Real-time Streaming",
+        guardrailTitle: "Continuous Accuracy & Bias Drift Tracker (POL-MON-001 & POL-HUM-002)",
+        guardrailDesc: "Monitors live model inference streams for concept drift, accuracy degradation (> 5% drop), latency spikes, and demographic bias divergence.",
+        enforce: "Triggers P1 alerts and activates emergency circuit breaker / human clinician fallback.",
+        snippet: `# File: agents/governance_agent.py monitor\nif accuracy_drop > 0.05 or hallucination_score > 0.08:\n    trigger_pagerduty_incident(priority="P1", reason="Drift threshold breach")\n    engage_circuit_breaker(fallback_mode="rules_engine")`,
+        files: [
+          { name: "agents/governance_agent.py", url: "file:///c:/ai-governance-package/agents/governance_agent.py" },
+          { name: "baseline/policies/POL-MON-monitoring-logging-audit.md", url: "file:///c:/ai-governance-package/baseline/policies/POL-MON-monitoring-logging-audit.md" },
+          { name: "baseline/policies/POL-HUM-human-oversight-agency.md", url: "file:///c:/ai-governance-package/baseline/policies/POL-HUM-human-oversight-agency.md" }
+        ],
+        why: "Day-2 Operational Reality: AI models do not remain static. Data patterns evolve, users adversarial test them, and drift happens. Live monitoring prevents silent failures."
+      }
+    ];
+
+    // Stage Selection Handler
+    function selectStage(index) {
+      const cards = document.querySelectorAll('.stage-card');
+      cards.forEach((c, idx) => {
+        if (idx === index) {
+          c.classList.add('selected');
+        } else {
+          c.classList.remove('selected');
+        }
+      });
+
+      const d = stagesData[index];
+      document.getElementById('inspStageNum').innerText = d.num;
+      document.getElementById('inspStageTitle').innerText = d.title;
+      document.getElementById('inspStageLoc').innerText = d.location;
+      document.getElementById('inspLatency').innerText = d.latency;
+      document.getElementById('inspSnippet1').innerText = d.snippet;
+
+      // Smooth scroll to inspector
+      document.getElementById('inspectorPanel').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    // Filter Guardrails
+    function filterGuardrails(cat, btn) {
+      document.querySelectorAll('.filter-chip').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      const items = document.querySelectorAll('.guardrail-item');
+      items.forEach(it => {
+        if (cat === 'all' || it.getAttribute('data-category') === cat) {
+          it.style.display = 'flex';
+          it.style.opacity = '1';
+        } else {
+          it.style.display = 'none';
+        }
+      });
+    }
+
+    // Interactive Scenario Simulator
+    const scenarios = {
+      secret: {
+        title: "POL-SEC-001 (Secret Scanner Hook)",
+        where: "Where It Sits: Workstation Git Pre-Commit Hook (.git/hooks/pre-commit)",
+        desc: "The developer staged config.py containing an active OpenAI API secret key. The pre-commit scanner detected the high-entropy token in under 0.1 seconds and blocked the git commit. The credential never reached GitHub.",
+        terminal: `$ git commit -m "Add new prompt service"
+<span class="log-cyan">[AI Governance Pre-Commit Hook v2.4.0] Scanning staged files...</span>
+Scanning: src/config.py
+<span class="log-red">❌ [VIOLATION] POL-SEC-001: High-entropy secret key detected!</span>
+  Pattern: OpenAI API Secret (sk-proj-98aBcD...)
+  File: src/config.py:14
+<span class="log-red">⛔ COMMIT REJECTED: Unencrypted credentials cannot be committed.</span>
+Remediation: Store your secret in environment variables or vault.`
+      },
+      copyleft: {
+        title: "POL-IPR-001 (Copyleft Licensing Gate)",
+        where: "Where It Sits: GitHub Actions CI/CD Pipeline (plugins/pull-request/ai_code_review_gate.py)",
+        desc: "An AI coding assistant (e.g. Copilot or Cursor) generated a helper function that included AGPL-3.0 licensed source code. The PR review gate scanned the pull request diff, identified the copyleft marker, and failed the build.",
+        terminal: `$ python plugins/pull-request/ai_code_review_gate.py
+<span class="log-cyan">[PR Governance Gate] Scanning git diff for PR #42...</span>
+Checking license compatibility against POL-IPR-001...
+<span class="log-red">❌ [VIOLATION] POL-IPR-001: Reciprocal Copyleft Detected!</span>
+  License Found: AGPL-3.0 in file: lib/data_parser.py
+  Impact: Contaminates proprietary codebase with mandatory open-sourcing.
+<span class="log-red">⛔ BUILD FAILED (Exit Code 1): Merge blocked by Enterprise Policy Gate.</span>
+Remediation: Remove the copyleft dependency or request legal exception.`
+      },
+      bias: {
+        title: "POL-FAI-001 (Algorithmic Fairness Audit)",
+        where: "Where It Sits: Policy-as-Code Evaluation Engine (policy-as-code/engine.py)",
+        desc: "A loan credit risk model was evaluated prior to production release. The demographic parity ratio for protected demographic groups was 0.68, which breaches the required 0.80 four-fifths threshold.",
+        terminal: `$ python policy-as-code/engine.py --eval loan_model_metrics.json
+<span class="log-cyan">[Policy Engine] Evaluating 60 Controls & Contextual Overlays...</span>
+Evaluating POL-FAI-001 (Fair Lending Compliance)...
+  Target Metric: Demographic Disparity Ratio >= 0.80
+  Actual Computed: 0.68 (Protected Class A vs B)
+<span class="log-red">❌ [FAIL] ORG-CTL-FAI-001: Disparate impact exceeds permissible threshold.</span>
+<span class="log-amber">⚠️ PROMOTION BLOCKED: Model Registry admission webhook rejected container.</span>
+Remediation: Reweight training sample weights and re-evaluate.`
+      },
+      agent_loop: {
+        title: "PEP-PROXY & POL-ROB-002 (Agent Recursion Ceiling)",
+        where: "Where It Sits: Universal MCP Interceptor (plugins/agent-interceptor/agent_pep_proxy.py)",
+        desc: "An autonomous agent attempted to query an API in an infinite loop due to ambiguous error returns. The PEP Proxy tracked loop depth and terminated execution after step 20, preserving compute budget.",
+        terminal: `$ agy agent run --goal "Diagnose database schema"
+<span class="log-cyan">[PEP Proxy] Intercepting tool executions via Model Context Protocol...</span>
+Step 1: list_tables (Allowed)
+Step 2: describe_schema (Allowed)
+...
+Step 20: query_db (Allowed)
+<span class="log-red">❌ [CIRCUIT BREAKER] POL-ROB-002: Maximum recursion steps (20) exceeded!</span>
+<span class="log-amber">⚠️ EXECUTION HALTED: Preventing infinite runaway token inference spend.</span>
+Action: State persisted to brain/session_state.json. Escalating to human.`
+      }
+    };
+
+    function runScenario(key, btn) {
+      document.querySelectorAll('.scenario-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      const sc = scenarios[key];
+      document.getElementById('simGuardrailTitle').innerText = sc.title;
+      document.getElementById('simGuardrailWhere').innerText = sc.where;
+      document.getElementById('simGuardrailDesc').innerText = sc.desc;
+      document.getElementById('simTerminal').innerHTML = sc.terminal;
+    }
+
+    // Theme Switcher
+    function toggleTheme() {
+      const body = document.body;
+      const current = body.getAttribute('data-theme');
+      const next = current === 'dark' ? 'light' : 'dark';
+      body.setAttribute('data-theme', next);
+      document.getElementById('themeIcon').innerHTML = next === 'dark' ? '&#x2600;' : '&#x1F319;';
+    }
+  </script>
+</body>
+</html>
