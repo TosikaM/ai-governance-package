@@ -565,7 +565,7 @@ licensing:
                 "enforcement": "Build halts at resolver gate"
             })
 
-        # 2. Effective Snapshot
+        # 2. Effective Snapshot & Metadata Resolution
         active_controls = 0
         snapshot_hash = "MISSING"
         risk_tier = "Unknown"
@@ -573,16 +573,27 @@ licensing:
         p_name = self.target_dir.name
         p_id = "SYS-UNKNOWN"
 
+        # Read project metadata and system profile from manifest
+        if manifest_path.exists():
+            try:
+                import yaml
+                with open(manifest_path, "r", encoding="utf-8") as mf:
+                    mdata = yaml.safe_load(mf) or {}
+                p_name = mdata.get("project_name", p_name)
+                p_id = mdata.get("project_id", p_id)
+                profile = mdata.get("ai_system_profile", {})
+                risk_tier = profile.get("risk_tier", risk_tier)
+                archetype = profile.get("archetype", archetype)
+            except Exception:
+                pass
+
         if snapshot_path.exists():
             try:
                 with open(snapshot_path, "r", encoding="utf-8") as sf:
                     sdata = json.load(sf)
                 active_controls = sdata.get("total_active_controls", 0)
                 snapshot_hash = sdata.get("snapshot_integrity_hash", "UNKNOWN")[:16]
-                risk_tier = sdata.get("risk_tier", "Unknown")
-                archetype = sdata.get("archetype", "Unknown")
-                p_name = sdata.get("project_name", self.target_dir.name)
-                p_id = sdata.get("project_id", "SYS-UNKNOWN")
+                p_id = sdata.get("project_id", p_id)
 
                 checks.append({
                     "name": "Cryptographic Policy Snapshot (POL-REC-01)",
